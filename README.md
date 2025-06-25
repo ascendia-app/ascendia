@@ -63,3 +63,9 @@ This project is not open source.
 No part of this repository may be reused, copied, modified, or republished without explicit permission.  
 Violation of these terms may result in legal action.
 
+### Running Locally (For Personal Use Only)
+```bash
+git clone https://github.com/your-username/ascendia.git
+cd ascendia
+# Open index.html in your browser or use Live Server in VS Code
+
