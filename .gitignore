@@ -1,1 +1,23 @@
+node_modules/
+dist/
+
+.env
+.env.local
+.env.development
+.env.production
+
+*.log
+npm-debug.log*
+
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+.cache/
 
