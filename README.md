@@ -56,8 +56,10 @@ Ascendia is a **Progressive Web App** that can be accessed through any modern br
 - Navigate to the deployed link (provided in the project’s GitHub Pages or hosting platform)
 - On supported browsers (like Chrome or Safari), click "Install" or "Add to Home Screen" to use it like a native app
 
-### Running Locally (For Personal Use Only)
-```bash
-git clone https://github.com/your-username/ascendia.git
-cd ascendia
-# Open index.html in your browser or use Live Server in VS Code
+## Legal Notice
+
+Ascendia is protected under a strict All Rights Reserved license.  
+This project is not open source.  
+No part of this repository may be reused, copied, modified, or republished without explicit permission.  
+Violation of these terms may result in legal action.
+
