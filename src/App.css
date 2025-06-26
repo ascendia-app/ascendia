@@ -137,7 +137,7 @@ html, body, #root {
 }
 
 .start-btn {
-  background-color: #ff9aa2; /* Keeps original color for consistency in light mode */
+  background-color: #e6e1e2a1; /* Keeps original color for consistency in light mode */
   color: white;
 }
 .start-btn:hover {
