@@ -162,30 +162,31 @@ html, body, #root {
   position: relative; /* Needed for transform */
 }
 
-.hero h1 { /* Main title */
-  font-family: 'Poppins', sans-serif; /* Explicitly set to Poppins for sans-serif */
-  font-size: 6.5rem; /* Even larger font size */
-  font-weight: 900; /* Extra bold */
-  margin-bottom: 1.5rem; /* Increased margin */
-  /* Updated gradient for brighter, more distinct colors */
-  background: linear-gradient(to right, #ff007f, #ff7f00, #ffea00); /* Hot Pink, Bright Orange, Bright Yellow */
+.hero h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 6.5rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  /* Brighter, more saturated gradient for vivid colors */
+  background: linear-gradient(to right, #ff1a8c, #ff6200, #ffd700); /* Hot Pink, Vivid Orange, Gold */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
-  letter-spacing: 5px; /* Adds more spacing for better visual */
-  /* --- NEW TEXT-SHADOW: Pure 3D extrusion, no whiteness, clear colors --- */
+  letter-spacing: 4px; /* Slightly reduced for better readability */
+  /* Enhanced 3D text-shadow with vibrant colors, no white or cloudy effects */
   text-shadow:
-    2px 2px 0px #ff007f, /* Layer 1: Pink, no blur */
-    4px 4px 0px #ff7f00, /* Layer 2: Orange, no blur */
-    6px 6px 0px #ffea00, /* Layer 3: Yellow, no blur */
-    8px 8px 0px #ff007f, /* Layer 4: Pink, no blur */
-    10px 10px 0px #ff7f00, /* Layer 5: Orange, no blur */
-    12px 12px 0px rgba(0, 0, 0, 0.3), /* Deeper, subtle dark shadow */
-    14px 14px 20px rgba(0, 0, 0, 0.5); /* Wider, darker blur for pop */
-  transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
+    2px 2px 0 #ff1a8c, /* Layer 1: Hot Pink */
+    4px 4px 0 #ff6200, /* Layer 2: Vivid Orange */
+    6px 6px 0 #ffd700, /* Layer 3: Gold */
+    8px 8px 0 #ff1a8c, /* Layer 4: Hot Pink */
+    10px 10px 0 #ff6200, /* Layer 5: Vivid Orange */
+    12px 12px 0 rgba(0, 0, 0, 0.4), /* Subtle black shadow for depth */
+    14px 14px 15px rgba(0, 0, 0, 0.6); /* Tighter, darker blur for contrast */
+  transform: perspective(500px) translateZ(20px); /* Enhanced 3D perspective */
+  /* Optional: Slight glow for extra vibrancy */
+  filter: drop-shadow(0 0 10px rgba(255, 98, 0, 0.5));
 }
-
 
 .hero p {
   font-size: 1.8rem; /* Slightly larger description */
