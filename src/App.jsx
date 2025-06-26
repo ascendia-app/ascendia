@@ -5,13 +5,13 @@ import './App.css';
 // Import pages
 import Home from './pages/Home';
 import Syllabus from './pages/Syllabus';
-import Papers from './pages/Papers'; // Ensure Papers component is properly imported and defined
+import Papers from './pages/Papers';
 import Tracker from './pages/Tracker';
 import Countdown from './pages/Countdown';
 import Planner from './pages/Planner';
-import GettingStarted from './pages/GettingStarted';
+import GettingStarted from './pages/GettingStarted'; // This now includes registration
 import Login from './pages/Login';
-import Download from './pages/Download';
+// Removed: import Download from './pages/Download'; // This import is removed to fix the build error
 
 
 function App() {
@@ -56,8 +56,9 @@ function App() {
           </div>
           <div className="nav-right">
             <div className="nav-buttons">
-              {/* These are React Router Links for navigation */}
+              {/* Login button points directly to login page */}
               <Link to="/login" className="login-btn">Login</Link>
+              {/* 'Get Started' button points to the Getting Started page (which now has registration) */}
               <Link to="/getting-started" className="start-btn">Get Started</Link>
             </div>
             <button className="toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
@@ -74,7 +75,7 @@ function App() {
 
             {/* Routes for other main sections/tools */}
             <Route path="/syllabus" element={<Syllabus />} />
-            <Route path="/papers" element={<Papers />} /> {/* CORRECTED: Now renders Papers component */}
+            <Route path="/papers" element={<Papers />} />
             <Route path="/tracker" element={<Tracker />} />
             <Route path="/countdown" element={<Countdown />} />
             <Route path="/planner" element={<Planner />} />
@@ -82,7 +83,7 @@ function App() {
             {/* ROUTES FOR GETTING STARTED FLOW */}
             <Route path="/getting-started" element={<GettingStarted />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/download" element={<Download />} />
+            {/* Removed: <Route path="/download" element={<Download />} /> to fix build error */}
 
           </Routes>
         </div>
