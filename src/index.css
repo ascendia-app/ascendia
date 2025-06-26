@@ -1,5 +1,5 @@
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* Reset + Base */
 * {
@@ -173,15 +173,11 @@ html, body, #root {
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  text-shadow: none; /* Text shadow removed as requested */
-  /* Added multiple text-shadows for a brighter, more distinct 3D effect without being dull */
+  /* Re-added and refined multiple text-shadows for brighter, distinct 3D effect */
   text-shadow:
-    -1px -1px 0 #f0f0f0, /* Top-left highlight */
-    1px -1px 0 #f0f0f0, /* Top-right highlight */
-    -1px 1px 0 #f0f0f0, /* Bottom-left highlight */
-    1px 1px 0 #f0f0f0,  /* Bottom-right highlight */
-    2px 2px 5px rgba(0,0,0,0.3); /* Subtle dark shadow for depth */
-
+    0 0 10px rgba(255, 255, 255, 0.8), /* White glow for brightness */
+    0 0 20px rgba(255, 255, 255, 0.6), /* Larger white glow */
+    3px 3px 6px rgba(0, 0, 0, 0.4); /* Deeper shadow for 3D depth */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
@@ -254,7 +250,7 @@ html, body, #root {
 .feature-card {
   background: #ffffff; /* Clearly white background for light mode */
   /* Re-adjusted box-shadow for more realistic 3D */
-  box-shadow: 
+  box-shadow:
     0 1px 2px rgba(0,0,0,0.07),  /* Subtle top shadow */
     0 2px 4px rgba(0,0,0,0.07),  /* Mid shadow */
     0 4px 8px rgba(0,0,0,0.07),  /* Stronger mid shadow */
@@ -263,7 +259,9 @@ html, body, #root {
     0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
-  width: 280px; /* Adjusted width for 3 cards per row */
+  width: calc((100% - 5rem) / 3); /* Calculated width for 3 cards per row, accounting for gap */
+  max-width: 280px; /* Ensure cards don't grow too wide on very large screens */
+  min-width: 250px; /* Minimum width before wrapping or becoming too small */
   height: 250px; /* Adjusted fixed height for consistent look */
   display: flex;
   flex-direction: column;
@@ -305,9 +303,15 @@ html, body, #root {
 .feature-card:hover {
   transform: translateY(-15px) rotateX(5deg) rotateY(5deg) translateZ(20px); /* More dynamic hover effect */
   /* Stronger, more defined shadow on hover for a popping 3D effect */
-  box-shadow: 
-    0 14px 28px rgba(0,0,0,0.25), 
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.25),
     0 10px 10px rgba(0,0,0,0.22);
+}
+
+.feature-card-icon { /* Re-added styling for emoji icons */
+  font-size: 3.5rem; /* Large emoji size */
+  margin-bottom: 1rem; /* Space below emoji */
+  line-height: 1; /* Prevents extra line height for emojis */
 }
 
 .feature-card h4 {
