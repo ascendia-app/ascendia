@@ -87,6 +87,7 @@ html, body, #root {
   display: flex;
   gap: 1.5rem; /* Adjusted gap */
   align-items: center;
+  position: relative; /* Needed for dropdown positioning */
 }
 
 .nav-buttons {
@@ -94,28 +95,200 @@ html, body, #root {
   gap: 1rem;
 }
 
-/* Buttons */
+
+/* Buttons & Links in Header (for logged out state) */
 .login-btn,
 .start-btn {
   padding: 0.6rem 1.2rem; /* Slightly larger padding */
   border-radius: 8px; /* More rounded corners */
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s, border 0.3s; /* Added border to transition */
-  color: white; /* Ensure text is white */
-  background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
-  border: 1px solid rgba(255, 255, 255, 0.5); /* Semi-transparent white border */
-  backdrop-filter: blur(5px); /* Added for a frosted glass effect */
-  -webkit-backdrop-filter: blur(5px); /* Webkit prefix */
-  font-family: 'Poppins', sans-serif; /* Applied Poppins font to buttons */
+  transition: background 0.3s, transform 0.2s, border 0.3s;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .login-btn:hover,
 .start-btn:hover {
-  background-color: rgba(255, 255, 255, 0.35); /* More opaque on hover */
-  transform: translateY(-2px); /* Slight lift effect */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+  background-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* User Profile Widget (for logged in state) */
+.user-profile-widget {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.75rem; /* Space between avatar/text/arrow */
+  padding: 0.5rem 0.8rem; /* Padding for the clickable area */
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle background for active area */
+  transition: background-color 0.2s;
+}
+
+.user-profile-widget:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-info-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white; /* Ensure text is white */
+  font-weight: 600;
+}
+
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3); /* Lighter background for avatar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white; /* Text color inside avatar */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0; /* Prevent it from shrinking */
+}
+
+.welcome-message {
+  color: white;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  white-space: nowrap; /* Prevent username from wrapping */
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  margin-left: 0.25rem;
+  transition: transform 0.2s ease-in-out;
+  color: white; /* Ensure arrow is white */
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px); /* Position below the trigger with some space */
+  right: 0; /* Align to the right of the widget */
+  background-color: #fff; /* White background for dropdown */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  min-width: 180px;
+  overflow: hidden; /* Ensures rounded corners */
+  z-index: 101; /* Above header */
+  display: flex;
+  flex-direction: column;
+  opacity: 0; /* Start hidden for animation */
+  transform: translateY(-10px); /* Start slightly up for animation */
+  animation: fadeInDown 0.2s ease-out forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Space between icon and text */
+  padding: 0.8rem 1rem;
+  color: #333; /* Dark text color for items */
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  font-family: 'Inter', sans-serif;
+  border-bottom: 1px solid #eee; /* Separator */
+}
+
+.dropdown-item:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0; /* Light gray on hover */
+  color: #ff4d88; /* Highlight color on hover */
+}
+
+.dropdown-item .icon svg {
+  width: 20px; /* Icon size */
+  height: 20px;
+  color: #666; /* Default icon color */
+  transition: color 0.2s;
+}
+
+.dropdown-item:hover .icon svg {
+  color: #ff4d88; /* Icon color on hover */
+}
+
+/* Logout Button Specific Styling within Dropdown */
+.logout-btn {
+  background: none;
+  border: none;
+  width: 100%; /* Make button take full width of dropdown item */
+  text-align: left; /* Align text within button */
+  padding: 0; /* Reset button padding as it's handled by .dropdown-item */
+  font: inherit; /* Inherit font styles */
+  cursor: pointer; /* Ensure cursor is pointer */
+}
+
+/* Apply dropdown-item styles directly to logout-btn for consistency */
+.logout-btn.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+  font-family: 'Inter', sans-serif;
+  border-bottom: 1px solid #eee;
+}
+
+.logout-btn.dropdown-item:hover {
+  background-color: #f0f0f0;
+  color: #ff4d88;
+}
+
+/* Ensure icons within logout button also follow dropdown-item icon styles */
+.logout-btn.dropdown-item .icon svg {
+  width: 20px;
+  height: 20px;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.logout-btn.dropdown-item:hover .icon svg {
+  color: #ff4d88;
+}
+
 
 /* Toggle - Remains for functionality, but no dark mode styling here */
 .toggle {
@@ -127,6 +300,7 @@ html, body, #root {
   position: relative;
   cursor: pointer;
   padding: 2px; /* Internal padding for the circle */
+  z-index: 2; /* Ensure toggle is also clickable */
 }
 
 .circle {
@@ -176,6 +350,7 @@ html, body, #root {
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
+
 .hero p {
   font-size: 1.8rem; /* Slightly larger description */
   font-weight: 500;
@@ -189,6 +364,7 @@ html, body, #root {
   transform: translateZ(-20px); /* Pushes p text into 'background' for stronger parallax */
 }
 
+/* CTA button in Hero Section */
 .cta {
   padding: 1.2rem 2.5rem; /* Larger CTA button */
   font-size: 1.3rem;
@@ -201,12 +377,19 @@ html, body, #root {
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
   transition: transform 0.2s, box-shadow 0.2s;
   transform: translateZ(-10px); /* Pushes cta button into 'background' for parallax */
+  text-decoration: none; /* Ensure no underline for Link component */
+  display: flex; /* Ensure Link behaves like a flex item */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  position: relative; /* Crucial for z-index to work */
+  z-index: 2; /* Ensure button is above other potential elements */
 }
 
 .cta:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
+
 
 /* Animations */
 @keyframes floatUp {
@@ -229,14 +412,13 @@ html, body, #root {
 }
 
 .feature-grid {
-  display: grid; /* Use CSS Grid for precise 2x3 layout */
-  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-  grid-template-rows: repeat(2, auto); /* 2 rows, auto-sized */
-  justify-content: center; /* Center the grid */
-  gap: 2.5rem; /* Consistent spacing between cards */
+  display: flex;
+  flex-wrap: wrap; /* Allows cards to wrap to new lines */
+  justify-content: center; /* Centers the rows of cards */
+  gap: 2.5rem; /* Creates consistent spacing between cards, both horizontally and vertically */
   margin-top: 3rem;
-  padding: 0; /* Remove horizontal padding from grid itself */
-  max-width: 1024px; /* Keep max-width for centering */
+  padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
+  max-width: 1024px; /* Increased max-width to provide more space for 3 cards per row */
   margin-left: auto; /* Center the grid */
   margin-right: auto; /* Center the grid */
 }
@@ -253,9 +435,10 @@ html, body, #root {
     0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
-  width: 100%; /* Full width of grid cell */
-  max-width: 310px; /* Keep max-width for consistency */
-  height: 250px; /* Fixed height for uniform cards */
+  /* This calculation ensures 3 cards fit per row with gaps, accounting for the increased grid max-width */
+  width: calc((100% - (2 * 2.5rem)) / 3); /* Calculated width for 3 cards per row, accounting for gap */
+  max-width: 310px; /* Increased max-width for individual cards to better fit 3 per row */
+  height: 250px; /* Adjusted fixed height for consistent look */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -354,8 +537,9 @@ html, body, #root {
   }
 
   .feature-grid {
-    grid-template-columns: 1fr; /* Stack cards in one column on mobile */
-    grid-template-rows: repeat(6, auto); /* 6 rows for 6 cards */
+    flex-wrap: wrap; /* Allow cards to wrap to new lines */
+    justify-content: center; /* Center cards when wrapped */
+    overflow-x: hidden; /* No horizontal scroll on mobile when stacked */
     gap: 1.5rem; /* Adjust gap for vertical stacking */
     padding: 0 1rem; /* Adjust padding for mobile view */
   }

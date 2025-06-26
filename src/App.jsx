@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react'; // Added useRef
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css';
+import { useAuth } from './contexts/AuthContext';
+import { signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from './firebaseConfig';
 
 // Import pages
 import Home from './pages/Home';
@@ -9,16 +13,22 @@ import Papers from './pages/Papers';
 import Tracker from './pages/Tracker';
 import Countdown from './pages/Countdown';
 import Planner from './pages/Planner';
-import GettingStarted from './pages/GettingStarted'; // This now includes registration
+import GettingStarted from './pages/GettingStarted';
 import Login from './pages/Login';
-// Removed: import Download from './pages/Download'; // This import is removed to fix the build error
+import UserSettings from './pages/UserSettings'; // NEW: Import UserSettings page
 
 
 function App() {
+  const { currentUser, loading } = useAuth();
+  const [displayedUsername, setDisplayedUsername] = useState('');
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
   });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
+  const dropdownRef = useRef(null); // Ref for dropdown to detect outside clicks
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -37,8 +47,66 @@ function App() {
     localStorage.setItem('dark-mode', darkMode);
   }, [darkMode]);
 
+  // Effect to fetch username when currentUser changes (i.e., login/logout)
+  useEffect(() => {
+    const fetchUsername = async () => {
+      if (currentUser) {
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (userDocSnap.exists()) {
+            setDisplayedUsername(userDocSnap.data().username);
+          } else {
+            console.log("No user profile found in Firestore for UID:", currentUser.uid);
+            setDisplayedUsername(currentUser.email.split('@')[0]); // Fallback to email prefix if username not found
+          }
+        } catch (error) {
+          console.error("Error fetching username:", error);
+          setDisplayedUsername(currentUser.email.split('@')[0]); // Fallback to email prefix on error
+        }
+      } else {
+        setDisplayedUsername('');
+      }
+    };
+
+    if (!loading) {
+      fetchUsername();
+    }
+  }, [currentUser, loading]);
+
+  // Effect to handle clicks outside the dropdown
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on cleanup
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
   const toggleTheme = () => {
     setDarkMode(prevMode => !prevMode);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(prev => !prev);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login'); // Redirect to login page after logout
+      setIsDropdownOpen(false); // Close dropdown on logout
+      console.log("User logged out successfully.");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
@@ -49,17 +117,70 @@ function App() {
           <div className="nav-left">
             <Link to="/" className="logo">Ascendia</Link>
             <div className="nav-links">
-              <a href="#about">About</a> {/* These are anchor links, not router links */}
-              <a href="#features">Features</a> {/* These are anchor links, not router links */}
-              <a href="#contact">Contact</a> {/* These are anchor links, not router links */}
+              <a href="#about">About</a>
+              <a href="#features">Features</a>
+              <a href="#contact">Contact</a>
             </div>
           </div>
           <div className="nav-right">
             <div className="nav-buttons">
-              {/* Login button points directly to login page */}
-              <Link to="/login" className="login-btn">Login</Link>
-              {/* 'Get Started' button points to the Getting Started page (which now has registration) */}
-              <Link to="/getting-started" className="start-btn">Get Started</Link>
+              {/* Conditional rendering based on authentication status */}
+              {loading ? (
+                <span className="welcome-message">Loading...</span>
+              ) : currentUser ? (
+                <div className="user-profile-widget" ref={dropdownRef}>
+                  <div className="user-info-trigger" onClick={toggleDropdown}>
+                    <div className="avatar-circle">
+                      {/* Display first letter of username, or '?' if unavailable */}
+                      {displayedUsername ? displayedUsername.charAt(0).toUpperCase() : '?'}
+                    </div>
+                    <span className="welcome-message">Hello, {displayedUsername}!</span>
+                    <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>&#9660;</span> {/* Unicode arrow */}
+                  </div>
+                  {isDropdownOpen && (
+                    <div className="dropdown-menu">
+                      <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <span className="icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+                          </svg>
+                        </span>
+                        User Settings
+                      </Link>
+                      <button onClick={handleLogout} className="dropdown-item">
+                        <span className="icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="17 16 22 12 17 8"/><line x1="22" x2="11" y1="12" y2="12"/>
+                          </svg>
+                        </span>
+                        Log Out
+                      </button>
+                      {/* Suggested additional items */}
+                      <Link to="/dashboard" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <span className="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard">
+                                <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+                            </svg>
+                        </span>
+                        Dashboard
+                      </Link>
+                      <Link to="/help" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <span className="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-help-circle">
+                                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+                            </svg>
+                        </span>
+                        Help
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link to="/login" className="login-btn">Login</Link>
+                  <Link to="/getting-started" className="start-btn">Get Started</Link>
+                </>
+              )}
             </div>
             <button className="toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
               <div className="circle"></div>
@@ -70,21 +191,15 @@ function App() {
         {/* Main content area where different routes will render their components */}
         <div className="main-content-area">
           <Routes>
-            {/* The root path "/" now renders the Home component */}
             <Route path="/" element={<Home />} />
-
-            {/* Routes for other main sections/tools */}
             <Route path="/syllabus" element={<Syllabus />} />
             <Route path="/papers" element={<Papers />} />
             <Route path="/tracker" element={<Tracker />} />
             <Route path="/countdown" element={<Countdown />} />
             <Route path="/planner" element={<Planner />} />
-
-            {/* ROUTES FOR GETTING STARTED FLOW */}
             <Route path="/getting-started" element={<GettingStarted />} />
             <Route path="/login" element={<Login />} />
-            {/* Removed: <Route path="/download" element={<Download />} /> to fix build error */}
-
+            <Route path="/user-settings" element={<UserSettings />} /> {/* NEW ROUTE */}
           </Routes>
         </div>
       </div>
