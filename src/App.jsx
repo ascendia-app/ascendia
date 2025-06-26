@@ -16,32 +16,38 @@ function App() {
   return (
     <Router>
       <div className={darkMode ? 'app dark' : 'app'}>
-        <header className="header">
-          <h1 className="logo">Ascendia</h1>
+  <div className="main-content">
+    <header className="header">
+      <h1 className="logo">Ascendia</h1>
 
-          <nav className="nav">
-            <Link to="/">Home</Link>
-            <Link to="/syllabus">Syllabus</Link>
-            <Link to="/papers">Past Papers</Link>
-            <Link to="/tracker">Mark Tracker</Link>
-            <Link to="/countdown">Countdown</Link>
-            <Link to="/planner">Planner</Link>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-          </nav>
+      <nav className="nav">
+        <Link to="/">Home</Link>
+        <Link to="/syllabus">Syllabus</Link>
+        <Link to="/papers">Past Papers</Link>
+        <Link to="/tracker">Mark Tracker</Link>
+        <Link to="/countdown">Countdown</Link>
+        <Link to="/planner">Planner</Link>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
 
-          <div className="nav-buttons">
-            <button className="login-btn">Login</button>
-            <button className="start-btn">Start Now</button>
-            <button
-              className="toggle"
-              onClick={() => setDarkMode(!darkMode)}
-              title="Toggle Dark Mode"
-            >
-              <div className="circle"></div>
-            </button>
-          </div>
-        </header>
+      <div className="nav-buttons">
+        <button className="login-btn">Login</button>
+        <button className="start-btn">Start Now</button>
+        <button
+          className="toggle"
+          onClick={() => setDarkMode(!darkMode)}
+          title="Toggle Dark Mode"
+        >
+          <div className="circle"></div>
+        </button>
+      </div>
+    </header>
+
+    {/* Other content like hero, features, footer goes here */}
+  </div>
+</div>
+
 
         <Routes>
           <Route path="/" element={
@@ -84,12 +90,15 @@ function App() {
           <Route path="/countdown" element={<Countdown />} />
           <Route path="/planner" element={<Planner />} />
         </Routes>
-
-        <footer className="footer" id="contact">
+<div> <footer className="footer" id="contact">
           <p>© 2025 Ascendia | Built by Ayesha</p>
         </footer>
-      </div>
-    </Router>
+         
+         
+         </div>
+       </Router>
+     
+   
   );
 }
 
