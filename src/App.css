@@ -53,23 +53,26 @@ html, body, #root {
   font-size: 2.2rem; /* Slightly larger */
   font-weight: 800; /* Bolder */
   color: white; /* Ensures logo color is white */
+  text-decoration: none; /* Ensure no underline for Link component */
 }
 
-/* Navigation Links - Left */
+/* Navigation Links - Left (this rule now specifically targets logo's link if it were a link, but logo has its own style) */
 .nav-left {
   display: flex;
   gap: 2rem; /* Increased gap for better spacing */
   align-items: center;
 }
 
-.nav-left a {
+/* Specific styling for navigation links (About, Features, Contact) */
+.nav-links a {
   text-decoration: none;
   color: white;
-  font-weight: 500;
+  font-weight: 600; /* Slightly bolder font weight */
   transition: opacity 0.2s, color 0.2s;
+  font-family: 'Poppins', sans-serif; /* Applied Poppins font */
 }
 
-.nav-left a:hover {
+.nav-links a:hover {
   opacity: 0.8;
   color: #f0f0f0; /* Slight color change on hover */
 }
@@ -86,53 +89,30 @@ html, body, #root {
   gap: 1rem;
 }
 
-.nav-links {
-  display: flex;
-  gap: 1.5rem; /* Adjusted gap */
-}
-
-.nav-links a {
-  color: inherit; /* Inherits color from parent (.header) */
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s, opacity 0.2s;
-}
-
-.nav-links a:hover {
-  opacity: 0.8;
-  color: #e0e0e0; /* Subtle hover effect */
-}
 
 /* Buttons */
 .login-btn,
 .start-btn {
   padding: 0.6rem 1.2rem; /* Slightly larger padding */
   border-radius: 8px; /* More rounded corners */
-  border: none;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: background 0.3s, transform 0.2s, border 0.3s; /* Added border to transition */
+  color: white; /* Ensure text is white */
+  background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
+  border: 1px solid rgba(255, 255, 255, 0.5); /* Semi-transparent white border */
+  backdrop-filter: blur(5px); /* Added for a frosted glass effect */
+  -webkit-backdrop-filter: blur(5px); /* Webkit prefix */
+  font-family: 'Poppins', sans-serif; /* Applied Poppins font to buttons */
 }
 
-.login-btn {
-  background-color: transparent;
-  color: white; /* Ensure text color is white in light theme */
-  border: 1px solid white; /* White border */
-}
-.login-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-2px); /* Slight lift effect */
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.start-btn {
-  background-color: #f867a6; /* Adjusted for light mode vibrant button */
-  color: white;
-}
+.login-btn:hover,
 .start-btn:hover {
-  background-color: #e05c93;
+  background-color: rgba(255, 255, 255, 0.35); /* More opaque on hover */
   transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
 }
+
 
 /* Toggle - Remains for functionality, but no dark mode styling here */
 .toggle {
@@ -184,6 +164,7 @@ html, body, #root {
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 3px; /* Adds more spacing */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Added text shadow for visibility */
 }
 
 .hero p {
@@ -195,6 +176,7 @@ html, body, #root {
   animation: floatUp 1.8s ease-out;
   line-height: 1.4;
   color: #555; /* A bit darker for readability against white */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Added subtle text shadow for visibility */
 }
 
 .cta {
