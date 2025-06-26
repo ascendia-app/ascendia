@@ -17,7 +17,8 @@ function App() {
     <Router>
       <div className={darkMode ? 'app dark' : 'app'}>
         <header className="header">
-          <h1>Ascendia</h1>
+          <h1 className="logo">Ascendia</h1>
+
           <nav className="nav">
             <Link to="/">Home</Link>
             <Link to="/syllabus">Syllabus</Link>
@@ -25,18 +26,58 @@ function App() {
             <Link to="/tracker">Mark Tracker</Link>
             <Link to="/countdown">Countdown</Link>
             <Link to="/planner">Planner</Link>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
           </nav>
-          <button
-            className="toggle"
-            onClick={() => setDarkMode(!darkMode)}
-            title="Toggle Dark Mode"
-          >
-            <div className="circle"></div>
-          </button>
+
+          <div className="nav-buttons">
+            <button className="login-btn">Login</button>
+            <button className="start-btn">Start Now</button>
+            <button
+              className="toggle"
+              onClick={() => setDarkMode(!darkMode)}
+              title="Toggle Dark Mode"
+            >
+              <div className="circle"></div>
+            </button>
+          </div>
         </header>
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={
+            <>
+              <section className="hero">
+                <h2>Your Ultimate Cambridge Companion</h2>
+                <p>All-in-one toolkit for IGCSE & A-Level success — smart, simple, soft.</p>
+              </section>
+
+              <section className="features" id="about">
+                <h3>What’s Inside</h3>
+                <div className="feature-grid">
+                  <div className="feature-card">
+                    <h4>Syllabus Checklist</h4>
+                    <p>Stay organized and track every topic.</p>
+                  </div>
+                  <div className="feature-card">
+                    <h4>Past Paper Vault</h4>
+                    <p>Access categorized past papers in seconds.</p>
+                  </div>
+                  <div className="feature-card">
+                    <h4>Grade Tracker</h4>
+                    <p>Visualize your grades and boost performance.</p>
+                  </div>
+                  <div className="feature-card">
+                    <h4>Exam Countdown</h4>
+                    <p>See your remaining days to prepare smartly.</p>
+                  </div>
+                  <div className="feature-card">
+                    <h4>Study Planner</h4>
+                    <p>Plan your weeks with flexible schedules.</p>
+                  </div>
+                </div>
+              </section>
+            </>
+          } />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/papers" element={<Papers />} />
           <Route path="/tracker" element={<Tracker />} />
@@ -44,76 +85,12 @@ function App() {
           <Route path="/planner" element={<Planner />} />
         </Routes>
 
-        <footer className="footer">
-          © 2025 Ascendia
+        <footer className="footer" id="contact">
+          <p>© 2025 Ascendia | Built by Ayesha</p>
         </footer>
       </div>
     </Router>
   );
 }
 
-import { useState } from 'react';
-import './App.css';
-
-function App() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  return (
-    <div className={darkMode ? 'app dark' : 'app'}>
-      <header className="header">
-        <h1 className="logo">Ascendia</h1>
-
-        <nav className="nav-links">
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-        </nav>
-
-        <div className="nav-buttons">
-          <button className="login-btn">Login</button>
-          <button className="start-btn">Start Now</button>
-          <button className="toggle" onClick={() => setDarkMode(!darkMode)} title="Toggle Dark Mode">
-            <div className="circle"></div>
-          </button>
-        </div>
-      </header>
-
-      <section className="hero">
-        <h2>Your Ultimate Cambridge Companion</h2>
-        <p>All-in-one toolkit for IGCSE & A-Level success — smart, simple, soft.</p>
-      </section>
-
-      <section className="features">
-        <h3>What’s Inside</h3>
-        <div className="feature-grid">
-          <div className="feature-card">
-            <h4>Syllabus Checklist</h4>
-            <p>Stay organized and track every topic.</p>
-          </div>
-          <div className="feature-card">
-            <h4>Past Paper Vault</h4>
-            <p>Access categorized past papers in seconds.</p>
-          </div>
-          <div className="feature-card">
-            <h4>Grade Tracker</h4>
-            <p>Visualize your grades and boost performance.</p>
-          </div>
-          <div className="feature-card">
-            <h4>Exam Countdown</h4>
-            <p>See your remaining days to prepare smartly.</p>
-          </div>
-          <div className="feature-card">
-            <h4>Study Planner</h4>
-            <p>Plan your weeks with flexible schedules.</p>
-          </div>
-        </div>
-      </section>
-
-      <footer className="footer" id="contact">
-        <p>© 2025 Ascendia | Built by Ayesha</p>
-      </footer>
-    </div>
-  );
-}
-
 export default App;
-
