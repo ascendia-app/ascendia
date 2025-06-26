@@ -1,5 +1,5 @@
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
 
 /* Reset + Base */
 * {
@@ -64,6 +64,11 @@ html, body, #root {
 }
 
 /* Specific styling for navigation links (About, Features, Contact) */
+.nav-links {
+  display: flex; /* Added display: flex to .nav-links */
+  gap: 1.5rem; /* Added gap to separate links */
+}
+
 .nav-links a {
   text-decoration: none;
   color: white;
@@ -151,21 +156,27 @@ html, body, #root {
   align-items: center;
   text-align: center;
   padding: 2rem;
+  /* Added for parallax scrolling illusion */
+  transform-style: preserve-3d; /* Creates a new stacking context for parallax */
+  perspective: 1000px; /* For 3D transform perspective */
+  position: relative; /* Needed for transform */
 }
 
 .hero h1 { /* Main title */
-  font-family: 'Montserrat', sans-serif; /* Cooler font for hero title */
-  font-size: 5.5rem; /* Even larger font size */
+  font-family: 'Playfair Display', serif; /* New, more sophisticated font */
+  font-size: 6.5rem; /* Even larger font size */
   font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
-  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Vibrant Pink, Orange, Yellow gradient text */
+  background: linear-gradient(to right, #B73D5E, #E25822, #FFB900); /* Richer, more sophisticated gradient */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
-  letter-spacing: 3px; /* Adds more spacing */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Added text shadow for visibility */
+  letter-spacing: 5px; /* Adds more spacing for better visual */
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced text shadow for 3D effect */
+  transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
+
 
 .hero p {
   font-size: 1.8rem; /* Slightly larger description */
@@ -177,6 +188,7 @@ html, body, #root {
   line-height: 1.4;
   color: #555; /* A bit darker for readability against white */
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Added subtle text shadow for visibility */
+  transform: translateZ(-20px); /* Pushes p text into 'background' for stronger parallax */
 }
 
 .cta {
@@ -190,6 +202,7 @@ html, body, #root {
   animation: floatUp 2.1s ease-out;
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
   transition: transform 0.2s, box-shadow 0.2s;
+  transform: translateZ(-10px); /* Pushes cta button into 'background' for parallax */
 }
 
 .cta:hover {
@@ -220,26 +233,66 @@ html, body, #root {
 
 .feature-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2.5rem; /* Increased gap */
-  justify-content: center;
+  flex-wrap: nowrap; /* Forces items into a single row */
+  overflow-x: auto; /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+  gap: 2.5rem; /* Increased gap between cards */
+  justify-content: flex-start; /* Align cards to the start of the container */
+  align-items: stretch; /* Make all cards the same height */
+  padding-bottom: 1rem; /* Space for the scrollbar */
   margin-top: 3rem;
+  padding-left: 2rem; /* Add some padding on the left for the first card */
+  padding-right: 2rem; /* Add some padding on the right for the last card */
 }
+
+/* Style for the scrollbar (Webkit browsers) */
+.feature-grid::-webkit-scrollbar {
+  height: 8px; /* Height of the horizontal scrollbar */
+}
+
+.feature-grid::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the scrollbar track */
+  border-radius: 10px;
+}
+
+.feature-grid::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar thumb */
+  border-radius: 10px;
+}
+
+.feature-grid::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the scrollbar thumb on hover */
+}
+
 
 .feature-card {
   background: #ffffff; /* Clearly white background for light mode */
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border-radius: 16px; /* More rounded */
-  padding: 2.5rem; /* More padding */
-  width: 280px; /* Slightly wider cards */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1.8rem 1.5rem; /* Adjusted padding for thinner/taller boxes */
+  min-width: 220px; /* Thinner boxes */
+  max-width: 220px; /* Ensures consistent width */
+  min-height: 320px; /* Longer vertical boxes */
+  display: flex; /* Flexbox for internal content alignment */
+  flex-direction: column; /* Stack content vertically */
+  justify-content: space-around; /* Distribute space between elements */
+  align-items: center; /* Center content horizontally */
   text-align: center;
+  flex-shrink: 0; /* Prevent cards from shrinking */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #f0f0f0; /* Slight border for definition */
 }
 
 .feature-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* More prominent shadow on hover */
+}
+
+/* Style for the emoji icon */
+.feature-card-icon {
+  font-size: 3.5rem; /* Large emoji size */
+  margin-bottom: 1rem; /* Space below emoji */
+  line-height: 1; /* Prevents extra line height for emojis */
 }
 
 .feature-card h4 {
