@@ -1,0 +1,287 @@
+/* Basic styling for common page elements */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Adjust based on header height */
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9f9f9; /* Light background for content pages */
+    color: #333;
+    font-family: 'Inter', sans-serif; /* Consistent font */
+}
+
+.page-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ff4d88; /* A vibrant color from your gradient */
+    margin-bottom: 1.5rem;
+}
+
+.page-description {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.page-description-small {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 1rem;
+}
+
+/* Authentication Forms (Register/Login) */
+.auth-form {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 2rem;
+    text-align: left; /* Align form labels/inputs to left */
+    border: 1px solid #eee;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.submit-button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.submit-button.primary-gradient {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+}
+
+.submit-button.primary-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.form-message {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #d9534f; /* Red for error messages */
+    font-weight: 500;
+}
+
+.auth-footer-links {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #666;
+}
+
+.auth-footer-links .inline-link {
+    color: #ff4d88; /* Link color */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.auth-footer-links .inline-link:hover {
+    color: #ff8c42;
+    text-decoration: underline;
+}
+
+/* Download Section */
+.download-section {
+    width: 100%;
+    max-width: 450px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    flex-direction: column; /* Stack download buttons */
+    gap: 1rem;
+    width: 100%;
+}
+
+.gs-button.download-windows,
+.gs-button.download-macos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    cursor: pointer;
+    color: white;
+    gap: 0.75rem; /* Space between icon and text */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.gs-button.download-windows {
+    background-color: #0078D4; /* Windows blue */
+}
+
+.gs-button.download-windows:hover {
+    transform: translateY(-3px);
+    background-color: #005bb5;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.gs-button.download-macos {
+    background-color: #A2AAAD; /* Apple grey */
+}
+
+.gs-button.download-macos:hover {
+    transform: translateY(-3px);
+    background-color: #8e969a;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.gs-button .icon {
+    display: flex; /* Ensure SVG icon is centered */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Specific styling for the detailed download page links */
+.download-links-detailed {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 1.5rem;
+}
+
+.download-link-detailed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  background-color: #6c757d; /* Grey for general download */
+  color: white;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  gap: 0.75rem;
+}
+
+.download-link-detailed:hover {
+  background-color: #5a6268;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+
+/* Back to Home Button */
+.back-to-home-button {
+    display: inline-block;
+    margin-top: 3rem;
+    padding: 0.7rem 1.2rem;
+    background-color: #f0f0f0;
+    color: #666;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.back-to-home-button:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2.2rem;
+    }
+
+    .page-description {
+        font-size: 1rem;
+    }
+
+    .auth-form, .download-section {
+        padding: 1.5rem;
+        max-width: 95%; /* Adjust width for smaller screens */
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    .form-group input {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .submit-button {
+        font-size: 1.1rem;
+        padding: 0.8rem;
+    }
+
+    .gs-button.download-windows,
+    .gs-button.download-macos {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+
+    .download-link-detailed {
+      font-size: 1rem;
+      padding: 0.8rem 1rem;
+    }
+}
