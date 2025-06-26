@@ -117,6 +117,11 @@ function App() {
                 <p>Plan your weeks with flexible schedules.</p>
               </div>
             </div>
+              <div className="feature-card">
+                <span className="feature-card-icon">💡</span> {/* Emoji Icon */}
+                <h4>Resource Hub</h4>
+                <p>Learn and understand concepts from loads of quality resources.</p>
+              </div>
           </section>
 
           {/* Footer */}
