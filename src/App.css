@@ -94,7 +94,6 @@ html, body, #root {
   gap: 1rem;
 }
 
-
 /* Buttons */
 .login-btn,
 .start-btn {
@@ -117,7 +116,6 @@ html, body, #root {
   transform: translateY(-2px); /* Slight lift effect */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
 }
-
 
 /* Toggle - Remains for functionality, but no dark mode styling here */
 .toggle {
@@ -178,7 +176,6 @@ html, body, #root {
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
-
 .hero p {
   font-size: 1.8rem; /* Slightly larger description */
   font-weight: 500;
@@ -211,7 +208,6 @@ html, body, #root {
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
 
-
 /* Animations */
 @keyframes floatUp {
   from {
@@ -233,13 +229,14 @@ html, body, #root {
 }
 
 .feature-grid {
-  display: flex;
-  flex-wrap: wrap; /* Allows cards to wrap to new lines */
-  justify-content: center; /* Centers the rows of cards */
-  gap: 2.5rem; /* Creates consistent spacing between cards, both horizontally and vertically */
+  display: grid; /* Use CSS Grid for precise 2x3 layout */
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  grid-template-rows: repeat(2, auto); /* 2 rows, auto-sized */
+  justify-content: center; /* Center the grid */
+  gap: 2.5rem; /* Consistent spacing between cards */
   margin-top: 3rem;
-  padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
-  max-width: 1024px; /* Increased max-width to provide more space for 3 cards per row */
+  padding: 0; /* Remove horizontal padding from grid itself */
+  max-width: 1024px; /* Keep max-width for centering */
   margin-left: auto; /* Center the grid */
   margin-right: auto; /* Center the grid */
 }
@@ -256,10 +253,9 @@ html, body, #root {
     0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
-  /* This calculation ensures 3 cards fit per row with gaps, accounting for the increased grid max-width */
-  width: calc((100% - (2 * 2.5rem)) / 3); /* Calculated width for 3 cards per row, accounting for gap */
-  max-width: 310px; /* Increased max-width for individual cards to better fit 3 per row */
-  height: 250px; /* Adjusted fixed height for consistent look */
+  width: 100%; /* Full width of grid cell */
+  max-width: 310px; /* Keep max-width for consistency */
+  height: 250px; /* Fixed height for uniform cards */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -274,7 +270,7 @@ html, body, #root {
   /* Pseudo-elements for inner 3D depth */
   &::before, &::after {
     content: '';
-    position: absolute;
+  position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -358,9 +354,8 @@ html, body, #root {
   }
 
   .feature-grid {
-    flex-wrap: wrap; /* Allow cards to wrap to new lines */
-    justify-content: center; /* Center cards when wrapped */
-    overflow-x: hidden; /* No horizontal scroll on mobile when stacked */
+    grid-template-columns: 1fr; /* Stack cards in one column on mobile */
+    grid-template-rows: repeat(6, auto); /* 6 rows for 6 cards */
     gap: 1.5rem; /* Adjust gap for vertical stacking */
     padding: 0 1rem; /* Adjust padding for mobile view */
   }
