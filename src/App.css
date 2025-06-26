@@ -162,21 +162,22 @@ html, body, #root {
   position: relative; /* Needed for transform */
 }
 
-.hero h1 {
-  font-family: 'Poppins', sans-serif; 
-  font-size: 6.5rem; 
-  font-weight: 900; 
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to right, #ff007f, #ff7f00, #ffea00);
+.hero h1 { /* Main title */
+  font-family: 'Poppins', sans-serif; /* Explicitly set to Poppins for sans-serif */
+  font-size: 6.5rem; /* Even larger font size */
+  font-weight: 900; /* Extra bold */
+  margin-bottom: 1.5rem; /* Increased margin */
+  /* Gradient colors for the text fill */
+  background: linear-gradient(to right, #ff007f, #ff7f00, #ffea00); /* Hot Pink, Bright Orange, Bright Yellow */
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent;
-  display: inline-block;
-animation: floatUp 1.5s ease-out;
-  letter-spacing: 5px; 
-  transform: translateZ(0);
+  -webkit-text-fill-color: transparent;
+  animation: floatUp 1.5s ease-out;
+  letter-spacing: 5px; /* Adds more spacing for better visual */
+  /* --- TEXT-SHADOW REMOVED: Only plain gradient fill as requested --- */
+  transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
+
 
 .hero p {
   font-size: 1.8rem; /* Slightly larger description */
@@ -193,7 +194,7 @@ animation: floatUp 1.5s ease-out;
 
 .cta {
   padding: 1.2rem 2.5rem; /* Larger CTA button */
-  font-size: 1.3rem; /* Larger font */
+  font-size: 1.3rem;
   background: linear-gradient(to right, #ffb74d, #f06292);
   border: none;
   border-radius: 10px;
@@ -233,12 +234,12 @@ animation: floatUp 1.5s ease-out;
 
 .feature-grid {
   display: flex;
-  flex-wrap: wrap; /* Allow wrapping for 3x2 layout */
-  justify-content: center; /* Center the rows of cards */
-  gap: 2.5rem; /* Adjusted gap between cards */
+  flex-wrap: wrap; /* Allows cards to wrap to new lines */
+  justify-content: center; /* Centers the rows of cards */
+  gap: 2.5rem; /* Creates consistent spacing between cards, both horizontally and vertically */
   margin-top: 3rem;
   padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
-  max-width: 960px; /* Max-width to enforce 3-card layout */
+  max-width: 960px; /* Max-width to enforce 3-card layout before wrapping */
   margin-left: auto; /* Center the grid */
   margin-right: auto; /* Center the grid */
 }
@@ -255,6 +256,7 @@ animation: floatUp 1.5s ease-out;
     0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
+  /* This calculation ensures 3 cards fit per row with gaps */
   width: calc((100% - (2 * 2.5rem)) / 3); /* Calculated width for 3 cards per row, accounting for gap */
   max-width: 290px; /* Max width for individual cards */
   height: 250px; /* Adjusted fixed height for consistent look */
