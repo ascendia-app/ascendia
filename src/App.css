@@ -176,12 +176,13 @@ html, body, #root {
   letter-spacing: 5px; /* Adds more spacing for better visual */
   /* --- NEW TEXT-SHADOW: Pure 3D extrusion, no whiteness, clear colors --- */
   text-shadow:
-    1px 1px 0px rgba(255, 0, 127, 0.7),   /* Pink offset shadow */
-    2px 2px 0px rgba(255, 127, 0, 0.7),   /* Orange offset shadow */
-    3px 3px 0px rgba(255, 234, 0, 0.7),   /* Yellow offset shadow */
-    4px 4px 0px rgba(255, 0, 127, 0.5),   /* Repeat pink for depth */
-    5px 5px 0px rgba(255, 127, 0, 0.5),   /* Repeat orange for depth */
-    6px 6px 12px rgba(0, 0, 0, 0.4);      /* Final dark blur for overall depth */
+    2px 2px 0px #ff007f, /* Layer 1: Pink, no blur */
+    4px 4px 0px #ff7f00, /* Layer 2: Orange, no blur */
+    6px 6px 0px #ffea00, /* Layer 3: Yellow, no blur */
+    8px 8px 0px #ff007f, /* Layer 4: Pink, no blur */
+    10px 10px 0px #ff7f00, /* Layer 5: Orange, no blur */
+    12px 12px 0px rgba(0, 0, 0, 0.3), /* Deeper, subtle dark shadow */
+    14px 14px 20px rgba(0, 0, 0, 0.5); /* Wider, darker blur for pop */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
