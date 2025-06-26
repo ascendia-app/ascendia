@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 
 // Import pages (assuming these files exist in your 'src/pages' directory)
-import Home from './pages/Home'; // While we render content directly in App.jsx for '/',
-                                  // you might have more complex Home components later.
+// You would create these files (e.g., src/pages/Syllabus.jsx) as needed
 import Syllabus from './pages/Syllabus';
 import Papers from './pages/Papers';
 import Tracker from './pages/Tracker';
@@ -14,30 +13,27 @@ import Planner from './pages/Planner';
 function App() {
   // State to manage dark mode.
   // Initializes to true if 'dark-mode' is found in localStorage, otherwise false.
-  // For now, we will mostly remove its visual effects in CSS, but keep the toggle logic.
+  // Dark mode visual effects are currently removed from CSS, but the toggle logic remains.
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
   });
 
-  // useEffect to update the 'dark' class on the body and save preference to localStorage
+  // useEffect to update the 'dark' class on the document root and save preference to localStorage
   useEffect(() => {
-    // Get the root HTML element
     const root = document.documentElement;
+    const appElement = document.querySelector('.app');
 
-    // Apply or remove the 'dark' class based on darkMode state
-    // While dark mode styles are removed from CSS, the class will still toggle
     if (darkMode) {
       root.classList.add('dark');
-      document.body.classList.add('dark'); // Also add to body to ensure full background coverage
-      document.querySelector('.app').classList.add('dark'); // Apply to .app container
+      document.body.classList.add('dark');
+      if (appElement) appElement.classList.add('dark'); // Apply to .app container
     } else {
       root.classList.remove('dark');
       document.body.classList.remove('dark');
-      document.querySelector('.app').classList.remove('dark');
+      if (appElement) appElement.classList.remove('dark');
     }
 
-    // Save the current theme preference to localStorage
     localStorage.setItem('dark-mode', darkMode);
   }, [darkMode]); // Re-run effect whenever darkMode state changes
 
@@ -49,7 +45,6 @@ function App() {
   return (
     <Router>
       {/* The main application container. The 'dark' class will be applied here for theme switching. */}
-      {/* Even if no dark mode CSS is present, this class will still toggle based on the state. */}
       <div className={`app ${darkMode ? 'dark' : ''}`}>
         {/* Header / Navigation Bar - Renders on all pages */}
         <header className="header">
@@ -132,7 +127,7 @@ function App() {
 
         {/* Routes for other pages */}
         <Routes>
-          {/* The root path "/" will render the homepage content directly above this Routes block. */}
+          {/* The root path "/" will display the homepage content defined above. */}
           {/* Specific routes for other tools/pages */}
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/papers" element={<Papers />} />

@@ -1,5 +1,5 @@
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* Reset + Base */
 * {
@@ -23,7 +23,7 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out; /* Smooth transition for theme change */
-  background-color: #f7f7f7; /* Whitish background for light mode */
+  background-color: #ffffff; /* Brighter whitish background for light mode */
   color: #333;
 }
 
@@ -44,7 +44,7 @@ html, body, #root {
 
 /* Header Light Theme Gradient */
 .header {
-  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Vibrant Pink, Orange, Yellow */
+  background: linear-gradient(to right, #ff4d88, #ff8c42, #ffcc33); /* Brighter gradient */
 }
 
 /* Logo - Cooler Font */
@@ -163,17 +163,21 @@ html, body, #root {
 }
 
 .hero h1 { /* Main title */
-  font-family: 'Playfair Display', serif; /* New, more sophisticated font */
+  font-family: 'Poppins', sans-serif; /* Explicitly set to Poppins for sans-serif */
   font-size: 6.5rem; /* Even larger font size */
   font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
-  background: linear-gradient(to right, #B73D5E, #E25822, #FFB900); /* Richer, more sophisticated gradient */
+  background: linear-gradient(to right, #ff4d88, #ff8c42, #ffcc33); /* Brighter gradient for 3D color */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced text shadow for 3D effect */
+  /* Refined text-shadow for a brighter, distinct 3D effect without being dull */
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.8), /* White glow for brightness */
+    0 0 20px rgba(255, 255, 255, 0.6), /* Larger white glow */
+    3px 3px 6px rgba(0, 0, 0, 0.4); /* Deeper shadow for 3D depth */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
@@ -187,7 +191,7 @@ html, body, #root {
   animation: floatUp 1.8s ease-out;
   line-height: 1.4;
   color: #555; /* A bit darker for readability against white */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Added subtle text shadow for visibility */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Kept subtle shadow for visibility against light background */
   transform: translateZ(-20px); /* Pushes p text into 'background' for stronger parallax */
 }
 
@@ -225,7 +229,7 @@ html, body, #root {
 
 /* Features Section */
 .features {
-  padding: 4rem 2rem;
+  padding: 4rem 2rem; /* Adjusted padding to allow cards to center better */
   text-align: center;
   background-color: transparent; /* Make features section background transparent to blend with .app */
   color: #333;
@@ -233,77 +237,152 @@ html, body, #root {
 
 .feature-grid {
   display: flex;
-  flex-wrap: nowrap; /* Forces items into a single row */
-  overflow-x: auto; /* Enables horizontal scrolling */
-  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
-  gap: 2.5rem; /* Increased gap between cards */
-  justify-content: flex-start; /* Align cards to the start of the container */
-  align-items: stretch; /* Make all cards the same height */
-  padding-bottom: 1rem; /* Space for the scrollbar */
+  flex-wrap: wrap; /* Allow wrapping for 3x2 layout */
+  justify-content: center; /* Center the rows of cards */
+  gap: 2.5rem; /* Adjusted gap between cards */
   margin-top: 3rem;
-  padding-left: 2rem; /* Add some padding on the left for the first card */
-  padding-right: 2rem; /* Add some padding on the right for the last card */
+  padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
+  max-width: 960px; /* Max-width to enforce 3-card layout */
+  margin-left: auto; /* Center the grid */
+  margin-right: auto; /* Center the grid */
 }
-
-/* Style for the scrollbar (Webkit browsers) */
-.feature-grid::-webkit-scrollbar {
-  height: 8px; /* Height of the horizontal scrollbar */
-}
-
-.feature-grid::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the scrollbar track */
-  border-radius: 10px;
-}
-
-.feature-grid::-webkit-scrollbar-thumb {
-  background: #888; /* Color of the scrollbar thumb */
-  border-radius: 10px;
-}
-
-.feature-grid::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Color of the scrollbar thumb on hover */
-}
-
 
 .feature-card {
   background: #ffffff; /* Clearly white background for light mode */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-radius: 16px; /* More rounded */
-  padding: 1.8rem 1.5rem; /* Adjusted padding for thinner/taller boxes */
-  min-width: 220px; /* Thinner boxes */
-  max-width: 220px; /* Ensures consistent width */
-  min-height: 320px; /* Longer vertical boxes */
-  display: flex; /* Flexbox for internal content alignment */
-  flex-direction: column; /* Stack content vertically */
-  justify-content: space-around; /* Distribute space between elements */
-  align-items: center; /* Center content horizontally */
+  /* Re-adjusted box-shadow for more realistic 3D */
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.07),  /* Subtle top shadow */
+    0 2px 4px rgba(0,0,0,0.07),  /* Mid shadow */
+    0 4px 8px rgba(0,0,0,0.07),  /* Stronger mid shadow */
+    0 8px 16px rgba(0,0,0,0.07), /* Even stronger mid shadow */
+    0 16px 32px rgba(0,0,0,0.07),/* Bottom shadow */
+    0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
+  border-radius: 18px; /* Slightly more rounded */
+  padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
+  width: calc((100% - (2 * 2.5rem)) / 3); /* Calculated width for 3 cards per row, accounting for gap */
+  max-width: 290px; /* Max width for individual cards */
+  height: 250px; /* Adjusted fixed height for consistent look */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  flex-shrink: 0; /* Prevent cards from shrinking */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid #f0f0f0; /* Slight border for definition */
+  transform-style: preserve-3d; /* For realistic 3D effect */
+  perspective: 1000px; /* For 3D transform */
+  position: relative; /* Needed for transforms */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid #e0e0e0; /* Slightly darker border for more definition */
+
+  /* Pseudo-elements for inner 3D depth */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: inherit; /* Inherit card's background */
+    box-shadow: inherit; /* Inherit card's shadow */
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  &::before {
+    transform: translateZ(-5px); /* Creates a layer behind */
+    opacity: 0.7;
+  }
+
+  &::after {
+    transform: translateZ(-10px); /* Creates another layer further behind */
+    opacity: 0.4;
+  }
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* More prominent shadow on hover */
+  transform: translateY(-15px) rotateX(5deg) rotateY(5deg) translateZ(20px); /* More dynamic hover effect */
+  /* Stronger, more defined shadow on hover for a popping 3D effect */
+  box-shadow:
+    0 14px 28px rgba(0,0,0,0.25),
+    0 10px 10px rgba(0,0,0,0.22);
 }
 
-/* Style for the emoji icon */
-.feature-card-icon {
+.feature-card-icon { /* Styling for emoji icons */
   font-size: 3.5rem; /* Large emoji size */
   margin-bottom: 1rem; /* Space below emoji */
   line-height: 1; /* Prevents extra line height for emojis */
 }
 
 .feature-card h4 {
-  font-size: 1.3rem; /* Slightly larger title */
-  color: #444; /* Darker for better contrast */
+  font-size: 1.4rem; /* Slightly larger title */
+  color: #333; /* Darker for better contrast */
   margin-bottom: 0.8rem;
+  z-index: 1; /* Ensure text is on top */
 }
 
 .feature-card p {
-  font-size: 1.05rem; /* Slightly larger description */
-  color: #666; /* Standard grey for text */
+  font-size: 1.1rem; /* Slightly larger description */
+  color: #555; /* Standard grey for text */
+  z-index: 1; /* Ensure text is on top */
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .header {
+    padding: 1.2rem 1rem; /* Adjust header padding for smaller screens */
+  }
+
+  .nav-left, .nav-right {
+    gap: 0.8rem; /* Reduce gap in nav for smaller screens */
+  }
+
+  .logo {
+    font-size: 1.8rem; /* Smaller logo on mobile */
+  }
+
+  .nav-links {
+    display: none; /* Hide nav links on very small screens, or consider a hamburger menu */
+  }
+
+  .hero h1 {
+    font-size: 4rem; /* Smaller hero title on mobile */
+    letter-spacing: 2px;
+  }
+
+  .hero p {
+    font-size: 1.2rem; /* Smaller description on mobile */
+    width: 90%; /* Wider description on mobile */
+  }
+
+  .cta {
+    padding: 1rem 2rem; /* Smaller CTA on mobile */
+    font-size: 1.1rem;
+  }
+
+  .feature-grid {
+    flex-wrap: wrap; /* Allow cards to wrap to new lines */
+    justify-content: center; /* Center cards when wrapped */
+    overflow-x: hidden; /* No horizontal scroll on mobile when stacked */
+    gap: 1.5rem; /* Adjust gap for vertical stacking */
+    padding: 0 1rem; /* Adjust padding for mobile view */
+  }
+
+  .feature-card {
+    min-width: unset; /* Remove fixed min-width for mobile */
+    max-width: 90%; /* Take up most of the screen width */
+    width: 90%; /* Ensure it takes up 90% and centers */
+    margin: 0 auto; /* Center individual cards when stacked */
+    min-height: 200px; /* Adjust height for mobile card */
+    padding: 1.5rem 1rem; /* Adjust padding for mobile card */
+  }
+
+  .feature-card h4 {
+    font-size: 1.2rem;
+  }
+
+  .feature-card p {
+    font-size: 0.95rem;
+  }
 }
 
 /* Footer */
