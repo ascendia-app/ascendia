@@ -270,7 +270,7 @@ html, body, #root {
   /* Pseudo-elements for inner 3D depth */
   &::before, &::after {
     content: '';
-  position: absolute;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
