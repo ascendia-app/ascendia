@@ -174,10 +174,11 @@ html, body, #root {
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  /* Replaced white shadows with subtle dark ones for depth, letting colors shine */
+  /* --- REFINED TEXT-SHADOW: Removed white luminosity, added clear depth --- */
   text-shadow:
-    3px 3px 0px rgba(0, 0, 0, 0.1), /* A very subtle offset for edge definition */
-    6px 6px 12px rgba(0, 0, 0, 0.4); /* Deeper, blurred shadow for volume */
+    -2px -2px 0px rgba(0, 0, 0, 0.2), /* Top-left dark shadow for definition */
+    2px 2px 4px rgba(0, 0, 0, 0.5),   /* Bottom-right darker shadow for depth */
+    4px 4px 8px rgba(0, 0, 0, 0.3);   /* Further blurred shadow for volume */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
