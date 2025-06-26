@@ -1,5 +1,5 @@
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* Reset + Base */
 * {
@@ -23,7 +23,7 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out; /* Smooth transition for theme change */
-  background-color: #f7f7f7; /* Whitish background for light mode */
+  background-color: #ffffff; /* Brighter whitish background for light mode */
   color: #333;
 }
 
@@ -44,7 +44,7 @@ html, body, #root {
 
 /* Header Light Theme Gradient */
 .header {
-  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Vibrant Pink, Orange, Yellow */
+  background: linear-gradient(to right, #ff4d88, #ff8c42, #ffcc33); /* Brighter gradient */
 }
 
 /* Logo - Cooler Font */
@@ -163,17 +163,25 @@ html, body, #root {
 }
 
 .hero h1 { /* Main title */
-  font-family: 'Poppins', sans-serif; /* Modern sans-serif font */
+  font-family: 'Poppins', sans-serif; /* Modern sans-serif font as requested */
   font-size: 6.5rem; /* Even larger font size */
   font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
-  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Keeping original vibrant gradient for 3D color */
+  background: linear-gradient(to right, #ff4d88, #ff8c42, #ffcc33); /* Brighter gradient for 3D color */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  /* text-shadow removed as requested */
+  text-shadow: none; /* Text shadow removed as requested */
+  /* Added multiple text-shadows for a brighter, more distinct 3D effect without being dull */
+  text-shadow: 
+    -1px -1px 0 #f0f0f0, /* Top-left highlight */
+    1px -1px 0 #f0f0f0, /* Top-right highlight */
+    -1px 1px 0 #f0f0f0, /* Bottom-left highlight */
+    1px 1px 0 #f0f0f0,  /* Bottom-right highlight */
+    2px 2px 5px rgba(0,0,0,0.3); /* Subtle dark shadow for depth */
+
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
@@ -225,7 +233,7 @@ html, body, #root {
 
 /* Features Section */
 .features {
-  padding: 4rem 0rem; /* Adjusted padding, especially horizontal, as cards have their own spacing */
+  padding: 4rem 2rem; /* Adjusted padding to allow cards to center better */
   text-align: center;
   background-color: transparent; /* Make features section background transparent to blend with .app */
   color: #333;
@@ -233,72 +241,76 @@ html, body, #root {
 
 .feature-grid {
   display: flex;
-  flex-wrap: nowrap; /* Forces items into a single row on larger screens */
-  overflow-x: auto; /* Enables horizontal scrolling */
-  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
-  gap: 2rem; /* Adjusted gap between cards */
-  justify-content: flex-start; /* Align cards to the start of the container */
-  align-items: stretch; /* Make all cards the same height */
-  padding: 1rem 2rem; /* Padding around the horizontally scrolling grid */
+  flex-wrap: wrap; /* Allow wrapping for 3x2 layout */
+  justify-content: center; /* Center the rows of cards */
+  gap: 2.5rem; /* Adjusted gap between cards */
   margin-top: 3rem;
-  /* Style for the scrollbar (Webkit browsers) */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #888 #f1f1f1; /* Firefox */
+  padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
+  max-width: 1000px; /* Constrain grid width for centering */
+  margin-left: auto; /* Center the grid */
+  margin-right: auto; /* Center the grid */
 }
-
-.feature-grid::-webkit-scrollbar {
-  height: 8px; /* Height of the horizontal scrollbar */
-}
-
-.feature-grid::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the scrollbar track */
-  border-radius: 10px;
-}
-
-.feature-grid::-webkit-scrollbar-thumb {
-  background: #888; /* Color of the scrollbar thumb */
-  border-radius: 10px;
-}
-
-.feature-grid::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Color of the scrollbar thumb on hover */
-}
-
 
 .feature-card {
   background: #ffffff; /* Clearly white background for light mode */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-radius: 16px; /* More rounded */
-  padding: 2rem 1.5rem; /* Adjusted padding for content */
-  min-width: 180px; /* Thinner boxes */
-  max-width: 180px; /* Ensures consistent width */
-  min-height: 280px; /* Adjusted height for content without emoji */
-  display: flex; /* Flexbox for internal content alignment */
-  flex-direction: column; /* Stack content vertically */
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* More prominent shadow for 3D effect */
+  border-radius: 18px; /* Slightly more rounded */
+  padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
+  width: 280px; /* Adjusted width for 3 cards per row */
+  height: 250px; /* Adjusted fixed height for consistent look */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  flex-shrink: 0; /* Prevent cards from shrinking */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid #f0f0f0; /* Slight border for definition */
+  transform-style: preserve-3d; /* For realistic 3D effect */
+  perspective: 1000px; /* For 3D transform */
+  position: relative; /* Needed for transforms */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid #e0e0e0; /* Slightly darker border for more definition */
+
+  /* Pseudo-elements for inner 3D depth */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: inherit; /* Inherit card's background */
+    box-shadow: inherit; /* Inherit card's shadow */
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  &::before {
+    transform: translateZ(-5px); /* Creates a layer behind */
+    opacity: 0.7;
+  }
+
+  &::after {
+    transform: translateZ(-10px); /* Creates another layer further behind */
+    opacity: 0.4;
+  }
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* More prominent shadow on hover */
+  transform: translateY(-15px) rotateX(5deg) rotateY(5deg) translateZ(20px); /* More dynamic hover effect */
+  box-shadow: 0 15px 30px rgba(0,0,0,0.25); /* Stronger shadow on hover */
 }
 
-/* No .feature-card-icon styling needed as emojis are removed */
-
 .feature-card h4 {
-  font-size: 1.3rem; /* Slightly larger title */
-  color: #444; /* Darker for better contrast */
+  font-size: 1.4rem; /* Slightly larger title */
+  color: #333; /* Darker for better contrast */
   margin-bottom: 0.8rem;
+  z-index: 1; /* Ensure text is on top */
 }
 
 .feature-card p {
-  font-size: 1.05rem; /* Slightly larger description */
-  color: #666; /* Standard grey for text */
+  font-size: 1.1rem; /* Slightly larger description */
+  color: #555; /* Standard grey for text */
+  z-index: 1; /* Ensure text is on top */
 }
 
 /* Responsive adjustments for mobile */
