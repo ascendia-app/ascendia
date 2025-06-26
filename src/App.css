@@ -168,11 +168,11 @@ html, body, #root {
   font-weight: 900;
   margin-bottom: 1.5rem;
   /* Bright gradient with specified colors */
-  background: linear-gradient(to right, #ff1493, #ff4500, #ffd700); /* Deep Pink, Orange Red, Gold */
+  background: -webkit-linear-gradient(to right, #ff1493, #ff4500, #ffd700);
   -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent; /* Ensures no white text shows through */
-  animation: floatUp 1.5s ease-out;
+  background-clip: transparent;
+  -webkit-text-fill-color: transparent;
+animation: floatUp 1.5s ease-out;
   letter-spacing: 4px;
   /* Slight dark shadow for contrast, no white */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
