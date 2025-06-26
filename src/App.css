@@ -24,13 +24,13 @@ html, body, #root {
 
 /* Light Theme Background */
 .app {
-  background: linear-gradient(to bottom right, #FFD2EB, #FFAF7B, #FFEB95); /* Vibrant Pink, Orange, Yellow */
+  background:  #ffffff; /* Vibrant Pink, Orange, Yellow */
   color: #333;
 }
 
 /* Dark Theme Background */
 .app.dark {
-  background: linear-gradient(to bottom right, #0A0A0A, #1A1A2E, #2A2A4A); /* Black to Deep Blue */
+  background: #0f0f0f; /* Black to Deep Blue */
   color: #f0f0f0;
 }
 
