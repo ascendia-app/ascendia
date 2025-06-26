@@ -163,7 +163,7 @@ html, body, #root {
 }
 
 .hero h1 { /* Main title */
-  font-family: 'Poppins', sans-serif; /* Modern sans-serif font as requested */
+  font-family: 'Poppins', sans-serif; /* Explicitly set to Poppins for sans-serif */
   font-size: 6.5rem; /* Even larger font size */
   font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
@@ -173,7 +173,7 @@ html, body, #root {
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  /* Re-added and refined multiple text-shadows for brighter, distinct 3D effect */
+  /* Refined text-shadow for a brighter, distinct 3D effect without being dull */
   text-shadow:
     0 0 10px rgba(255, 255, 255, 0.8), /* White glow for brightness */
     0 0 20px rgba(255, 255, 255, 0.6), /* Larger white glow */
@@ -242,7 +242,7 @@ html, body, #root {
   gap: 2.5rem; /* Adjusted gap between cards */
   margin-top: 3rem;
   padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
-  max-width: 1000px; /* Constrain grid width for centering */
+  max-width: 960px; /* Slightly reduced max-width for better control over 3-card row */
   margin-left: auto; /* Center the grid */
   margin-right: auto; /* Center the grid */
 }
@@ -259,9 +259,8 @@ html, body, #root {
     0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
-  width: calc((100% - 5rem) / 3); /* Calculated width for 3 cards per row, accounting for gap */
-  max-width: 280px; /* Ensure cards don't grow too wide on very large screens */
-  min-width: 250px; /* Minimum width before wrapping or becoming too small */
+  width: calc((100% - 2 * 2.5rem) / 3); /* Calculated width for 3 cards per row, accounting for gap */
+  max-width: 290px; /* Max width for individual cards */
   height: 250px; /* Adjusted fixed height for consistent look */
   display: flex;
   flex-direction: column;
@@ -308,7 +307,7 @@ html, body, #root {
     0 10px 10px rgba(0,0,0,0.22);
 }
 
-.feature-card-icon { /* Re-added styling for emoji icons */
+.feature-card-icon { /* Styling for emoji icons */
   font-size: 3.5rem; /* Large emoji size */
   margin-bottom: 1rem; /* Space below emoji */
   line-height: 1; /* Prevents extra line height for emojis */
