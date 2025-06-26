@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// Link is kept here in case you revert, but not used for internal navigation in this version
 import { Link } from 'react-router-dom';
 import './PageStyles.css'; // Assuming a generic stylesheet for pages
 
@@ -106,13 +107,14 @@ function GettingStarted() {
       </form>
 
       <div className="auth-footer-links">
-        <p>Already have an account? <Link to="/login" className="inline-link">Log In</Link></p>
+        {/* Changed to <a> tag for direct navigation (full page reload) */}
+        <p>Already have an account? <a href="/login" className="inline-link">Log In</a></p>
       </div>
 
       <div className="download-section">
         <h3 className="section-title">Or Download Our Desktop App:</h3>
         <div className="download-buttons">
-          {/* Changed to <a> tag for direct download */}
+          {/* These remain <a> tags as they trigger file downloads */}
           <a href="/downloads/Ascendia_Windows_Setup.exe" download className="gs-button download-windows">
             <span className="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-windows">
@@ -122,7 +124,7 @@ function GettingStarted() {
             </span>
             Download for Windows
           </a>
-          {/* Changed to <a> tag for direct download */}
+          {/* These remain <a> tags as they trigger file downloads */}
           <a href="/downloads/Ascendia_macOS.dmg" download className="gs-button download-macos">
             <span className="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-apple">
@@ -135,7 +137,8 @@ function GettingStarted() {
         </div>
       </div>
 
-      <Link to="/" className="back-to-home-button">← Back to Homepage</Link>
+      {/* Changed to <a> tag for direct navigation (full page reload) */}
+      <a href="/" className="back-to-home-button">← Back to Homepage</a>
     </div>
   );
 }
