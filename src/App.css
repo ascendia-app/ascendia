@@ -149,17 +149,17 @@ html, body, #root {
 
 /* Hero Section */
 .hero {
-  flex-grow: 1; /* Allows it to take available space */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 2rem;
-  /* Added for parallax scrolling illusion */
-  transform-style: preserve-3d; /* Creates a new stacking context for parallax */
-  perspective: 1000px; /* For 3D transform perspective */
-  position: relative; /* Needed for transform */
+  /* Removed dark background, inherits from .app (#ffffff) */
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  position: relative;
 }
 
 .hero h1 {
@@ -167,46 +167,47 @@ html, body, #root {
   font-size: 6.5rem;
   font-weight: 900;
   margin-bottom: 1.5rem;
-  /* Gradient with your specified colors */
+  /* Bright gradient with specified colors */
   background: linear-gradient(to right, #ff1493, #ff4500, #ffd700); /* Deep Pink, Orange Red, Gold */
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
+  color: transparent; /* Ensures no white text shows through */
   animation: floatUp 1.5s ease-out;
   letter-spacing: 4px;
-  /* Slight dark shadow for contrast */
+  /* Slight dark shadow for contrast, no white */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
+
 .hero p {
-  font-size: 1.8rem; /* Slightly larger description */
+  font-size: 1.8rem;
   font-weight: 500;
-  width: 75%; /* Constrain width for readability */
+  width: 75%;
   max-width: 900px;
-  margin: 0 auto 2.5rem auto; /* Center and add more bottom margin */
+  margin: 0 auto 2.5rem auto;
   animation: floatUp 1.8s ease-out;
   line-height: 1.4;
-  color: #555; /* A bit darker for readability against white */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Kept subtle shadow for visibility against light background */
-  transform: translateZ(-20px); /* Pushes p text into 'background' for stronger parallax */
+  color: #555; /* Kept as is for readability against white background */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Kept subtle shadow */
+  transform: translateZ(-20px);
 }
 
 .cta {
-  padding: 1.2rem 2.5rem; /* Larger CTA button */
-  font-size: 1.3rem; /* Larger font */
+  padding: 1.2rem 2.5rem;
+  font-size: 1.3rem;
   background: linear-gradient(to right, #ffb74d, #f06292);
   border: none;
-  border-radius: 10px; /* More rounded */
+  border-radius: 10px;
   color: white;
   cursor: pointer;
   animation: floatUp 2.1s ease-out;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s, box-shadow 0.2s;
-  transform: translateZ(-10px); /* Pushes cta button into 'background' for parallax */
+  transform: translateZ(-10px);
 }
 
 .cta:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 
