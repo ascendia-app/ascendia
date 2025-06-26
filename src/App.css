@@ -40,3 +40,148 @@
 .read-the-docs {
   color: #888;
 }
+
+body, html, .app {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  transition: background 0.5s, color 0.5s;
+}
+
+.app {
+  background: linear-gradient(to bottom right, #fff5e1, #ffeef5, #ffffff);
+  color: #111;
+  min-height: 100vh;
+}
+
+.dark {
+  background: linear-gradient(to bottom right, #000428, #2c003e, #000);
+  color: #f0f0f0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.dark .header {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.nav a {
+  margin: 0 0.8rem;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+/* Toggle Switch */
+.toggle {
+  width: 50px;
+  height: 25px;
+  background: #ccc;
+  border-radius: 25px;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2.5px;
+  left: 3px;
+  transition: transform 0.3s;
+}
+
+.dark .circle {
+  transform: translateX(25px);
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+}
+
+.hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.cta {
+  background: #ff5c8a;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cta:hover {
+  background: #ff3e72;
+}
+
+/* Features */
+.features {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.features h3 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.feature {
+  background: #fff9fb;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.dark .feature {
+  background: #1a0032;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+

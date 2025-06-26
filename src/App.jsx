@@ -37,4 +37,55 @@ function App() {
   );
 }
 
+import './App.css';
+import { useState } from 'react';
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  return (
+    <div className={darkMode ? 'app dark' : 'app'}>
+      <header className="header">
+        <h1>Ascendia</h1>
+        <nav className="nav">
+          <a href="#">Home</a>
+          <a href="#">Syllabus</a>
+          <a href="#">Past Papers</a>
+          <a href="#">Mark Tracker</a>
+          <a href="#">Countdown</a>
+          <a href="#">Planner</a>
+        </nav>
+        <button
+          className="toggle"
+          onClick={() => setDarkMode(!darkMode)}
+          title="Toggle Dark Mode"
+        >
+          <div className="circle"></div>
+        </button>
+      </header>
+
+      <section className="hero">
+        <h2>Your Ultimate Cambridge Companion</h2>
+        <p>All-in-one toolkit for IGCSE & A-Level success — smart, simple, soft.</p>
+        <button className="cta">Get Started</button>
+      </section>
+
+      <section className="features">
+        <h3>What’s Inside</h3>
+        <div className="feature-grid">
+          <div className="feature">✅ Syllabus Checklist</div>
+          <div className="feature">📄 Past Paper Vault</div>
+          <div className="feature">📊 Mark Tracker</div>
+          <div className="feature">⏳ Exam Countdown</div>
+          <div className="feature">🗓️ Study Planner</div>
+        </div>
+      </section>
+
+      <footer className="footer">
+        © 2025 Ascendia
+      </footer>
+    </div>
+  );
+}
+
 export default App;
