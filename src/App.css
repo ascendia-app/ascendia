@@ -167,15 +167,13 @@ html, body, #root {
   font-size: 6.5rem;
   font-weight: 900;
   margin-bottom: 1.5rem;
-  /* Bright gradient fill */
-  background: linear-gradient(to right, #ff1493, #ff4500, #ffd700); /* Deep Pink, Orange Red, Gold */
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* Bright gradient fill directly applied */
+  color: linear-gradient(to right, #ff1493, #ff4500, #ffd700); /* Deep Pink, Orange Red, Gold */
   animation: floatUp 1.5s ease-out;
   letter-spacing: 4px;
+  /* Slight dark shadow */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
-
 .hero p {
   font-size: 1.8rem; /* Slightly larger description */
   font-weight: 500;
