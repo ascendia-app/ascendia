@@ -149,61 +149,66 @@ html, body, #root {
 
 /* Hero Section */
 .hero {
-  flex-grow: 1;
+  flex-grow: 1; /* Allows it to take available space */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 2rem;
-  /* Removed dark background, inherits from .app (#ffffff) */
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  position: relative;
+  /* Added for parallax scrolling illusion */
+  transform-style: preserve-3d; /* Creates a new stacking context for parallax */
+  perspective: 1000px; /* For 3D transform perspective */
+  position: relative; /* Needed for transform */
 }
 
-.hero h1 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 6.5rem;
-  font-weight: 900;
-  margin-bottom: 1.5rem;
-  /* Bright gradient with specified colors */
-  background-image: linear-gradient(45deg, #ff1493, #ff4500 50%, #ffd700 100%);
-  background-clip: text;
+.hero h1 { /* Main title */
+  font-family: 'Poppins', sans-serif; /* Explicitly set to Poppins for sans-serif */
+  font-size: 6.5rem; /* Even larger font size */
+  font-weight: 900; /* Extra bold */
+  margin-bottom: 1.5rem; /* Increased margin */
+  /* Gradient colors for the text fill */
+  background: linear-gradient(to right, #ff007f, #ff7f00, #ffea00); /* Hot Pink, Bright Orange, Bright Yellow */
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: floatUp 1.5s ease-out;
+  letter-spacing: 5px; /* Adds more spacing for better visual */
+  /* --- TEXT-SHADOW REMOVED: Only plain gradient fill as requested --- */
+  transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
+
 
 .hero p {
-  font-size: 1.8rem;
+  font-size: 1.8rem; /* Slightly larger description */
   font-weight: 500;
-  width: 75%;
+  width: 75%; /* Constrain width for readability */
   max-width: 900px;
-  margin: 0 auto 2.5rem auto;
+  margin: 0 auto 2.5rem auto; /* Center and add more bottom margin */
   animation: floatUp 1.8s ease-out;
   line-height: 1.4;
-  color: #555; /* Kept as is for readability against white background */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Kept subtle shadow */
-  transform: translateZ(-20px);
+  color: #555; /* A bit darker for readability against white */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Kept subtle shadow for visibility against light background */
+  transform: translateZ(-20px); /* Pushes p text into 'background' for stronger parallax */
 }
 
 .cta {
-  padding: 1.2rem 2.5rem;
-  font-size: 1.3rem;
+  padding: 1.2rem 2.5rem; /* Larger CTA button */
+  font-size: 1.3rem; /* Larger font */
   background: linear-gradient(to right, #ffb74d, #f06292);
   border: none;
   border-radius: 10px;
   color: white;
   cursor: pointer;
   animation: floatUp 2.1s ease-out;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
   transition: transform 0.2s, box-shadow 0.2s;
-  transform: translateZ(-10px);
+  transform: translateZ(-10px); /* Pushes cta button into 'background' for parallax */
 }
 
 .cta:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
 
 
