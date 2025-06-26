@@ -167,17 +167,18 @@ html, body, #root {
   font-size: 6.5rem; /* Even larger font size */
   font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
-  background: linear-gradient(to right, #ff4d88, #ff8c42, #ffcc33); /* Brighter gradient for 3D color */
+  /* Updated gradient for brighter, more distinct colors */
+  background: linear-gradient(to right, #ff007f, #ff7f00, #ffea00); /* Hot Pink, Bright Orange, Bright Yellow */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  /* Refined text-shadow for a brighter, distinct 3D effect without being dull */
+  /* Refined text-shadow for a brighter, distinct 3D effect */
   text-shadow:
-    0 0 10px rgba(255, 255, 255, 0.8), /* White glow for brightness */
-    0 0 20px rgba(255, 255, 255, 0.6), /* Larger white glow */
-    3px 3px 6px rgba(0, 0, 0, 0.4); /* Deeper shadow for 3D depth */
+    0 0 15px rgba(255, 255, 255, 1), /* Stronger white glow for brightness */
+    0 0 30px rgba(255, 255, 255, 0.8), /* Larger white glow */
+    4px 4px 8px rgba(0, 0, 0, 0.5); /* Deeper, more noticeable shadow for 3D depth */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 
