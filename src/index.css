@@ -1,68 +1,372 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* Reset + Base */
+* {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  font-family: 'Inter', sans-serif; /* Standardize font to Inter */
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Base App Container - Light Mode Focus */
+.app {
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.5s ease-in-out, color 0.5s ease-in-out; /* Smooth transition for theme change */
+  background-color: #f7f7f7; /* Whitish background for light mode */
+  color: #333;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Header (Navigation Bar) */
+.header {
+  width: 100%;
+  padding: 1.2rem 4rem; /* Increased padding for full span appearance */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: background 0.5s ease-in-out; /* Smooth transition for theme change */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+/* Header Light Theme Gradient */
+.header {
+  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Vibrant Pink, Orange, Yellow */
+}
+
+/* Logo - Cooler Font */
+.logo {
+  font-family: 'Montserrat', sans-serif; /* Applied new cooler font */
+  font-size: 2.2rem; /* Slightly larger */
+  font-weight: 800; /* Bolder */
+  color: white; /* Ensures logo color is white */
+  text-decoration: none; /* Ensure no underline for Link component */
+}
+
+/* Navigation Links - Left (this rule now specifically targets logo's link if it were a link, but logo has its own style) */
+.nav-left {
+  display: flex;
+  gap: 2rem; /* Increased gap for better spacing */
+  align-items: center;
+}
+
+/* Specific styling for navigation links (About, Features, Contact) */
+.nav-links {
+  display: flex; /* Added display: flex to .nav-links */
+  gap: 1.5rem; /* Added gap to separate links */
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 600; /* Slightly bolder font weight */
+  transition: opacity 0.2s, color 0.2s;
+  font-family: 'Poppins', sans-serif; /* Applied Poppins font */
+}
+
+.nav-links a:hover {
+  opacity: 0.8;
+  color: #f0f0f0; /* Slight color change on hover */
+}
+
+/* Navigation Links - Right */
+.nav-right {
+  display: flex;
+  gap: 1.5rem; /* Adjusted gap */
+  align-items: center;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+
+/* Buttons */
+.login-btn,
+.start-btn {
+  padding: 0.6rem 1.2rem; /* Slightly larger padding */
+  border-radius: 8px; /* More rounded corners */
+  font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: background 0.3s, transform 0.2s, border 0.3s; /* Added border to transition */
+  color: white; /* Ensure text is white */
+  background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
+  border: 1px solid rgba(255, 255, 255, 0.5); /* Semi-transparent white border */
+  backdrop-filter: blur(5px); /* Added for a frosted glass effect */
+  -webkit-backdrop-filter: blur(5px); /* Webkit prefix */
+  font-family: 'Poppins', sans-serif; /* Applied Poppins font to buttons */
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.login-btn:hover,
+.start-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35); /* More opaque on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+}
+
+
+/* Toggle - Remains for functionality, but no dark mode styling here */
+.toggle {
+  background: none;
+  border: 2px solid currentColor; /* Uses current text color for border */
+  border-radius: 20px;
+  width: 48px; /* Slightly wider */
+  height: 24px; /* Slightly taller */
+  position: relative;
+  cursor: pointer;
+  padding: 2px; /* Internal padding for the circle */
+}
+
+.circle {
+  background-color: currentColor; /* Uses current text color for circle */
+  border-radius: 50%;
+  width: 16px; /* Slightly larger circle */
+  height: 16px;
+  position: absolute;
+  top: 2px; /* Adjusted to center vertically */
+  left: 2px; /* Start position */
+  transition: left 0.3s ease-in-out;
+}
+
+/* This rule will currently have no visual effect if .app.dark is not applied */
+.app.dark .toggle .circle {
+  left: 26px; /* End position for dark mode */
+}
+
+/* Hero Section */
+.hero {
+  flex-grow: 1; /* Allows it to take available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  /* Added for parallax scrolling illusion */
+  transform-style: preserve-3d; /* Creates a new stacking context for parallax */
+  perspective: 1000px; /* For 3D transform perspective */
+  position: relative; /* Needed for transform */
+}
+
+.hero h1 { /* Main title */
+  font-family: 'Poppins', sans-serif; /* Modern sans-serif font */
+  font-size: 6.5rem; /* Even larger font size */
+  font-weight: 900; /* Extra bold */
+  margin-bottom: 1.5rem; /* Increased margin */
+  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Keeping original vibrant gradient for 3D color */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: floatUp 1.5s ease-out;
+  letter-spacing: 5px; /* Adds more spacing for better visual */
+  /* text-shadow removed as requested */
+  transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
+}
+
+
+.hero p {
+  font-size: 1.8rem; /* Slightly larger description */
+  font-weight: 500;
+  width: 75%; /* Constrain width for readability */
+  max-width: 900px;
+  margin: 0 auto 2.5rem auto; /* Center and add more bottom margin */
+  animation: floatUp 1.8s ease-out;
+  line-height: 1.4;
+  color: #555; /* A bit darker for readability against white */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Kept subtle shadow for visibility against light background */
+  transform: translateZ(-20px); /* Pushes p text into 'background' for stronger parallax */
+}
+
+.cta {
+  padding: 1.2rem 2.5rem; /* Larger CTA button */
+  font-size: 1.3rem; /* Larger font */
+  background: linear-gradient(to right, #ffb74d, #f06292);
+  border: none;
+  border-radius: 10px; /* More rounded */
+  color: white;
+  cursor: pointer;
+  animation: floatUp 2.1s ease-out;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  transform: translateZ(-10px); /* Pushes cta button into 'background' for parallax */
+}
+
+.cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+
+/* Animations */
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+/* Features Section */
+.features {
+  padding: 4rem 0rem; /* Adjusted padding, especially horizontal, as cards have their own spacing */
+  text-align: center;
+  background-color: transparent; /* Make features section background transparent to blend with .app */
+  color: #333;
+}
+
+.feature-grid {
+  display: flex;
+  flex-wrap: nowrap; /* Forces items into a single row on larger screens */
+  overflow-x: auto; /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+  gap: 2rem; /* Adjusted gap between cards */
+  justify-content: flex-start; /* Align cards to the start of the container */
+  align-items: stretch; /* Make all cards the same height */
+  padding: 1rem 2rem; /* Padding around the horizontally scrolling grid */
+  margin-top: 3rem;
+  /* Style for the scrollbar (Webkit browsers) */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 #f1f1f1; /* Firefox */
+}
+
+.feature-grid::-webkit-scrollbar {
+  height: 8px; /* Height of the horizontal scrollbar */
+}
+
+.feature-grid::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the scrollbar track */
+  border-radius: 10px;
+}
+
+.feature-grid::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar thumb */
+  border-radius: 10px;
+}
+
+.feature-grid::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the scrollbar thumb on hover */
+}
+
+
+.feature-card {
+  background: #ffffff; /* Clearly white background for light mode */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-radius: 16px; /* More rounded */
+  padding: 2rem 1.5rem; /* Adjusted padding for content */
+  min-width: 180px; /* Thinner boxes */
+  max-width: 180px; /* Ensures consistent width */
+  min-height: 280px; /* Adjusted height for content without emoji */
+  display: flex; /* Flexbox for internal content alignment */
+  flex-direction: column; /* Stack content vertically */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  text-align: center;
+  flex-shrink: 0; /* Prevent cards from shrinking */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #f0f0f0; /* Slight border for definition */
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* More prominent shadow on hover */
+}
+
+/* No .feature-card-icon styling needed as emojis are removed */
+
+.feature-card h4 {
+  font-size: 1.3rem; /* Slightly larger title */
+  color: #444; /* Darker for better contrast */
+  margin-bottom: 0.8rem;
+}
+
+.feature-card p {
+  font-size: 1.05rem; /* Slightly larger description */
+  color: #666; /* Standard grey for text */
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .header {
+    padding: 1.2rem 1rem; /* Adjust header padding for smaller screens */
   }
+
+  .nav-left, .nav-right {
+    gap: 0.8rem; /* Reduce gap in nav for smaller screens */
+  }
+
+  .logo {
+    font-size: 1.8rem; /* Smaller logo on mobile */
+  }
+
+  .nav-links {
+    display: none; /* Hide nav links on very small screens, or consider a hamburger menu */
+  }
+
+  .hero h1 {
+    font-size: 4rem; /* Smaller hero title on mobile */
+    letter-spacing: 2px;
+  }
+
+  .hero p {
+    font-size: 1.2rem; /* Smaller description on mobile */
+    width: 90%; /* Wider description on mobile */
+  }
+
+  .cta {
+    padding: 1rem 2rem; /* Smaller CTA on mobile */
+    font-size: 1.1rem;
+  }
+
+  .feature-grid {
+    flex-wrap: wrap; /* Allow cards to wrap to new lines */
+    justify-content: center; /* Center cards when wrapped */
+    overflow-x: hidden; /* No horizontal scroll on mobile when stacked */
+    gap: 1.5rem; /* Adjust gap for vertical stacking */
+    padding: 0 1rem; /* Adjust padding for mobile view */
+  }
+
+  .feature-card {
+    min-width: unset; /* Remove fixed min-width for mobile */
+    max-width: 90%; /* Take up most of the screen width */
+    width: 90%; /* Ensure it takes up 90% and centers */
+    margin: 0 auto; /* Center individual cards when stacked */
+    min-height: 200px; /* Adjust height for mobile card */
+    padding: 1.5rem 1rem; /* Adjust padding for mobile card */
+  }
+
+  .feature-card h4 {
+    font-size: 1.2rem;
+  }
+
+  .feature-card p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  opacity: 0.7; /* Slightly less opaque */
+  font-size: 0.9rem;
+  margin-top: auto; /* Pushes footer to the bottom */
+  color: #555; /* Standard footer text color */
+  background: rgba(0, 0, 0, 0.03); /* Very slight background for distinction */
 }

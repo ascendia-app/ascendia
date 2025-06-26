@@ -93,31 +93,31 @@ function App() {
             <div className="feature-grid">
               {/* Feature Card 1: Syllabus Checklist */}
               <div className="feature-card">
-                <span className="feature-card-icon">📋</span> {/* Emoji Icon */}
+                {/* Emojis removed as requested */}
                 <h4>Syllabus Checklist</h4>
                 <p>Stay organized and track every topic.</p>
               </div>
               {/* Feature Card 2: Past Paper Vault */}
               <div className="feature-card">
-                <span className="feature-card-icon">📚</span> {/* Emoji Icon */}
+                {/* Emojis removed as requested */}
                 <h4>Past Paper Vault</h4>
                 <p>Access categorized past papers in seconds.</p>
               </div>
               {/* Feature Card 3: Grade Tracker */}
               <div className="feature-card">
-                <span className="feature-card-icon">📈</span> {/* Emoji Icon */}
+                {/* Emojis removed as requested */}
                 <h4>Grade Tracker</h4>
                 <p>Visualize your grades and boost performance.</p>
               </div>
               {/* Feature Card 4: Exam Countdown */}
               <div className="feature-card">
-                <span className="feature-card-icon">⏳</span> {/* Emoji Icon */}
+                {/* Emojis removed as requested */}
                 <h4>Exam Countdown</h4>
                 <p>See your remaining days to prepare smartly.</p>
               </div>
               {/* New Feature Card: Study Planner */}
               <div className="feature-card">
-                <span className="feature-card-icon">🗓️</span> {/* Emoji Icon */}
+                {/* Emojis removed as requested */}
                 <h4>Study Planner</h4>
                 <p>Plan your weeks with flexible schedules.</p>
               </div>
@@ -136,7 +136,7 @@ function App() {
           {/* Specific routes for other tools/pages */}
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/papers" element={<Papers />} />
-        <Route path="/tracker"  element={<Tracker />} />
+          <Route path="/tracker" element={<Tracker />} />
           <Route path="/countdown" element={<Countdown />} />
           <Route path="/planner" element={<Planner />} />
         </Routes>
