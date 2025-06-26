@@ -51,12 +51,11 @@ html, body, #root {
 
 /* Header Light Theme Gradient */
 .header {
-  background: linear-gradient(to right, #FF6B6B, #FFD2EB); /* Pinkish-Red to Light Pink */
-}
+  background: linear-gradient(to right, #f31e70, #ff4e18, #cc7a00); 
 
 /* Header Dark Theme Gradient */
 .app.dark .header {
-  background: linear-gradient(to right, #1A237E, #4A148C); /* Dark Blue to Dark Purple */
+  background: linear-gradient(to right, #000108, #1b003b, #2d0370); /* Dark Blue to Dark Purple */
 }
 
 /* Logo */
@@ -338,4 +337,5 @@ html, body, #root {
 
 .app.dark .footer {
   background: rgba(255, 255, 255, 0.05);
+}
 }
