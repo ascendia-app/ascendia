@@ -1,11 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client'; // Import ReactDOM client API
-import App from './App.jsx'; // Import your main App component
-import './index.css'; // You might have a global index.css or other base styles here
+    // src/main.jsx
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import App from './App.jsx';
+    import './index.css';
+    import { AuthProvider } from './contexts/AuthContext'; // Import AuthProvider
 
-// Create a root and render your App component into the #root element in index.html
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <React.StrictMode>
+        <AuthProvider> {/* Wrap your App component with AuthProvider */}
+          <App />
+        </AuthProvider>
+      </React.StrictMode>,
+    );
+    
