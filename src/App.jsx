@@ -17,23 +17,23 @@ function App() {
     <Router>
       <div className={darkMode ? 'app dark' : 'app'}>
   <div className="main-content">
-    <header className="header">
-      <h1 className="logo">Ascendia</h1>
-
-<nav className="nav">
-  <a href="#about">About</a>
-  <a href="#contact">Contact</a>
-</nav>
-
-<div className="nav-buttons">
-  <button className="login-btn">Login</button>
-  <button className="register-btn">Register</button>
-  <button className="toggle" onClick={() => setDarkMode(!darkMode)}>
-    <div className="circle"></div>
-  </button>
-</div>
-
-    </header>
+<header class="header">
+  <div class="nav-left">
+    <div class="logo">Ascendia</div>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+  <div class="nav-right">
+    <button class="login-btn">Login</button>
+    <button class="start-btn">Get Started</button>
+    <div class="toggle">
+      <div class="circle"></div>
+    </div>
+  </div>
+</header>
 
     {/* Other content like hero, features, footer goes here */}
   </div>

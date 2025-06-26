@@ -1,3 +1,4 @@
+
 /* Reset + Base */
 * {
   margin: 0;
@@ -5,23 +6,23 @@
   box-sizing: border-box;
 }
 
+
+
+
 html, body, .app {
-  margin: 0;
-  padding: 0;
   height: 100%;
   width: 100%;
   font-family: 'Segoe UI', sans-serif;
   transition: background 0.3s, color 0.3s;
 }
 
-
-
-/* Themes */
+/* Light Theme */
 .app {
   background: linear-gradient(to bottom right, #fff5e6, #ffe4ec);
   color: #333;
 }
 
+/* Dark Theme */
 .app.dark {
   background: linear-gradient(to bottom right, #1a1a40, #3b1a4d);
   color: #f0f0f0;
@@ -30,37 +31,40 @@ html, body, .app {
 /* Header */
 .header {
   width: 100%;
-  padding: 1.5rem 3rem;
-  background: linear-gradient(to right, #fff176, #ff8a65, #f06292); /* tropical gradient */
+  padding: 1.2rem 2rem;
+  background: linear-gradient(to right, #ff9a9e, #fad0c4);
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-
-.logo {
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.nav {
+/* Navigation */
+.nav-left {
   display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  gap: 1.8rem;
+  align-items: center;
 }
 
-.nav a {
+.nav-left a {
   text-decoration: none;
-  color: #222;
-  font-weight: 600;
+  color: white;
+  font-weight: 500;
+  transition: opacity 0.2s;
 }
 
-.nav a:hover {
-  color: #d81b60;
+.nav-left a:hover {
+  opacity: 0.75;
+}
+
+.nav-right {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .nav-buttons {
@@ -79,10 +83,17 @@ html, body, .app {
   font-weight: 500;
   transition: color 0.2s;
 }
+
 .nav-links a:hover {
   opacity: 0.7;
 }
 
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 auto;
+  color: white;
+}
 
 /* Buttons */
 .login-btn,
@@ -175,6 +186,7 @@ html, body, .app {
   animation: floatUp 2.1s ease-out;
 }
 
+/* Animations */
 @keyframes floatUp {
   from {
     opacity: 0;
@@ -190,7 +202,6 @@ html, body, .app {
   from { opacity: 0 }
   to { opacity: 1 }
 }
-
 
 /* Features */
 .features {
@@ -230,30 +241,25 @@ html, body, .app {
   color: #666;
 }
 
-
-.dark {
-  background: linear-gradient(to bottom right, #0d47a1, #512da8, #000000);
-  color: #eee;
-}
-
-.dark .header {
+/* Dark Mode Overrides */
+.app.dark .header {
   background: linear-gradient(to right, #1a237e, #4a148c);
 }
 
-.dark .nav a {
+.app.dark .nav a {
   color: #f3f3f3;
 }
 
-.dark .feature-card {
+.app.dark .feature-card {
   background: #222;
   color: #ddd;
 }
 
-.dark .feature-card p {
+.app.dark .feature-card p {
   color: #ccc;
 }
 
-.dark .cta {
+.app.dark .cta {
   background: linear-gradient(to right, #3949ab, #7e57c2);
 }
 
@@ -264,6 +270,8 @@ html, body, .app {
   opacity: 0.6;
   font-size: 0.9rem;
 }
+
+/* Layout Container */
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -271,9 +279,7 @@ html, body, .app {
   box-sizing: border-box;
 }
 
-/* Reset spacing and fix layout */
-
-
+/* Full Page and Font Fix */
 html, body, #root {
   width: 100%;
   height: 100%;
