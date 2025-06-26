@@ -174,9 +174,6 @@ html, body, #root {
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
   letter-spacing: 4px;
-  /* Minimal 3D effect with dark blurred background */
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
-  transform: perspective(300px) translateZ(10px);
 }
 
 .hero p {
