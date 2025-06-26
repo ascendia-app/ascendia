@@ -1,3 +1,6 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap');
+
 /* Reset + Base */
 * {
   margin: 0;
@@ -13,25 +16,15 @@ html, body, #root {
   transition: background 0.3s, color 0.3s;
 }
 
-/* Base App Container */
+/* Base App Container - Light Mode Focus */
 .app {
   min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out; /* Smooth transition for theme change */
-}
-
-/* Light Theme Background */
-.app {
-  background:  #ffffff; /* Vibrant Pink, Orange, Yellow */
+  background-color: #f7f7f7; /* Whitish background for light mode */
   color: #333;
-}
-
-/* Dark Theme Background */
-.app.dark {
-  background: #0f0f0f; /* Black to Deep Blue */
-  color: #f0f0f0;
 }
 
 /* Header (Navigation Bar) */
@@ -51,19 +44,15 @@ html, body, #root {
 
 /* Header Light Theme Gradient */
 .header {
-  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); 
-
-/* Header Dark Theme Gradient */
-.app.dark .header {
-  background: linear-gradient(to right, #000108, #1b003b, #2d0370); /* Dark Blue to Dark Purple */
+  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Vibrant Pink, Orange, Yellow */
 }
 
-/* Logo */
+/* Logo - Cooler Font */
 .logo {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-family: 'Montserrat', sans-serif; /* Applied new cooler font */
+  font-size: 2.2rem; /* Slightly larger */
+  font-weight: 800; /* Bolder */
   color: white; /* Ensures logo color is white */
-  /* No auto margin here to allow proper flex alignment */
 }
 
 /* Navigation Links - Left */
@@ -103,7 +92,7 @@ html, body, #root {
 }
 
 .nav-links a {
-  color: inherit; /* Inherits color from parent (.header or .app.dark .nav a) */
+  color: inherit; /* Inherits color from parent (.header) */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s, opacity 0.2s;
@@ -127,7 +116,7 @@ html, body, #root {
 
 .login-btn {
   background-color: transparent;
-  color: white; /* Ensure text color is white in both themes */
+  color: white; /* Ensure text color is white in light theme */
   border: 1px solid white; /* White border */
 }
 .login-btn:hover {
@@ -137,29 +126,15 @@ html, body, #root {
 }
 
 .start-btn {
-  background-color: #e6e1e2a1; /* Keeps original color for consistency in light mode */
+  background-color: #f867a6; /* Adjusted for light mode vibrant button */
   color: white;
 }
 .start-btn:hover {
-  background-color: #f1788c;
+  background-color: #e05c93;
   transform: translateY(-2px); /* Slight lift effect */
 }
 
-/* Dark Mode Button Overrides */
-.app.dark .login-btn {
-  color: #f0f0f0;
-  border-color: #f0f0f0;
-}
-
-.app.dark .start-btn {
-  background-color: #7e57c2; /* Dark mode vibrant button color */
-}
-.app.dark .start-btn:hover {
-  background-color: #673ab7;
-}
-
-
-/* Toggle */
+/* Toggle - Remains for functionality, but no dark mode styling here */
 .toggle {
   background: none;
   border: 2px solid currentColor; /* Uses current text color for border */
@@ -182,6 +157,7 @@ html, body, #root {
   transition: left 0.3s ease-in-out;
 }
 
+/* This rule will currently have no visual effect if .app.dark is not applied */
 .app.dark .toggle .circle {
   left: 26px; /* End position for dark mode */
 }
@@ -195,37 +171,30 @@ html, body, #root {
   align-items: center;
   text-align: center;
   padding: 2rem;
-  /* animation: fadeIn 2s ease-in-out; Removed to prevent re-animation on theme switch */
 }
 
-.hero h1 { /* Changed from h2 to h1 for main title */
-  font-size: 5rem; /* Larger font size */
-  font-weight: 800; /* Bolder */
+.hero h1 { /* Main title */
+  font-family: 'Montserrat', sans-serif; /* Cooler font for hero title */
+  font-size: 5.5rem; /* Even larger font size */
+  font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
-  background: linear-gradient(to right, #ff6b6b, #ffe4ec, #ffeb95); /* Gradient text for Ascendia */
+  background: linear-gradient(to right, #f31e70, #ff4e18, #fffb09); /* Vibrant Pink, Orange, Yellow gradient text */
   -webkit-background-clip: text;
-  background-clip: text; /* Added for compatibility */
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: floatUp 1.5s ease-out;
-  letter-spacing: 2px; /* Adds a little spacing */
+  letter-spacing: 3px; /* Adds more spacing */
 }
-
-.app.dark .hero h1 {
-  background: linear-gradient(to right, #4CAF50, #8BC34A, #CDDC39); /* Greenish gradient for dark mode title */
-  -webkit-background-clip: text;
-  background-clip: text; /* Added for compatibility */
-  -webkit-text-fill-color: transparent;
-}
-
 
 .hero p {
-  font-size: 1.7rem; /* Slightly larger description */
-  width: 70%; /* Constrain width for readability */
-  max-width: 800px;
+  font-size: 1.8rem; /* Slightly larger description */
+  font-weight: 500;
+  width: 75%; /* Constrain width for readability */
+  max-width: 900px;
   margin: 0 auto 2.5rem auto; /* Center and add more bottom margin */
   animation: floatUp 1.8s ease-out;
-  line-height: 1.5;
-  color: inherit; /* Inherits from .app or .app.dark */
+  line-height: 1.4;
+  color: #555; /* A bit darker for readability against white */
 }
 
 .cta {
@@ -246,11 +215,6 @@ html, body, #root {
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
 
-/* Dark Mode CTA */
-.app.dark .cta {
-  background: linear-gradient(to right, #3F51B5, #673AB7); /* Darker blue/purple gradient */
-}
-
 
 /* Animations */
 @keyframes floatUp {
@@ -268,19 +232,8 @@ html, body, #root {
 .features {
   padding: 4rem 2rem;
   text-align: center;
-  transition: background 0.5s ease-in-out, color 0.5s ease-in-out; /* Smooth transition */
-}
-
-/* Light Mode Features Background */
-.features {
-  background-color: rgba(255, 255, 255, 0.7); /* Slightly transparent white */
+  background-color: transparent; /* Make features section background transparent to blend with .app */
   color: #333;
-}
-
-/* Dark Mode Features Background */
-.app.dark .features {
-  background-color: rgba(30, 30, 30, 0.7); /* Dark grey with slight transparency */
-  color: #f0f0f0;
 }
 
 .feature-grid {
@@ -292,13 +245,14 @@ html, body, #root {
 }
 
 .feature-card {
-  background: #ffffff; /* Default for light mode */
+  background: #ffffff; /* Clearly white background for light mode */
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border-radius: 16px; /* More rounded */
   padding: 2.5rem; /* More padding */
   width: 280px; /* Slightly wider cards */
-  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
+  border: 1px solid #f0f0f0; /* Slight border for definition */
 }
 
 .feature-card:hover {
@@ -306,22 +260,15 @@ html, body, #root {
   box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* More prominent shadow on hover */
 }
 
-/* Dark Mode Feature Card Overrides */
-.app.dark .feature-card {
-  background: #282828; /* Darker grey background */
-  color: #ddd;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Darker shadow */
-}
-
 .feature-card h4 {
   font-size: 1.3rem; /* Slightly larger title */
-  color: inherit; /* Inherits from parent */
+  color: #444; /* Darker for better contrast */
   margin-bottom: 0.8rem;
 }
 
 .feature-card p {
   font-size: 1.05rem; /* Slightly larger description */
-  color: inherit; /* Inherits from parent */
+  color: #666; /* Standard grey for text */
 }
 
 /* Footer */
@@ -331,11 +278,6 @@ html, body, #root {
   opacity: 0.7; /* Slightly less opaque */
   font-size: 0.9rem;
   margin-top: auto; /* Pushes footer to the bottom */
-  color: inherit; /* Inherits color from .app */
-  background: rgba(0, 0, 0, 0.05); /* Slight background for distinction */
-}
-
-.app.dark .footer {
-  background: rgba(255, 255, 255, 0.05);
-}
+  color: #555; /* Standard footer text color */
+  background: rgba(0, 0, 0, 0.03); /* Very slight background for distinction */
 }
