@@ -1,39 +1,40 @@
-<<<<<<< HEAD
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
+// Import your pages
+import Home from './pages/Home';
+import Syllabus from './pages/Syllabus';
+import Papers from './pages/Papers';
+import Tracker from './pages/Tracker';
+import Countdown from './pages/Countdown';
+import Planner from './pages/Planner';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+
+       <nav style={{ padding: '1rem', background: '#fef3f3' }}>
+        <ul style={{ display: 'flex', gap: '1rem', listStyle: 'none' }}>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/syllabus">Syllabus</Link></li>
+          <li><Link to="/papers">Past Papers</Link></li>
+          <li><Link to="/tracker">Mark Tracker</Link></li>
+          <li><Link to="/countdown">Countdown</Link></li>
+          <li><Link to="/planner">Study Planner</Link></li>
+        </ul>
+      </nav>
+
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/syllabus" element={<Syllabus />} />
+        <Route path="/papers" element={<Papers />} />
+        <Route path="/tracker" element={<Tracker />} />
+        <Route path="/countdown" element={<Countdown />} />
+        <Route path="/planner" element={<Planner />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
-=======
-
->>>>>>> 1b435bf8f20796a6b8a0de269048c4b3aef9c530
+export default App;
