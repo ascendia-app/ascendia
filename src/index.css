@@ -175,7 +175,7 @@ html, body, #root {
   letter-spacing: 5px; /* Adds more spacing for better visual */
   text-shadow: none; /* Text shadow removed as requested */
   /* Added multiple text-shadows for a brighter, more distinct 3D effect without being dull */
-  text-shadow: 
+  text-shadow:
     -1px -1px 0 #f0f0f0, /* Top-left highlight */
     1px -1px 0 #f0f0f0, /* Top-right highlight */
     -1px 1px 0 #f0f0f0, /* Bottom-left highlight */
@@ -253,7 +253,14 @@ html, body, #root {
 
 .feature-card {
   background: #ffffff; /* Clearly white background for light mode */
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* More prominent shadow for 3D effect */
+  /* Re-adjusted box-shadow for more realistic 3D */
+  box-shadow: 
+    0 1px 2px rgba(0,0,0,0.07),  /* Subtle top shadow */
+    0 2px 4px rgba(0,0,0,0.07),  /* Mid shadow */
+    0 4px 8px rgba(0,0,0,0.07),  /* Stronger mid shadow */
+    0 8px 16px rgba(0,0,0,0.07), /* Even stronger mid shadow */
+    0 16px 32px rgba(0,0,0,0.07),/* Bottom shadow */
+    0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
   width: 280px; /* Adjusted width for 3 cards per row */
@@ -297,7 +304,10 @@ html, body, #root {
 
 .feature-card:hover {
   transform: translateY(-15px) rotateX(5deg) rotateY(5deg) translateZ(20px); /* More dynamic hover effect */
-  box-shadow: 0 15px 30px rgba(0,0,0,0.25); /* Stronger shadow on hover */
+  /* Stronger, more defined shadow on hover for a popping 3D effect */
+  box-shadow: 
+    0 14px 28px rgba(0,0,0,0.25), 
+    0 10px 10px rgba(0,0,0,0.22);
 }
 
 .feature-card h4 {
