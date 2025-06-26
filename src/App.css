@@ -239,7 +239,7 @@ html, body, #root {
   gap: 2.5rem; /* Creates consistent spacing between cards, both horizontally and vertically */
   margin-top: 3rem;
   padding: 0; /* Remove horizontal padding from grid itself, cards will have margin */
-  max-width: 960px; /* Max-width to enforce 3-card layout before wrapping */
+  max-width: 1024px; /* Increased max-width to provide more space for 3 cards per row */
   margin-left: auto; /* Center the grid */
   margin-right: auto; /* Center the grid */
 }
@@ -256,9 +256,9 @@ html, body, #root {
     0 32px 64px rgba(0,0,0,0.07); /* Deepest shadow */
   border-radius: 18px; /* Slightly more rounded */
   padding: 2.5rem 1.8rem; /* Adjusted padding for better internal spacing */
-  /* This calculation ensures 3 cards fit per row with gaps */
+  /* This calculation ensures 3 cards fit per row with gaps, accounting for the increased grid max-width */
   width: calc((100% - (2 * 2.5rem)) / 3); /* Calculated width for 3 cards per row, accounting for gap */
-  max-width: 290px; /* Max width for individual cards */
+  max-width: 310px; /* Increased max-width for individual cards to better fit 3 per row */
   height: 250px; /* Adjusted fixed height for consistent look */
   display: flex;
   flex-direction: column;
