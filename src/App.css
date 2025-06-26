@@ -4,6 +4,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 html, body, .app {
   margin: 0;
   padding: 0;
@@ -29,20 +30,38 @@ html, body, .app {
 /* Header */
 .header {
   width: 100%;
-  padding: 1rem 2rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #fff5f5;
   position: sticky;
   top: 0;
-  background: transparent;
-  z-index: 10;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 
 .logo {
   font-size: 1.8rem;
   font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav a:hover {
+  color: #ff9aa2;
 }
 
 .nav-links {
@@ -64,7 +83,9 @@ html, body, .app {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
+
 
 /* Buttons */
 .login-btn,
@@ -185,3 +206,23 @@ html, body, .app {
   box-sizing: border-box;
 }
 
+/* Reset spacing and fix layout */
+
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom right, #fff1f1, #fffbe7);
+}
+
+.app {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Prevent weird black space */
+body {
+  background-color: transparent;
+}
