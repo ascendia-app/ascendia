@@ -2,7 +2,6 @@
   "name": "ascendia",
   "version": "1.0.0",
   "description": "A progressive web app for Cambridge students",
-  "main": "eslint.config.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
