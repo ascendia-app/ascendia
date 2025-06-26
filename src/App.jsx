@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'; // Added useRef
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css';
 import { useAuth } from './contexts/AuthContext';
@@ -15,12 +15,12 @@ import Countdown from './pages/Countdown';
 import Planner from './pages/Planner';
 import GettingStarted from './pages/GettingStarted';
 import Login from './pages/Login';
-import UserSettings from './pages/UserSettings'; // NEW: Import UserSettings page
+import UserSettings from './pages/UserSettings';
 
 
 function App() {
-  const { currentUser, loading } = useAuth();
-  const [displayedUsername, setDisplayedUsername] = useState('');
+  const { currentUser, loading } = useAuth(); // Get currentUser and loading state from AuthContext
+  const [displayedUsername, setDisplayedUsername] = useState(''); // State to store the fetched username
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
@@ -29,6 +29,14 @@ function App() {
   const dropdownRef = useRef(null); // Ref for dropdown to detect outside clicks
 
   const navigate = useNavigate();
+
+  // DEBUG: Log current user and loading state
+  useEffect(() => {
+    console.log("AuthContext: currentUser =", currentUser);
+    console.log("AuthContext: loading =", loading);
+    console.log("App.jsx: displayedUsername =", displayedUsername); // Also log username state
+  }, [currentUser, loading, displayedUsername]);
+
 
   useEffect(() => {
     const root = document.documentElement;
@@ -51,29 +59,33 @@ function App() {
   useEffect(() => {
     const fetchUsername = async () => {
       if (currentUser) {
+        // Fallback directly to email prefix initially to ensure something shows quickly
+        setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
         try {
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
             setDisplayedUsername(userDocSnap.data().username);
+            console.log("Fetched username from Firestore:", userDocSnap.data().username); // DEBUG
           } else {
-            console.log("No user profile found in Firestore for UID:", currentUser.uid);
-            setDisplayedUsername(currentUser.email.split('@')[0]); // Fallback to email prefix if username not found
+            console.warn("No user profile found in Firestore for UID:", currentUser.uid, ". Falling back to email prefix."); // DEBUG
+            // If user doc doesn't exist, already set fallback to email prefix
           }
         } catch (error) {
-          console.error("Error fetching username:", error);
-          setDisplayedUsername(currentUser.email.split('@')[0]); // Fallback to email prefix on error
+          console.error("Error fetching username from Firestore:", error); // DEBUG
+          setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User'); // Fallback on error
         }
       } else {
-        setDisplayedUsername('');
+        setDisplayedUsername(''); // Clear username if no user is logged in
       }
     };
 
-    if (!loading) {
+    if (!loading) { // Only fetch username once auth state is determined
+      console.log("Auth state determined, attempting to fetch username..."); // DEBUG
       fetchUsername();
     }
-  }, [currentUser, loading]);
+  }, [currentUser, loading, db]); // Rerun when currentUser, loading, or db instance changes
 
   // Effect to handle clicks outside the dropdown
   useEffect(() => {
@@ -103,9 +115,10 @@ function App() {
       await signOut(auth);
       navigate('/login'); // Redirect to login page after logout
       setIsDropdownOpen(false); // Close dropdown on logout
-      console.log("User logged out successfully.");
+      setDisplayedUsername(''); // Clear displayed username immediately
+      console.log("User logged out successfully."); // DEBUG
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("Error logging out:", error); // DEBUG
     }
   };
 
@@ -126,15 +139,16 @@ function App() {
             <div className="nav-buttons">
               {/* Conditional rendering based on authentication status */}
               {loading ? (
-                <span className="welcome-message">Loading...</span>
+                <span className="welcome-message">Loading...</span> // Show loading state
               ) : currentUser ? (
                 <div className="user-profile-widget" ref={dropdownRef}>
                   <div className="user-info-trigger" onClick={toggleDropdown}>
                     <div className="avatar-circle">
                       {/* Display first letter of username, or '?' if unavailable */}
-                      {displayedUsername ? displayedUsername.charAt(0).toUpperCase() : '?'}
+                      {displayedUsername ? displayedUsername.charAt(0).toUpperCase() : (currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?')}
                     </div>
-                    <span className="welcome-message">Hello, {displayedUsername}!</span>
+                    {/* Ensure displayedUsername is not empty, otherwise fallback to email prefix */}
+                    <span className="welcome-message">Hello, {displayedUsername || (currentUser.email ? currentUser.email.split('@')[0] : 'User')}!</span>
                     <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>&#9660;</span> {/* Unicode arrow */}
                   </div>
                   {isDropdownOpen && (
@@ -199,7 +213,7 @@ function App() {
             <Route path="/planner" element={<Planner />} />
             <Route path="/getting-started" element={<GettingStarted />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/user-settings" element={<UserSettings />} /> {/* NEW ROUTE */}
+            <Route path="/user-settings" element={<UserSettings />} />
           </Routes>
         </div>
       </div>
