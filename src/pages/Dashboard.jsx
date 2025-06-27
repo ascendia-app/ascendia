@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download
-} from 'lucide-react';
+} from 'lucide-react'; // Using lucide-react now, based on previous instructions for main icons
 
-// Import Firebase (auth, db, appId) and AuthContext
+// Import Firebase (db, appId) - assuming these are exported from firebaseConfig.js
 import { db, appId } from '../firebaseConfig'; // Ensure appId is imported here
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext'; // CORRECTED PATH: Go up two levels, then into contexts
+
 import { collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from 'firebase/firestore';
+
 
 // Import your separated modal components
 import EditExamsModal from '../modals/EditExamsModal';
@@ -239,6 +241,7 @@ function Dashboard() {
     }
   };
 
+
   // --- Function to generate and display exams table as JPG ---
   const handleSeeAllExams = () => {
     // Only generate if there are exams to display
@@ -364,13 +367,16 @@ function Dashboard() {
     { id: 4, name: "Study Planner", to: "/planner", icon: <Target size={20} /> },
   ];
 
+  // Placeholder for recent activity until we have a real activity collection
+  // For now, these are hardcoded for display purposes.
   const recentActivity = [
-    "Completed 'Kinematics' in Physics.",
-    "Attempted May/June 2023 Paper 1.",
-    "Reviewed Chemistry topic 'Stoichiometry'.",
-    "Updated 'Forces and Motion' notes.",
-    "Set reminder for 'Maths Quiz' next week."
+    { id: 'a1', description: "Completed 'Kinematics' in Physics.", timestamp: new Date(Date.now() - 5 * 60 * 1000) },
+    { id: 'a2', description: "Attempted May/June 2023 Paper 1.", timestamp: new Date(Date.now() - 30 * 60 * 1000) },
+    { id: 'a3', description: "Reviewed Chemistry topic 'Stoichiometry'.", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+    { id: 'a4', description: "Updated 'Forces and Motion' notes.", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+    { id: 'a5', description: "Set reminder for 'Maths Quiz' next week.", timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000) },
   ];
+
 
   // Conditional rendering based on authentication state
   if (loading) {
@@ -391,128 +397,128 @@ function Dashboard() {
   }
 
   return (
-    <div className="page-container dashboard-page">
-      <h2 className="page-title">Welcome to Your Dashboard!</h2>
-      <p className="page-description">Your personalized hub for Cambridge exam success.</p>
+    <div className="app">
+        {/* Placeholder for Header, UserProfileWidget, ThemeToggle, NotificationsDropdown */}
+        {/* You should have these components imported and rendered here,
+            e.g., <Header><Bell size={24} ... /><UserProfileWidget /><ThemeToggle /></Header>
+            and {isNotificationsOpen && <NotificationsDropdown ... />} */}
 
-      {firebaseError && (
-        <p className="form-message">{firebaseError}</p>
-      )}
+      <main className="page-container dashboard-page">
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-description">Welcome back! Here's a quick overview of your academic journey.</p>
 
-      <div className="dashboard-grid-container">
-        {/* Time Widget */}
-        <div className="time-widget dashboard-card grid-item">
-          <Clock size={32} className="widget-icon" />
-          <div className="time-display">
-            <p className="current-date">{currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <p className="current-time">{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</p>
-          </div>
-        </div>
+        {firebaseError && (
+          <p className="form-message">{firebaseError}</p>
+        )}
 
-        {/* Exam Countdown Widget */}
-        <div className="countdown-widget dashboard-card grid-item grid-span-2">
-          <CalendarClock size={32} className="widget-icon" />
-          <h3 className="widget-title">Next Exam In:</h3>
-          {nextExam ? (
-            <div className="countdown-content">
-              <div className="countdown-timer">
-                <div className="countdown-segment">
-                  <span className="countdown-value">{timeRemaining.days}</span>
-                  <span className="countdown-label">Days</span>
-                </div>
-                <div className="countdown-segment">
-                  <span className="countdown-value">{formatTime(timeRemaining.hours)}</span>
-                  <span className="countdown-label">Hours</span>
-                </div>
-                <div className="countdown-segment">
-                  <span className="countdown-value">{formatTime(timeRemaining.minutes)}</span>
-                  <span className="countdown-label">Mins</span>
-                </div>
-                <div className="countdown-segment">
-                  <span className="countdown-value">{formatTime(timeRemaining.seconds)}</span>
-                  <span className="countdown-label">Secs</span>
-                </div>
-              </div>
-              <p className="exam-details">
-                {nextExam.subject} {nextExam.component} on {new Date(`${nextExam.date}T${nextExam.time || '00:00'}`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} ({nextExam.session})
-                {nextExam.time && ` at ${new Date(`${nextExam.date}T${nextExam.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`}
-              </p>
+        <div className="dashboard-grid-container">
+          {/* Current Time Widget */}
+          <div className="grid-item dashboard-card time-widget">
+            <Clock size={40} className="widget-icon" /> {/* Using lucide-react Clock icon */}
+            <div className="time-display">
+              <div className="current-date">{currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              <div className="current-time">{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</div>
             </div>
-          ) : (
-            <p className="no-upcoming-exams">No upcoming exams added. Click 'Edit Exams' to add one!</p>
-          )}
-        </div>
-
-        {/* Action Buttons for Countdown - Now a separate grid item */}
-        <div className="countdown-actions grid-item grid-column-2-3">
-            <button onClick={handleSeeAllExams} className="see-all-exams-btn dashboard-action-btn">
-              <Table size={16} /> See All Exams
-            </button>
-            <button onClick={() => setIsEditModalOpen(true)} className="edit-exams-btn dashboard-action-btn">
-              <Pencil size={16} /> Edit Exams
-            </button>
           </div>
 
-        {/* Quick Stats Section */}
-        <section className="dashboard-section quick-stats-section grid-item grid-span-full">
-          <h3 className="section-heading">Your Progress At A Glance</h3>
-          <div className="stats-grid">
-            {quickStats.map(stat => (
-              <div key={stat.id} className="stat-card dashboard-card">
-                <div className="stat-icon">{stat.icon}</div>
-                <p className="stat-label">{stat.label}</p>
-                <p className="stat-value">{stat.value}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Quick Links Section */}
-        <section className="dashboard-section quick-links-section grid-item grid-span-full">
-          <h3 className="section-heading">Quick Actions</h3>
-          <div className="links-grid">
-            {quickLinks.map(link => (
-              <Link key={link.id} to={link.to} className="dashboard-link-card dashboard-card">
-                <div className="link-icon">{link.icon}</div>
-                <span className="link-name">{link.name}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Recent Activity/Notifications Section */}
-        <section className="dashboard-section recent-activity-section grid-item grid-span-full">
-          <h3 className="section-heading">Recent Activity & Notifications</h3>
-          <div className="activity-list dashboard-card">
-            {recentActivity.length > 0 ? (
-              recentActivity.map((activity, index) => (
-                <div key={index} className="activity-item">
-                  <span className="activity-icon"><Bell size={16} /></span>
-                  <p>{activity}</p>
+          {/* Countdown Widget */}
+          <div className="grid-item dashboard-card countdown-widget grid-span-2">
+            <CalendarClock size={40} className="widget-icon" /> {/* Using lucide-react CalendarClock icon */}
+            <h2 className="widget-title">Next Exam Countdown</h2>
+            {nextExam ? (
+              <>
+                <div className="countdown-content">
+                  {timerComponents.length > 0 ? timerComponents : <p className="no-upcoming-exams">Time's up! Exam passed.</p>}
                 </div>
-              ))
+                <div className="exam-details">
+                    {/* Display exam details here below countdown */}
+                    <h3>{nextExam.subject} - {nextExam.component}</h3>
+                    <p>Date: {formatDateWithOrdinal(nextExam.date)}</p>
+                    {nextExam.time && <p>Time: {nextExam.time} {nextExam.session}</p>}
+                </div>
+                {/* --- Action Buttons (Now inside countdown-widget, absolutely positioned) --- */}
+                <div className="countdown-actions">
+                    <button onClick={handleSeeAllExams} className="dashboard-action-btn">
+                      <Table size={16} /> See All
+                    </button>
+                    <button onClick={handleEditExams} className="dashboard-action-btn">
+                      <Pencil size={16} /> Edit
+                    </button>
+                </div>
+                {/* --- End Action Buttons --- */}
+              </>
             ) : (
-              <p className="no-activity">No recent activity yet. Start planning your studies!</p>
+              <div className="no-upcoming-exams">
+                <p>No upcoming exams scheduled.</p>
+                <button onClick={handleEditExams} className="dashboard-action-btn">
+                  <PlusCircle size={16} /> Add Exams
+                </button>
+              </div>
             )}
           </div>
-        </section>
 
-      </div> {/* End dashboard-grid-container */}
+          {/* Quick Stats Section */}
+          <section className="dashboard-section quick-stats-section grid-span-full">
+            <h3 className="section-heading">Your Progress At A Glance</h3>
+            <div className="stats-grid">
+              {quickStats.map(stat => (
+                <div key={stat.id} className="stat-card dashboard-card">
+                  <div className="stat-icon">{stat.icon}</div>
+                  <p className="stat-label">{stat.label}</p>
+                  <p className="stat-value">{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      {/* Edit Exams Modal */}
-      <EditExamsModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleSaveExams}
-        initialExams={exams} // Pass exams fetched from Firestore
-      />
+          {/* Quick Links Section */}
+          <section className="dashboard-section quick-links-section grid-span-full">
+            <h3 className="section-heading">Quick Actions</h3>
+            <div className="links-grid">
+              {quickLinks.map(link => (
+                <Link key={link.id} to={link.to} className="dashboard-link-card dashboard-card">
+                  <div className="link-icon">{link.icon}</div>
+                  <span className="link-name">{link.name}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
 
-      {/* Image Display Modal */}
-      <ImageDisplayModal
-        isOpen={isImageModalOpen}
-        onClose={() => setIsImageModalOpen(false)}
-        imageUrl={imageDataUrl}
-      />
+          {/* Recent Activity/Notifications Section */}
+          <section className="dashboard-section recent-activity-section grid-span-full">
+            <h3 className="section-heading">Recent Activity & Notifications</h3>
+            <div className="activity-list dashboard-card">
+              {recentActivity.length > 0 ? (
+                recentActivity.map((activity, index) => (
+                  <div key={activity.id} className="activity-item">
+                    <Bell size={16} className="activity-icon" /> {/* Using lucide-react Bell icon */}
+                    <p>{activity.description}</p>
+                    <span className="timestamp">{new Date(activity.timestamp).toLocaleString()}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="no-activity">No recent activity yet. Start planning your studies!</p>
+              )}
+            </div>
+          </section>
+
+        </div> {/* End dashboard-grid-container */}
+
+        {/* Modals rendered here, controlled by state */}
+        <EditExamsModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleSaveExams}
+          initialExams={exams} // Pass current exams for editing
+        />
+
+        <ImageDisplayModal
+          isOpen={isImageModalOpen}
+          onClose={() => setIsImageModalOpen(false)}
+          imageUrl={imageDataUrl}
+        />
+      </main>
+      {/* Footer component should also be here */}
     </div>
   );
 }

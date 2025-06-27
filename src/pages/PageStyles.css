@@ -442,7 +442,8 @@
     justify-content: space-between; /* Distribute space vertically */
     align-items: center;
     min-height: 220px; /* Match height of time widget */
-    /* Removed padding-bottom and position: relative as action buttons are separate grid items */
+    position: relative; /* REQUIRED for absolute positioning of buttons inside */
+    padding-bottom: 3.5rem; /* Make space for absolutely positioned buttons at the bottom */
 }
 
 .countdown-widget .widget-title {
@@ -507,45 +508,44 @@
     padding: 1rem;
 }
 
-/* Countdown Action Buttons (Edit & See All) - Now a separate grid item */
+/* Countdown Action Buttons (Edit & See All) - NOW ABSOLUTELY POSITIONED */
 .countdown-actions {
-    grid-column: 2 / 4; /* Stays consistent with Dashboard.jsx grid-column */
+    position: absolute; /* Position relative to .countdown-widget */
+    bottom: 1rem; /* Distance from the bottom of the countdown widget */
+    right: 1.5rem; /* Distance from the right of the countdown widget */
     display: flex;
-    gap: 0.5rem; /* Reduced gap between buttons */
+    gap: 0.5rem; /* Small gap between buttons */
     z-index: 10; /* Ensure they are above other elements if needed */
-    justify-content: flex-end; /* Align to right on desktop */
-    width: 100%;
-    margin-top: 1rem; /* Space from the widget above */
-    padding-right: 3rem; /* Matches grid container padding */
-    box-sizing: border-box; /* Include padding in width */
+    justify-content: flex-end; /* Align buttons to the right within their container */
+    /* Remove width/padding as they are now absolutely positioned */
 }
 
-/* Specific styling for the buttons in countdown-actions */
-/* --- MODIFIED FOR SMALLER BUTTONS --- */
+/* Specific styling for the buttons in countdown-actions - MADE THEM EVEN SMALLER AND SLEEKER */
 .countdown-actions .dashboard-action-btn {
     background-color: white; /* Solid white background */
     color: #555; /* Grey text */
-    padding: 0.3rem 0.7rem; /* Reduced padding for smaller size */
+    padding: 0.2rem 0.6rem; /* VERY REDUCED PADDING for smaller size */
     border: 1px solid #ff4d88; /* Pink border */
-    border-radius: 6px; /* Slightly smaller border radius */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
-    font-size: 0.7rem; /* Reduced font size */
+    border-radius: 4px; /* Even smaller border radius */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Subtle shadow */
+    font-size: 0.65rem; /* VERY REDUCED FONT SIZE */
     font-weight: 600; /* Make text bolder */
     text-decoration: none; /* Ensure no underline if it's a Link */
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem; /* Space between icon and text */
+    gap: 0.2rem; /* Reduced space between icon and text */
     transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
     cursor: pointer; /* Ensure cursor is pointer */
     white-space: nowrap; /* Prevent text from wrapping */
+    min-width: 80px; /* Ensure a minimum width so they don't collapse too much */
 }
 
 .countdown-actions .dashboard-action-btn:hover {
     background-color: #ff4d88; /* Pink background on hover */
     color: white; /* White text on hover */
     transform: translateY(-1px); /* Subtle lift */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Stronger shadow on hover */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Stronger shadow on hover */
 }
 
 .countdown-actions .dashboard-action-btn svg { /* Icon in these buttons */
@@ -554,14 +554,13 @@
     background-clip: unset;
     stroke: currentColor; /* Ensure SVG strokes with currentColor */
     fill: none; /* Ensure SVG is outlined */
-    width: 20px; /* Reduced size for quick action icons */
-    height: 20px; /* Reduced size for quick action icons */
+    width: 16px; /* Reduced size for quick action icons */
+    height: 16px; /* Reduced size for quick action icons */
     transition: color 0.2s; /* Smooth color transition for icon */
 }
 .countdown-actions .dashboard-action-btn:hover svg {
     color: white; /* Icon turns white on hover */
 }
-/* --- END MODIFIED FOR SMALLER BUTTONS --- */
 
 
 /* General Dashboard Section Styling (for Quick Stats, Links, Activity) */
@@ -1746,6 +1745,7 @@ html.dark, body.dark, .app.dark {
     display: none;
 }
 
+/* Dark mode for countdown-actions (now absolutely positioned) */
 .app.dark .countdown-actions .dashboard-action-btn {
     background-color: #3a3a3a;
     color: #c0c0c0;
@@ -2236,17 +2236,7 @@ html.dark, body.dark, .app.dark {
     }
 
     /* Countdown actions will naturally flow as a separate grid item */
-    .countdown-actions {
-        grid-column: span 2; /* Span full width on 2-column layout */
-        justify-content: center; /* Center buttons */
-        margin-top: 1rem;
-        padding-right: 2rem; /* Match new grid padding */
-    }
-
-    .dashboard-action-btn {
-        width: auto; /* Allow buttons to size content */
-        flex-grow: 1; /* Grow equally */
-    }
+    /* REMOVED: .countdown-actions is now inside countdown-widget */
 
     .dashboard-page .page-title,
     .dashboard-page .page-description {
@@ -2363,7 +2353,7 @@ html.dark, body.dark, .app.dark {
         flex-wrap: nowrap !important; /* This is absolutely critical for no wrapping */
         justify-content: center !important;
         gap: 0.5rem !important; /* Reduce gap to give segments more space */
-        width: 100% !important; /* Ensure it takes full available width */
+        width: 100% !important; /* Explicitly take all available width */
     }
 
     .countdown-widget .countdown-segment {
@@ -2386,25 +2376,26 @@ html.dark, body.dark, .app.dark {
         text-align: center;
     }
 
+    /* Countdown actions - now inside the widget, adjust positioning for mobile */
     .countdown-actions {
-        position: static; /* Ensure static positioning on mobile */
-        margin-top: 1rem; /* Add margin after content */
-        justify-content: center; /* Center buttons */
-        width: 100%;
-        padding: 0 1rem; /* Add horizontal padding */
-        box-sizing: border-box;
-        flex-direction: row; /* Keep buttons horizontal if possible */
-        gap: 0.3rem; /* Further reduce gap on small screens */
+        position: absolute;
+        bottom: 0.8rem; /* Closer to the bottom on small screens */
+        right: 1rem; /* Closer to the right on small screens */
+        gap: 0.3rem; /* Even smaller gap */
+        flex-direction: row; /* Keep them horizontal if space allows */
+        flex-wrap: wrap; /* Allow wrapping if really squeezed */
+        justify-content: flex-end; /* Keep to the right */
     }
     .countdown-actions .dashboard-action-btn {
-        flex-grow: 1; /* Allow buttons to grow and fill space */
-        max-width: 150px; /* Limit their max width */
-        padding: 0.25rem 0.5rem; /* Even smaller padding */
-        font-size: 0.65rem; /* Even smaller font size */
+        flex-grow: 0; /* Do not grow */
+        width: auto; /* Auto width */
+        min-width: unset; /* Remove min-width constraint */
+        padding: 0.2rem 0.5rem; /* Even smaller padding */
+        font-size: 0.6rem; /* Even smaller font size */
     }
     .countdown-actions .dashboard-action-btn svg {
-        width: 18px; /* Smaller icon size */
-        height: 18px;
+        width: 14px; /* Smaller icon size */
+        height: 14px;
     }
 
 

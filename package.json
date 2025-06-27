@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/ascendia-app/ascendia#readme",
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@vitejs/plugin-react": "^4.6.0",
     "firebase": "^11.9.1",
     "lucide-react": "^0.523.0",
