@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { getTimeRemaining } from '../utils/dateUtils'; // Corrected import name
-import { Settings, Eye } from 'lucide-react'; // Using lucide-react for icons
+import { getTimeRemaining } from '../utils/dateUtils';
+import { Settings, Eye } from 'lucide-react';
+import PropTypes from 'prop-types';
 
-// Countdown component displays a countdown to the nearest exam.
-// It also provides buttons to manage exams.
 const Countdown = ({ exams, onEditExams, onSeeAllExams }) => {
     const [nearestExam, setNearestExam] = useState(null);
     const [timeLeft, setTimeLeft] = useState({
         days: 0,
         hours: 0,
         minutes: 0,
-        seconds: 0
+        seconds: 0,
     });
 
-    // Effect to find the nearest upcoming exam and set up the countdown
     useEffect(() => {
         if (!exams || exams.length === 0) {
             setNearestExam(null);
             return;
         }
 
-        // Filter for upcoming exams and sort to find the nearest one
         const now = new Date();
-        const upcoming = exams.filter(exam => new Date(exam.date) > now);
+        const upcoming = exams.filter(exam => {
+            const examDate = new Date(exam.date);
+            return !isNaN(examDate) && examDate > now;
+        });
         upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         if (upcoming.length > 0) {
@@ -30,53 +30,53 @@ const Countdown = ({ exams, onEditExams, onSeeAllExams }) => {
         } else {
             setNearestExam(null);
         }
-    }, [exams]); // Re-run when exams data changes
+    }, [exams]);
 
-    // Effect to update the countdown time every second
     useEffect(() => {
         if (!nearestExam) {
             return;
         }
 
-        const timer = setInterval(() => {
-            // Use the correctly imported getTimeRemaining function
+        const updateTimer = () => {
             const newTimeLeft = getTimeRemaining(nearestExam.date);
-            // If all time components are zero or negative, clear interval and set to zero
-            if (Object.values(newTimeLeft).every(val => val <= 0)) {
-                clearInterval(timer);
-                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-                setNearestExam(null); // Clear the nearest exam as it has passed
-            } else {
-                setTimeLeft(newTimeLeft);
+            if (!newTimeLeft || Object.values(newTimeLeft).some(val => isNaN(val))) {
+                console.error('Invalid time remaining data:', newTimeLeft);
+                return;
             }
-        }, 1000);
+            if (Object.values(newTimeLeft).every(val => val <= 0)) {
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                setNearestExam(null);
+                return;
+            }
+            setTimeLeft(newTimeLeft);
+        };
 
-        // Cleanup function to clear the interval when component unmounts or exam changes
+        updateTimer(); // Run immediately
+        const timer = setInterval(updateTimer, 1000);
+
         return () => clearInterval(timer);
-    }, [nearestExam]); // Re-run when the nearest exam changes
+    }, [nearestExam]);
 
     return (
         <div className="dashboard-card countdown-widget grid-item">
             <h3 className="widget-title">Next Exam</h3>
             {nearestExam ? (
                 <>
-                    {/* This div is the flex container for horizontal arrangement */}
                     <div className="countdown-content">
-                        {/* Each of these is a flex item that stacks its own content vertically */}
                         <div className="countdown-segment">
-                            <span className="countdown-value">{timeLeft.days}</span>
+                            <span className="countdown-value">{timeLeft.days.toString().padStart(2, '0')}</span>
                             <span className="countdown-label">Days</span>
                         </div>
                         <div className="countdown-segment">
-                            <span className="countdown-value">{timeLeft.hours}</span>
+                            <span className="countdown-value">{timeLeft.hours.toString().padStart(2, '0')}</span>
                             <span className="countdown-label">Hours</span>
                         </div>
                         <div className="countdown-segment">
-                            <span className="countdown-value">{timeLeft.minutes}</span>
+                            <span className="countdown-value">{timeLeft.minutes.toString().padStart(2, '0')}</span>
                             <span className="countdown-label">Minutes</span>
                         </div>
                         <div className="countdown-segment">
-                            <span className="countdown-value">{timeLeft.seconds}</span>
+                            <span className="countdown-value">{timeLeft.seconds.toString().padStart(2, '0')}</span>
                             <span className="countdown-label">Seconds</span>
                         </div>
                     </div>
@@ -89,16 +89,23 @@ const Countdown = ({ exams, onEditExams, onSeeAllExams }) => {
             )}
             <div className="countdown-actions">
                 <button onClick={onEditExams} className="dashboard-action-btn">
-                    <Settings size={20} strokeWidth={2} /> {/* Settings icon */}
-                    Edit Exams
+                    <Settings size={20} strokeWidth={2} /> Edit Exams
                 </button>
                 <button onClick={onSeeAllExams} className="dashboard-action-btn">
-                    <Eye size={20} strokeWidth={2} /> {/* Eye icon */}
-                    See All
+                    <Eye size={20} strokeWidth={2} /> See All
                 </button>
             </div>
         </div>
     );
+};
+
+Countdown.propTypes = {
+    exams: PropTypes.arrayOf(PropTypes.shape({
+        date: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+    })),
+    onEditExams: PropTypes.func.isRequired,
+    onSeeAllExams: PropTypes.func.isRequired,
 };
 
 export default Countdown;

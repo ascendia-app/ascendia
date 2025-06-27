@@ -188,7 +188,6 @@ const ImageDisplayModal = ({ isOpen, onClose, imageUrl }) => {
   );
 };
 
-
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exams, setExams] = useState([]); // Initialize as empty array
@@ -345,7 +344,6 @@ function Dashboard() {
       }
     }
 
-
     // Calculate total width of columns
     let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
 
@@ -358,7 +356,6 @@ function Dashboard() {
         colWidths = colWidths.map(w => w + uniformAdd);
         totalColWidth = minTableWidth; // Set total width to minTableWidth
     }
-
 
     const tableHeight = headerHeight + exams.length * rowHeight;
     canvas.width = totalColWidth;
@@ -403,7 +400,6 @@ function Dashboard() {
     setImageDataUrl(image);
     setIsImageModalOpen(true); // Open the modal
   };
-
 
   // Mock data (keep these for other sections)
   // Updated 'Upcoming Exam' value to reflect nextExam state
@@ -529,7 +525,6 @@ function Dashboard() {
             )}
           </div>
         </section>
-
       </div> {/* End dashboard-grid-container */}
 
       {/* Exam Editor Modal */}
