@@ -440,8 +440,7 @@
     justify-content: space-between; /* Distribute space vertically */
     align-items: center;
     min-height: 220px; /* Match height of time widget */
-    position: relative; /* Needed for positioning action buttons */
-    padding-bottom: 4rem; /* Make space for absolutely positioned buttons */
+    /* Removed padding-bottom and position: relative as action buttons are separate grid items */
 }
 
 .countdown-widget .widget-title {
@@ -459,7 +458,7 @@
     justify-content: center; /* Centers the segments horizontally */
     gap: 0.3rem; /* Further reduced gap between each segment for tighter fit */
     width: 100%; /* Explicitly take all available width */
-    flex-wrap: nowrap; /* Prevent wrapping on larger screens, force side-by-side */
+    flex-wrap: nowrap !important; /* Force no wrapping across all screen sizes */
     margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
 }
 
@@ -478,12 +477,11 @@
     flex-grow: 1; /* Allow segments to grow and take available space */
     overflow: hidden; /* Crucial: Hides overflowing content, forcing the element to shrink */
     box-sizing: border-box; /* Ensure padding/border are included in width calculation */
-    /* Removed max-width to give more flexibility */
 }
 
 .countdown-widget .countdown-value {
     font-family: 'Poppins', sans-serif;
-    font-size: 1rem; /* Even smaller font for values */
+    font-size: 1rem; /* Base font size */
     font-weight: 700;
     color: #ff4d88; /* Pinkish orange */
     line-height: 1.2; /* Adjust line height for better spacing */
@@ -491,7 +489,7 @@
 }
 
 .countdown-widget .countdown-label {
-    font-size: 0.45rem; /* Even smaller font for labels */
+    font-size: 0.45rem; /* Base font size */
     color: #777;
     text-transform: uppercase;
 }
@@ -512,14 +510,17 @@
     padding: 1rem;
 }
 
-/* Countdown Action Buttons (Edit & See All) - Positioned at bottom right */
+/* Countdown Action Buttons (Edit & See All) - Now a separate grid item */
 .countdown-actions {
-    position: absolute; /* Position relative to .countdown-widget */
-    bottom: 1rem;
-    right: 1rem;
+    grid-column: 2 / 4; /* Stays consistent with Dashboard.jsx grid-column */
     display: flex;
     gap: 0.5rem; /* Reduced gap between buttons */
     z-index: 10; /* Ensure they are above other elements if needed */
+    justify-content: flex-end; /* Align to right on desktop */
+    width: 100%;
+    margin-top: 1rem; /* Space from the widget above */
+    padding-right: 3rem; /* Matches grid container padding */
+    box-sizing: border-box; /* Include padding in width */
 }
 
 /* Specific styling for the buttons in countdown-actions */
@@ -1932,7 +1933,8 @@ html.dark, body.dark, .app.dark {
         grid-column: span 1; /* Make countdown span 1 column on tablets */
     }
 
-    .countdown-actions { /* Adjust positioning for smaller screens if needed */
+    /* Countdown actions will naturally flow as a separate grid item */
+    .countdown-actions {
         grid-column: span 2; /* Span full width on 2-column layout */
         justify-content: center; /* Center buttons */
         margin-top: 1rem;
@@ -2017,27 +2019,32 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        flex-wrap: wrap; /* Re-enable wrapping on small screens for countdown segments */
-        justify-content: space-around; /* Distribute segments */
-        gap: 0.5rem; /* Smaller gap */
+        flex-wrap: nowrap !important; /* IMPORTANT: Force no wrapping on smaller screens */
+        justify-content: center; /* Center segments */
+        gap: 0.2rem; /* Reduce gap even more */
     }
 
     .countdown-widget .countdown-segment {
-        min-width: 60px; /* Adjust min-width for mobile segments */
-        padding: 0.6rem 0.3rem; /* Adjust padding */
+        min-width: 50px; /* Ensure segments can shrink */
+        padding: 0.5rem 0.2rem; /* Adjust padding for tightness */
     }
 
     .countdown-widget .countdown-value {
-        font-size: 1.2rem; /* Smaller font on mobile */
+        font-size: 0.9rem; /* Smaller font on mobile */
+    }
+
+    .countdown-widget .countdown-label {
+        font-size: 0.4rem; /* Even smaller font on mobile */
     }
 
     .countdown-actions {
-        position: static; /* Remove absolute positioning */
+        position: static; /* Ensure static positioning on mobile */
         margin-top: 1rem; /* Add margin after content */
         justify-content: center; /* Center buttons */
         width: 100%;
         padding: 0 1rem; /* Add horizontal padding */
         box-sizing: border-box;
+        flex-direction: row; /* Keep buttons horizontal if possible */
     }
     .countdown-actions .dashboard-action-btn {
         flex-grow: 1; /* Allow buttons to grow and fill space */
@@ -2098,7 +2105,14 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-segment {
-        min-width: 50px; /* Even smaller min-width for very small screens */
+        min-width: 45px; /* Even smaller min-width for very small screens */
+        padding: 0.4rem 0.1rem; /* Reduced padding further */
+    }
+    .countdown-widget .countdown-value {
+        font-size: 0.8rem; /* Even smaller font on very small screens */
+    }
+    .countdown-widget .countdown-label {
+        font-size: 0.35rem; /* Even smaller font on very small screens */
     }
 
     .countdown-actions {
