@@ -332,7 +332,10 @@ html, body, #root {
   /* NEW: Plain pink color with dropshadow, no gradient web clipping */
   color: #ff4d88; /* Plain pink color */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Subtle drop shadow */
-  /* Removed: background, -webkit-background-clip, background-clip, -webkit-text-fill-color */
+  background: none !important; /* Explicitly remove any background */
+  -webkit-background-clip: unset !important; /* Explicitly remove webkit clipping */
+  background-clip: unset !important; /* Explicitly remove background clipping */
+  -webkit-text-fill-color: unset !important; /* Explicitly remove text fill color override */
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
