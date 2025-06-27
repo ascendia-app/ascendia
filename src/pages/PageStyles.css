@@ -35,6 +35,27 @@
     margin-bottom: 1rem;
 }
 
+/* Dashboard & Syllabus Common Card Style */
+.dashboard-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 180px; /* Adjust min-height for better card appearance */
+    border: 1px solid #eee;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.12);
+}
+
 /* Authentication Forms (Register/Login) */
 .auth-form {
     background-color: white;
@@ -60,7 +81,7 @@
     font-size: 1rem;
 }
 
-.form-group input {
+.form-group input, .form-group select { /* Added select for form-group styling */
     width: 100%;
     padding: 0.8rem 1rem;
     border: 1px solid #ddd;
@@ -69,10 +90,39 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-group input:focus {
+.form-group input:focus, .form-group select:focus {
     outline: none;
     border-color: #ff8c42;
     box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+/* Inline form groups for modals */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+.form-group-inline label {
+    flex-shrink: 0;
+    width: 80px; /* Fixed width for labels */
+    text-align: right;
+    margin-bottom: 0; /* Override default margin */
+}
+.form-group-inline input, .form-group-inline select {
+    flex-grow: 1; /* Allow input/select to take available space */
+    min-width: 150px; /* Ensure they don't get too small */
+}
+
+/* Compulsory field indicator */
+.compulsory-field::after {
+    content: '*';
+    color: #dc3545; /* Red asterisk */
+    margin-left: 4px;
+    font-weight: normal;
+    vertical-align: super;
+    font-size: 0.8em;
 }
 
 .submit-button {
@@ -141,7 +191,6 @@
     color: #dc3545; /* Red for taken */
 }
 
-
 .auth-footer-links {
     margin-top: 1.5rem;
     font-size: 1rem;
@@ -165,7 +214,7 @@
     text-decoration: underline;
 }
 
-/* Download Section */
+/* Download Section - Used in GettingStarted and Download pages */
 .download-section {
     width: 100%;
     max-width: 450px;
@@ -189,10 +238,10 @@
     width: 100%;
 }
 
-/* Updated styles for direct download <a> tags */
+/* Styles for direct download <a> tags used in GettingStarted */
 .gs-button.download-windows,
 .gs-button.download-macos {
-    display: flex; /* Changed from inline-block to flex */
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem 1.5rem;
@@ -200,11 +249,11 @@
     font-family: 'Poppins', sans-serif;
     font-size: 1.1rem;
     font-weight: 600;
-    text-decoration: none; /* Important for <a> tags */
+    text-decoration: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
     cursor: pointer;
     color: white;
-    gap: 0.75rem; /* Space between icon and text */
+    gap: 0.75rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
@@ -229,12 +278,48 @@
 }
 
 .gs-button .icon {
-    display: flex; /* Ensure SVG icon is centered */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Back to Home Button */
+/* Styles for detailed download links on the /download page */
+.download-links-detailed {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.download-link-detailed {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.download-link-detailed:hover {
+    background-color: #e6e6e6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.download-link-detailed .icon {
+    color: #6200EE; /* Consistent icon color */
+}
+
+
+/* Back to Home Button (General use) */
 .back-to-home-button {
     display: inline-block;
     margin-top: 3rem;
@@ -253,44 +338,295 @@
     color: #333;
 }
 
-
-/* Responsive adjustments for mobile */
-@media (max-width: 768px) {
-    .page-title {
-        font-size: 2.2rem;
-    }
-
-    .page-description {
-        font-size: 1rem;
-    }
-
-    .auth-form, .download-section {
-        padding: 1.5rem;
-        max-width: 95%; /* Adjust width for smaller screens */
-    }
-
-    .form-group label {
-        font-size: 0.9rem;
-    }
-
-    .form-group input {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    .submit-button {
-        font-size: 1.1rem;
-        padding: 0.8rem;
-    }
-
-    .gs-button.download-windows,
-    .gs-button.download-macos {
-        font-size: 1rem;
-        padding: 0.8rem 1rem;
-    }
+/* --- DASHBOARD SPECIFIC STYLES --- */
+.dashboard-page {
+    align-items: flex-start;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
-/* --- SYLLABUS SPECIFIC STYLES (FROM PREVIOUS UPDATES) --- */
+.dashboard-grid-container { /* Main grid for dashboard layout */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns by default */
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 2rem;
+    padding: 0 1rem; /* Added padding to ensure content isn't flush with edges */
+}
+
+.grid-item {
+    /* Basic style for all direct children of dashboard-grid-container */
+    min-height: 150px; /* Ensure a baseline height */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.grid-span-2 {
+    grid-column: span 2;
+}
+
+.grid-span-full {
+    grid-column: 1 / -1; /* Spans all columns */
+}
+
+/* Time Widget */
+.time-widget {
+    background: linear-gradient(to right, #ff8c42, #ff4d88); /* Orange to Pink gradient */
+    color: white;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 220px; /* Make it taller */
+}
+
+.time-widget .widget-icon {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.time-widget .time-display {
+    text-align: center;
+}
+
+.time-widget .current-date {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.time-widget .current-time {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Countdown Widget */
+.countdown-widget {
+    background-color: white; /* Explicitly white for contrast */
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 220px; /* Match height of time widget */
+}
+
+.countdown-widget .widget-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.countdown-widget .countdown-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.countdown-widget .countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.countdown-widget .countdown-segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 0.7rem 0.5rem;
+    border-radius: 8px;
+    min-width: 60px; /* Ensure segments have minimum width */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.countdown-widget .countdown-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #6200EE; /* Purple */
+    line-height: 1;
+}
+
+.countdown-widget .countdown-label {
+    font-size: 0.8rem;
+    color: #777;
+    text-transform: uppercase;
+}
+
+.countdown-widget .exam-details {
+    font-size: 0.95rem;
+    color: #555;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    max-width: 90%; /* Prevent text from being too wide */
+}
+
+.countdown-widget .no-upcoming-exams {
+    font-size: 1rem;
+    color: #777;
+    font-style: italic;
+    padding: 1rem;
+}
+
+/* Countdown Action Buttons (Edit & See All) */
+.countdown-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0; /* Add padding for separation */
+    grid-column: 1 / -1; /* Span full width by default */
+    background-color: white; /* Match card background */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    align-items: center;
+}
+
+.dashboard-action-btn {
+    display: flex; /* Use flex for icon and text alignment */
+    align-items: center;
+    gap: 0.5rem; /* Space between icon and text */
+    background-color: #ff4d88;
+    color: white;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none; /* For Link components */
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    border: none; /* Ensure no default button border */
+    cursor: pointer;
+}
+
+.dashboard-action-btn:hover {
+    background-color: #e03b70;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* General Dashboard Section Styling (for Quick Stats, Links, Activity) */
+.dashboard-section {
+    margin-top: 2rem; /* Space between sections */
+    width: 100%;
+}
+
+.dashboard-section .section-heading {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #ffcc33;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* Quick Stats Section */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    min-height: 150px;
+}
+
+.stat-icon {
+    margin-bottom: 0.5rem;
+    color: #6200EE; /* Purple for icons */
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 0.2rem;
+}
+
+.stat-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ff4d88; /* Pink */
+}
+
+/* Quick Links Section */
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.dashboard-link-card {
+    /* Inherits dashboard-card */
+    text-decoration: none; /* Remove underline for links */
+    color: inherit; /* Inherit text color */
+    padding: 1.2rem;
+    min-height: 120px;
+}
+
+.dashboard-link-card .link-icon {
+    margin-bottom: 0.5rem;
+    color: #6200EE;
+}
+
+.dashboard-link-card .link-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+/* Recent Activity Section */
+.activity-list {
+    text-align: left; /* Align text within activity list */
+    padding: 1.5rem;
+    min-height: auto; /* Allow height to adjust based on content */
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start; /* Align icon and text at the top */
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #eee; /* Light dashed separator */
+}
+
+.activity-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.activity-icon {
+    color: #ff8c42; /* Orange for notification icon */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    margin-top: 2px; /* Small adjustment for alignment */
+}
+
+.activity-item p {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+    margin-bottom: 0; /* Remove default paragraph margin */
+}
+
+.no-activity {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+    padding: 1rem;
+}
+
+
+/* --- SYLLABUS SPECIFIC STYLES --- */
 
 .syllabus-page {
   max-width: 100%;
@@ -375,7 +711,7 @@
 
 .dropdown-arrow-icon {
   position: absolute;
-  right: 15px; /* Adjusted to be more to the right */
+  right: 15px; /* Adjusted to be more to the right, from 10px or 25px */
   top: 50%;
   transform: translateY(-50%);
   color: #999;
@@ -720,7 +1056,117 @@
   font-style: italic;
 }
 
-/* Notes Modal Specific Styles (reusing existing modal structure) */
+/* Modal General Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px; /* Default max-width for modals */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.modal-body {
+  flex-grow: 1;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  overflow-y: auto; /* Enable scrolling for modal content if it gets too long */
+  max-height: 70vh; /* Limit modal body height */
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.modal-cancel-btn, .modal-save-btn {
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.modal-cancel-btn {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.modal-save-btn {
+  background-color: #4CAF50; /* Green for save */
+  color: white;
+  border: none;
+}
+
+.modal-save-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+/* Specific Modal Styles */
 .notes-modal-content {
   max-width: 600px;
 }
@@ -740,7 +1186,6 @@
   box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
 }
 
-/* Confirmation Modal Specific Styles */
 .confirmation-modal-content {
   max-width: 450px; /* Smaller for confirmation */
   text-align: center;
@@ -764,23 +1209,153 @@
 .confirmation-modal-content .modal-delete-btn:hover {
   background-color: #c82333;
 }
-.confirmation-modal-content .modal-cancel-btn {
-  background-color: #f0f0f0;
-  color: #666;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.7rem 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+
+/* Exam Editor Modal specific */
+.exam-entry {
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
 }
-.confirmation-modal-content .modal-cancel-btn:hover {
-  background-color: #e0e0e0;
-  color: #333;
+.exam-entry .form-group-inline {
+    flex: 1 1 calc(50% - 0.5rem); /* Two columns on larger screens */
+}
+.exam-entry .form-group-inline label {
+    width: 60px; /* Adjust label width within exam entry */
+}
+.add-exam-btn {
+    background-color: #6200EE;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: background-color 0.2s, transform 0.2s;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+}
+.add-exam-btn:hover {
+    background-color: #3700B3;
+    transform: translateY(-1px);
+}
+.remove-exam-btn {
+    background-color: #dc3545; /* Red for remove */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.remove-exam-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+.no-exams-message {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 1rem;
+}
+
+/* Image Display Modal specific */
+.image-modal-content {
+    max-width: 900px;
+    max-height: 90vh; /* Limit overall modal height */
+    overflow: hidden; /* Hide scrollbar for the modal itself */
+}
+
+.image-modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto; /* Scroll for the image content */
+    flex-grow: 1;
+}
+
+.generated-image {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Remove extra space below image */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modal-download-btn {
+    background-color: #6200EE; /* Purple */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.modal-download-btn:hover {
+    background-color: #3700B3;
+    transform: translateY(-1px);
 }
 
 
-/* Responsive Adjustments for Syllabus Page */
+/* Responsive Adjustments for ALL Pages */
 @media (max-width: 992px) {
+  /* Dashboard specific responsive */
+  .dashboard-grid-container {
+    grid-template-columns: 1fr; /* Stack cards on smaller screens */
+    padding: 0 1rem;
+  }
+  .dashboard-card {
+    min-height: auto; /* Allow height to adjust */
+  }
+  .grid-span-2, .grid-span-full {
+      grid-column: span 1; /* Override span on small screens */
+  }
+  .time-widget, .countdown-widget {
+      min-height: 180px; /* Smaller height on mobile */
+  }
+  .countdown-actions {
+    flex-direction: column; /* Stack buttons */
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+  .dashboard-action-btn {
+    width: 100%; /* Full width for stacked buttons */
+    justify-content: center;
+  }
+  .dashboard-section .section-heading {
+    font-size: 1.5rem;
+  }
+  .stats-grid, .links-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Smaller minwidth for mobile grids */
+  }
+  .stat-card, .dashboard-link-card {
+    min-height: 100px;
+    padding: 1rem;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  .link-name {
+    font-size: 1rem;
+  }
+
+  /* Syllabus specific responsive */
   .syllabus-grid-container {
     grid-template-columns: 1fr;
     padding: 0 1.5rem;
@@ -810,39 +1385,93 @@
     flex-direction: column;
     align-items: flex-start;
   }
-}
+  .exam-entry .form-group-inline {
+    flex: 1 1 100%; /* Stack inputs in exam editor modal */
+    text-align: left;
+  }
+  .exam-entry .form-group-inline label {
+    width: auto; /* Auto width for stacked labels */
+    text-align: left;
+  }
 
-@media (max-width: 768px) {
-  .syllabus-page {
-    padding: 1rem;
+  /* General page adjustments */
+  .page-title {
+      font-size: 2.2rem;
   }
-  .panel-heading {
-    font-size: 1.4rem;
+  .page-description {
+      font-size: 1rem;
   }
-  .add-topic-section, .level-select-section { /* Added level-select-section */
+  .auth-form, .download-section {
+      padding: 1.5rem;
+      max-width: 95%;
+  }
+  .form-group label {
+      font-size: 0.9rem;
+  }
+  .form-group input {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.9rem;
+  }
+  .submit-button {
+      font-size: 1.1rem;
+      padding: 0.8rem;
+  }
+  .gs-button.download-windows,
+  .gs-button.download-macos {
+      font-size: 1rem;
+      padding: 0.8rem 1rem;
+  }
+  .add-topic-section, .level-select-section {
     flex-direction: column;
   }
-  .add-topic-btn, .add-selected-subjects-btn { /* Added add-selected-subjects-btn */
+  .add-topic-btn, .add-selected-subjects-btn {
     width: 100%;
     justify-content: center;
   }
-  .subject-item, .syllabus-item-card, .predefined-subject-item { /* Added predefined-subject-item */
+  .subject-item, .syllabus-item-card, .predefined-subject-item {
     padding: 0.6rem 0.8rem;
   }
   .item-text, .status-dropdown, .notes-btn, .delete-topic-btn {
     font-size: 0.95rem;
   }
-  /* Adjusted specific form elements for modals if necessary */
-  .form-group-inline {
+}
+
+@media (max-width: 576px) {
+  .page-container {
+    padding: 1rem;
+  }
+  .page-title {
+    font-size: 1.8rem;
+  }
+  .dashboard-card h3, .panel-heading {
+    font-size: 1.3rem;
+  }
+  .dashboard-action-btn {
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+  }
+  .modal-content {
+    padding: 1rem;
+  }
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+  .modal-footer {
     flex-direction: column;
     gap: 0.5rem;
   }
-  .form-group-inline label {
+  .modal-cancel-btn, .modal-save-btn, .confirmation-modal-content .modal-delete-btn {
     width: 100%;
-    text-align: left;
+    margin-left: 0 !important; /* Override margin for stacking */
   }
-  .remove-exam-btn {
-    width: 100%;
-    align-self: center;
+  .countdown-widget .countdown-segment {
+    min-width: 50px;
+    padding: 0.5rem 0.3rem;
+  }
+  .countdown-widget .countdown-value {
+    font-size: 1.5rem;
+  }
+  .countdown-widget .countdown-label {
+    font-size: 0.7rem;
   }
 }
