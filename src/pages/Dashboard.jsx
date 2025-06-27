@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation
 import './PageStyles.css'; // Assuming common styles for pages
 import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download } from 'lucide-react'; // Import Lucide React icons
 
@@ -197,6 +197,8 @@ function Dashboard() {
   const [timeRemaining, setTimeRemaining] = useState({});
   const [nextExam, setNextExam] = useState(null);
 
+  const location = useLocation(); // Get current location object
+
   // Function to find the next upcoming exam - moved outside useEffect for reusability
   const findNextExam = useCallback((currentExams) => {
     const now = new Date().getTime();
@@ -228,28 +230,20 @@ function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Effect to load exams from localStorage on component mount and on navigation
-  // The location.pathname ensures this re-runs if the user navigates back to the dashboard
+  // Effect to load exams from localStorage on component mount AND when location.pathname changes
   useEffect(() => {
+    console.log("Dashboard: Reloading exams due to location change or mount.");
     try {
       const savedExams = localStorage.getItem('userExams');
       const loadedExams = savedExams ? JSON.parse(savedExams) : [];
       setExams(loadedExams);
       findNextExam(loadedExams); // Immediately find next exam after loading
     } catch (error) {
-      console.error("Failed to parse exams from localStorage:", error);
+      console.error("Dashboard: Failed to parse exams from localStorage:", error);
       setExams([]);
       findNextExam([]); // Reset if error
     }
-    // No dependency on `location.pathname` directly in this component,
-    // as App.jsx handles Router and component rendering.
-    // React Router typically remounts the component if the key changes,
-    // but the issue might be due to memoization or fast re-renders.
-    // The `findNextExam(loadedExams)` call ensures we always process the latest data.
-    // For a more explicit re-fetch on navigation, if needed,
-    // you might pass `location.pathname` as a prop from App.jsx, or use a context.
-    // However, the current structure *should* trigger this on component (re)mount.
-  }, []); // Empty array, so it runs once on mount. `findNextExam` is called within.
+  }, [location.pathname, findNextExam]); // Dependency on location.pathname to re-run on browser back/forward
 
   // Effect to save exams to localStorage whenever the exams state changes
   useEffect(() => {
@@ -363,7 +357,7 @@ function Dashboard() {
         // If the calculated total width is less than minTableWidth, expand columns proportionally
         const diff = minTableWidth - totalColWidth;
         const uniformAdd = diff / colWidths.length;
-        colWidths = colWidths.map(w => w + uniformAdd);
+        colWidths = colColWidths.map(w => w + uniformAdd);
         totalColWidth = minTableWidth; // Set total width to minTableWidth
     }
 
