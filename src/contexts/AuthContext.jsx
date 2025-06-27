@@ -9,10 +9,36 @@ const __firebase_config = typeof window !== 'undefined' && window.__firebase_con
 const __initial_auth_token = typeof window !== 'undefined' && window.__initial_auth_token !== undefined ? window.__initial_auth_token : null;
 
 // Initialize Firebase App
-const firebaseConfig = JSON.parse(__firebase_config);
 let app, authInstance, dbInstance;
+let firebaseConfig = {};
 
 try {
+    firebaseConfig = JSON.parse(__firebase_config);
+    // Add console log for debugging the incoming config
+    console.log("Firebase Init Debug: Canvas-provided config:", firebaseConfig);
+
+    // CRITICAL FALLBACK FOR INVALID/EMPTY CONFIG:
+    // If the parsed config is empty or doesn't have an apiKey, it means Canvas didn't provide it correctly.
+    // In this case, use your hardcoded Firebase config for development/debugging.
+    // YOU WILL NEED TO SECURE THIS FOR PRODUCTION DEPLOYMENTS IF NOT USING CANVAS ENV VARIABLES.
+    if (!firebaseConfig || Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
+        console.warn("Firebase Init Debug: Canvas-provided config is empty or invalid. Falling back to hardcoded config.");
+        // !! YOUR ACTUAL FIREBASE PROJECT CONFIG IS INSERTED BELOW !!
+        firebaseConfig = {
+            apiKey: "AIzaSyC5xNK1gThitsLgSnzF7iujPKUEsnqA1jA",
+            authDomain: "ascendia-app.firebaseapp.com",
+            projectId: "ascendia-app",
+            storageBucket: "ascendia-app.firebasestorage.app",
+            messagingSenderId: "537890941125",
+            appId: "1:537890941125:web:b3bdbd902b5ac7b5d6e8ac"
+            // Note: measurementId was not in your provided config, so it's omitted here.
+        };
+    }
+    console.log("Firebase Init Debug: Final Firebase Config = ", firebaseConfig);
+    console.log("Firebase Init Debug: Final Resolved App ID = ", __app_id);
+    console.log("Firebase Init Debug: Initial Auth Token provided = ", !!__initial_auth_token);
+
+
     app = initializeApp(firebaseConfig);
     authInstance = getAuth(app);
     dbInstance = getFirestore(app);
@@ -24,7 +50,7 @@ try {
 
 // Export db and appId for direct import where needed
 export const db = dbInstance;
-export const appId = __app_id;
+export const appId = __app_id; // This is the Canvas-provided app ID
 
 const AuthContext = createContext();
 
@@ -42,24 +68,22 @@ export function AuthProvider({ children }) {
             if (user) {
                 // User is signed in.
                 setCurrentUser(user);
-                // console.log("Firebase Auth State Changed: User is signed in:", user.uid);
+                console.log("Firebase Auth State Changed: User is signed in:", user.uid);
             } else {
                 // User is signed out.
                 setCurrentUser(null);
-                // console.log("Firebase Auth State Changed: User is signed out. Attempting anonymous sign-in.");
+                console.log("Firebase Auth State Changed: User is signed out. Attempting anonymous sign-in.");
                 try {
                     // Fallback to anonymous sign-in if no user and no initial token or token expired
-                    if (!__initial_auth_token) {
-                        // console.log("Anonymous sign-in as no initial auth token provided.");
+                    // Only try anonymous if authInstance is defined
+                    if (authInstance) {
                         await signInAnonymously(authInstance);
+                        console.log("AuthContext: Signed in anonymously.");
                     } else {
-                        // Attempt to sign in with the initial token again if needed,
-                        // or rely on the initial sign-in logic if token just got processed
-                        // For Canvas, it often provides a token for anonymous/guest sessions
-                        // console.log("Initial auth token was provided, relying on its initial sign-in.");
+                        console.warn("AuthContext: authInstance not available for anonymous sign-in.");
                     }
                 } catch (error) {
-                    console.error("Anonymous sign-in error:", error);
+                        console.error("Anonymous sign-in error:", error);
                     // This is where 'auth/admin-restricted-operation' might appear
                 }
             }
@@ -68,32 +92,37 @@ export function AuthProvider({ children }) {
 
         // Initial sign-in with custom token (from Canvas env) or anonymously
         const performInitialSignIn = async () => {
-            if (authInstance && typeof __initial_auth_token !== 'undefined' && __initial_auth_token !== null) {
-                try {
-                    await signInWithCustomToken(authInstance, __initial_auth_token);
-                    // console.log("AuthContext: Signed in with Canvas custom token.");
-                } catch (error) {
-                    console.error("AuthContext: Error signing in with Canvas custom token:", error);
-                    // If custom token fails, try anonymous as a fallback
+            if (authInstance) { // Ensure authInstance is defined
+                if (__initial_auth_token) {
+                    try {
+                        await signInWithCustomToken(authInstance, __initial_auth_token);
+                        console.log("AuthContext: Signed in with Canvas custom token.");
+                    } catch (error) {
+                        console.error("AuthContext: Error signing in with Canvas custom token:", error);
+                        // If custom token fails, try anonymous as a fallback
+                        try {
+                            await signInAnonymously(authInstance);
+                            console.log("AuthContext: Signed in anonymously after custom token failure.");
+                        } catch (anonError) {
+                                console.error("AuthContext: Anonymous sign-in fallback failed:", anonError);
+                        }
+                    }
+                } else if (!authInstance.currentUser) {
                     try {
                         await signInAnonymously(authInstance);
-                        // console.log("AuthContext: Signed in anonymously after custom token failure.");
-                    } catch (anonError) {
-                        console.error("AuthContext: Anonymous sign-in fallback failed:", anonError);
+                        console.log("AuthContext: Signed in anonymously as no custom token provided.");
+                    } catch (error) {
+                            console.error("AuthContext: Anonymous sign-in failed:", error);
                     }
                 }
-            } else if (authInstance && !authInstance.currentUser) {
-                try {
-                    await signInAnonymously(authInstance);
-                    // console.log("AuthContext: Signed in anonymously as no custom token provided.");
-                } catch (error) {
-                    console.error("AuthContext: Anonymous sign-in failed:", error);
-                }
+            } else {
+                console.warn("AuthContext: authInstance not available for initial sign-in attempt.");
             }
         };
 
         // Only run initial sign-in if not already loading or authenticated
-        if (loading && !authInstance.currentUser) {
+        // and if Firebase instances are ready.
+        if (loading && authInstance) { // Check authInstance before calling performInitialSignIn
             performInitialSignIn();
         }
 
