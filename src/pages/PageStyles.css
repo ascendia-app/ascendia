@@ -2,14 +2,14 @@
 .page-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Align to top for dashboards */
     align-items: center;
     min-height: calc(100vh - 80px); /* Adjust based on header height */
     padding: 2rem;
     text-align: center;
     background-color: #f9f9f9; /* Light background for content pages */
     color: #333;
-    font-family: 'Inter', sans-serif; /* Consistent font */
+    overflow-y: auto; /* Allow scrolling if content overflows */
 }
 
 .page-title {
@@ -35,164 +35,17 @@
     margin-bottom: 1rem;
 }
 
-/* Authentication Forms (Register/Login) */
-.auth-form {
-    background-color: white;
-    padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 450px;
-    margin-bottom: 2rem;
-    text-align: left; /* Align form labels/inputs to left */
-    border: 1px solid #eee;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: #ff8c42;
-    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
-}
-
-.submit-button {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: white;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.submit-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.submit-button.primary-gradient {
-    background: linear-gradient(to right, #ff4d88, #ff8c42);
-}
-
-.submit-button.primary-gradient:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-.form-message {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-align: center;
-    background-color: #f8d7da; /* Light red for errors */
-    color: #721c24; /* Dark red for error text */
-    border: 1px solid #f5c6cb;
-}
-
-.form-message.success {
-    background-color: #d4edda; /* Light green for success */
-    color: #155724; /* Dark green for success text */
-    border-color: #c3e6cb;
-}
-
-/* Username availability status messages */
-.username-status {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    padding-left: 0.2rem;
-    font-style: italic;
-}
-
-.username-status.checking {
-    color: #007bff; /* Blue for checking */
-}
-
-.username-status.available {
-    color: #28a745; /* Green for available */
-}
-
-.username-status.taken {
-    color: #dc3545; /* Red for taken */
-}
-
-
-.auth-footer-links {
-    margin-top: 1.5rem;
-    font-size: 1rem;
-    color: #666;
-    text-align: center; /* Ensure links are centered */
-}
-
-.auth-footer-links p {
-    margin-bottom: 0.5rem; /* Space between paragraphs in footer links */
-}
-
-.auth-footer-links .inline-link {
-    color: #ff4d88; /* Link color */
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-}
-
-.auth-footer-links .inline-link:hover {
-    color: #ff8c42;
-    text-decoration: underline;
-}
-
-/* Download Section */
-.download-section {
-    width: 100%;
-    max-width: 450px;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid #eee;
-}
-
-.section-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 1.5rem;
-}
-
-.download-buttons {
+.getting-started-options {
     display: flex;
-    flex-direction: column; /* Stack download buttons */
-    gap: 1rem;
+    flex-direction: column;
+    gap: 1.5rem;
     width: 100%;
+    max-width: 400px;
+    margin-top: 2rem;
 }
 
-/* Updated styles for direct download <a> tags */
-.gs-button.download-windows,
-.gs-button.download-macos {
-    display: flex; /* Changed from inline-block to flex */
+.gs-button {
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem 1.5rem;
@@ -200,42 +53,91 @@
     font-family: 'Poppins', sans-serif;
     font-size: 1.1rem;
     font-weight: 600;
-    text-decoration: none; /* Important for <a> tags */
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
+    text-align: center;
+}
+
+.gs-button.primary {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
     color: white;
-    gap: 0.75rem; /* Space between icon and text */
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-.gs-button.download-windows {
-    background-color: #0078D4; /* Windows blue */
-}
-
-.gs-button.download-windows:hover {
+.gs-button.primary:hover {
     transform: translateY(-3px);
-    background-color: #005bb5;
     box-shadow: 0 6px 12px rgba(0,0,0,0.25);
 }
 
-.gs-button.download-macos {
-    background-color: #A2AAAD; /* Apple grey */
+.gs-button.secondary {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.gs-button.download-macos:hover {
+.gs-button.secondary:hover {
+    transform: translateY(-2px);
+    background-color: #d0d0d0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.gs-button.download {
+    background-color: #4CAF50; /* Green for download */
+    color: white;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    gap: 0.5rem; /* Space between icon and text */
+}
+
+.gs-button.download:hover {
     transform: translateY(-3px);
-    background-color: #8e969a;
+    background-color: #45a049;
     box-shadow: 0 6px 12px rgba(0,0,0,0.25);
 }
 
-.gs-button .icon {
-    display: flex; /* Ensure SVG icon is centered */
+.gs-download-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    width: 100%;
     align-items: center;
-    justify-content: center;
 }
 
-/* Back to Home Button */
-.back-to-home-button {
+.gs-download-options p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.download-links {
+  display: flex;
+  flex-direction: column; /* Stack download links on mobile */
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.download-link {
+  display: block; /* Make it block level to take full width */
+  background-color: #6c757d; /* Grey for general download */
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.download-link:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+
+.back-button {
     display: inline-block;
     margin-top: 3rem;
     padding: 0.7rem 1.2rem;
@@ -248,44 +150,198 @@
     transition: background-color 0.2s, color 0.2s;
 }
 
-.back-to-home-button:hover {
+.back-button:hover {
     background-color: #e0e0e0;
     color: #333;
 }
 
+/* Dashboard Specific Styles */
+.dashboard-page {
+  max-width: 1200px; /* Constrain max width for better readability */
+  width: 100%; /* Ensure it uses available width up to max */
+  align-items: flex-start; /* Align content to the left within the page */
+  padding-top: 3rem; /* More space from header */
+  padding-bottom: 3rem;
+}
 
-/* Responsive adjustments for mobile */
+.dashboard-page .page-title,
+.dashboard-page .page-description {
+  text-align: left; /* Align dashboard specific titles to left */
+  width: 100%; /* Take full width */
+  max-width: 100%; /* Remove max-width for these titles */
+  padding-left: 2rem; /* Indent slightly */
+  box-sizing: border-box; /* Include padding in width */
+}
+
+.dashboard-section {
+  width: 100%;
+  margin-bottom: 3rem; /* Space between sections */
+  padding: 0 2rem; /* Horizontal padding for sections */
+  box-sizing: border-box;
+}
+
+.section-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: left; /* Align section headings to the left */
+  border-bottom: 2px solid #ffcc33; /* Subtle underline */
+  padding-bottom: 0.5rem;
+}
+
+/* Quick Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid for stats */
+  gap: 2rem;
+  width: 100%;
+}
+
+.stat-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08); /* Modern, soft shadow */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #eee; /* Light border */
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+.stat-icon {
+  color: #ff8c42; /* Orange color for icons */
+  margin-bottom: 0.8rem;
+  /* Lucide icon size is controlled by size prop, but general styling can be here */
+}
+
+.stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ff4d88; /* Pink color for values */
+}
+
+/* Quick Links Grid */
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Grid for links */
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.dashboard-link-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+  border: 1px solid #eee;
+}
+
+.dashboard-link-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  background-color: #fcfcfc; /* Very subtle background change on hover */
+}
+
+.link-icon {
+  color: #ffcc33; /* Yellow color for link icons */
+  margin-bottom: 0.8rem;
+  /* Lucide icon size is controlled by size prop, but general styling can be here */
+}
+
+.link-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Recent Activity Section */
+.activity-list {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  padding: 1.5rem 2rem;
+  text-align: left; /* Align text to left within the list */
+  border: 1px solid #eee;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #f0f0f0; /* Separator between items */
+}
+
+.activity-item:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.activity-icon {
+  color: #4CAF50; /* Green for activity notifications */
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.activity-item p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #444;
+  margin: 0; /* Remove default paragraph margin */
+}
+
+.no-activity {
+  font-style: italic;
+  color: #777;
+  padding: 1rem 0;
+}
+
+/* Responsive adjustments for Dashboard */
 @media (max-width: 768px) {
-    .page-title {
-        font-size: 2.2rem;
-    }
+  .dashboard-page {
+    padding: 1rem; /* Adjust overall padding for mobile */
+  }
 
-    .page-description {
-        font-size: 1rem;
-    }
+  .dashboard-page .page-title,
+  .dashboard-page .page-description {
+    padding-left: 1rem; /* Reduce indent */
+    text-align: center; /* Center titles on small screens */
+  }
 
-    .auth-form, .download-section {
-        padding: 1.5rem;
-        max-width: 95%; /* Adjust width for smaller screens */
-    }
+  .section-heading {
+    text-align: center; /* Center section headings on small screens */
+    font-size: 1.5rem;
+    padding-left: 0; /* Remove indent */
+  }
 
-    .form-group label {
-        font-size: 0.9rem;
-    }
+  .stats-grid, .links-grid {
+    grid-template-columns: 1fr; /* Stack cards/links vertically on small screens */
+    gap: 1.5rem; /* Adjust gap */
+  }
 
-    .form-group input {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    .submit-button {
-        font-size: 1.1rem;
-        padding: 0.8rem;
-    }
-
-    .gs-button.download-windows,
-    .gs-button.download-macos {
-        font-size: 1rem;
-        padding: 0.8rem 1rem;
-    }
+  .stat-card, .dashboard-link-card, .activity-list {
+    padding: 1.5rem; /* Adjust card padding */
+  }
 }
