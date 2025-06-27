@@ -456,7 +456,7 @@
     display: flex; /* Changed to flex for side-by-side */
     flex-direction: row; /* Arranges items side-by-side */
     justify-content: center; /* Centers the segments horizontally */
-    gap: 0.2rem; /* Reduced gap even on desktop */
+    gap: 1rem; /* Reverted to more generous gap */
     width: 100%; /* Explicitly take all available width */
     flex-wrap: nowrap !important; /* Force no wrapping across all screen sizes */
     margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
@@ -469,29 +469,26 @@
     align-items: center;
     justify-content: center;
     background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.1rem 0.05rem; /* Reduced padding further */
+    padding: 0.8rem 0.5rem; /* Reverted to more generous padding */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    /* min-width: 0; */ /* Important: Allow it to shrink to 0 if needed (overriding intrinsic size) */
-    flex-basis: 0; /* Key for even distribution with flex-grow */
+    min-width: 60px; /* Reverted to more generous min-width */
     flex-grow: 1; /* Allow segments to grow and take available space */
-    overflow: hidden; /* Crucial: Hides overflowing content, forcing the element to shrink */
     box-sizing: border-box; /* Ensure padding/border are included in width calculation */
-    min-width: 20%; /* Give it a more aggressive min-width */
     max-width: 25%; /* Max width to ensure 4 segments can fit in a row */
 }
 
 .countdown-widget .countdown-value {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem; /* REDUCED FONT SIZE */
-    font-weight: 700;
+    font-family: 'Montserrat', sans-serif; /* Reverted font family */
+    font-size: 2rem; /* Reverted font size */
+    font-weight: 800; /* Reverted font weight */
     color: #ff4d88; /* Pinkish orange */
-    line-height: 1.2; /* Adjust line height for better spacing */
-    margin-bottom: 0.1rem; /* Small space between value and label */
+    line-height: 1; /* Reverted line height */
+    margin-bottom: 0.2rem; /* Reverted margin */
 }
 
 .countdown-widget .countdown-label {
-    font-size: 0.4rem; /* REDUCED FONT SIZE */
+    font-size: 0.8rem; /* Reverted font size */
     color: #777;
     text-transform: uppercase;
 }
@@ -2028,22 +2025,21 @@ html.dark, body.dark, .app.dark {
     .countdown-widget .countdown-content {
         flex-wrap: nowrap !important; /* IMPORTANT: Force no wrapping on smaller screens */
         justify-content: center; /* Center segments */
-        gap: 0.05rem; /* Even smaller gap on tablets */
+        gap: 0.5rem; /* Reverted to slightly larger gap */
     }
 
     .countdown-widget .countdown-segment {
-        padding: 0.1rem 0.02rem; /* EVEN MORE REDUCED PADDING */
-        min-width: 0; /* Important: Allow it to shrink to 0 if needed (overriding intrinsic size) */
-        flex-shrink: 1; /* Allow segments to shrink further */
-        max-width: 25%; /* Keep max width */
+        padding: 0.6rem 0.3rem; /* Reverted to more generous padding */
+        min-width: 50px; /* Reverted to more generous min-width */
+        /* Removed flex-shrink: 1; to avoid over-shrinking */
     }
 
     .countdown-widget .countdown-value {
-        font-size: 0.65rem; /* EVEN SMALLER FONT ON MOBILE */
+        font-size: 1.8rem; /* Reverted font size */
     }
 
     .countdown-widget .countdown-label {
-        font-size: 0.25rem; /* EVEN SMALLER FONT ON MOBILE */
+        font-size: 0.7rem; /* Reverted font size */
     }
 
     .countdown-actions {
@@ -2114,18 +2110,19 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        gap: 0.05rem; /* Minimal gap on very small screens */
+        gap: 0.2rem; /* Slightly more gap than last attempt for readability */
     }
 
     .countdown-widget .countdown-segment {
-        padding: 0.05rem 0.01rem; /* EXTREMELY MINIMAL PADDING */
+        padding: 0.1rem 0.05rem; /* Slightly more padding than last attempt */
         min-width: 0; /* Explicitly allow shrinking */
+        /* Removed flex-shrink: 1; to avoid over-shrinking */
     }
     .countdown-widget .countdown-value {
-        font-size: 0.6rem; /* SMALLEST FONT ON VERY SMALL SCREENS */
+        font-size: 0.9rem; /* Slightly larger font than last attempt for readability */
     }
     .countdown-widget .countdown-label {
-        font-size: 0.2rem; /* SMALLEST FONT ON VERY SMALL SCREENS */
+        font-size: 0.4rem; /* Slightly larger font than last attempt for readability */
     }
 
     .countdown-actions {
