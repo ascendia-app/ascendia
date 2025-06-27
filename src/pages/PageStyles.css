@@ -377,9 +377,7 @@
     font-size: 40px; /* Larger icons */
     /* Apply gradient directly to SVG content */
     background: linear-gradient(to right, #ff4d88, #ff8c42); /* Pink to Orange gradient */
-    -webkit-background-clip: text; /* Clip background to text shape */
     background-clip: text; /* Standard property for compatibility */
-    -webkit-text-fill-color: transparent; /* Make text fill transparent so gradient shows */
     color: transparent; /* Fallback for browsers not supporting -webkit-text-fill-color */
     display: inline-flex; /* To apply gradient on SVG, ensure it's treated like text */
     align-items: center;
@@ -398,9 +396,7 @@
 .time-widget .widget-icon { /* Specific color override for time widget icon */
     color: white; /* Keep white for the time widget to stand out on dark gradient */
     background: none; /* Remove gradient for this icon */
-    -webkit-background-clip: unset;
     background-clip: unset; /* Standard property for compatibility */
-    -webkit-text-fill-color: unset;
 }
 
 .time-widget .time-display {
@@ -513,11 +509,7 @@
 .countdown-actions .dashboard-action-btn svg { /* Icon in these buttons */
     color: white; /* Keep icons white on translucent background */
     background: none;
-    -webkit-background-clip: unset;
     background-clip: unset; /* Standard property for compatibility */
-    -webkit-text-fill-color: unset;
-    width: 14px; /* Smaller icons for these buttons */
-    height: 14px;
 }
 
 
