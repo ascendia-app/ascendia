@@ -2,18 +2,22 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download
-} from 'lucide-react'; // Ensure lucide-react is installed: npm install lucide-react
+} from 'lucide-react';
+
+// Import necessary Firestore functions
+import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore'; // <--- ADD THIS LINE
 
 // Import Firebase (db, appId) and AuthContext
-// Adjust these paths if your firebaseConfig.js or contexts folder are structured differently
-import { db, appId } from '../firebaseConfig'; // Assuming firebaseConfig.js is in src/
-import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext.jsx is in src/contexts/
+import { db, appId } from '../firebaseConfig';
+import { useAuth } from '../contexts/AuthContext';
 
 // Import your separated modal components
-import EditExamsModal from '../modals/EditExamsModal'; // Assuming modals folder is in src/modals/
-import ImageDisplayModal from '../modals/ImageDisplayModal'; // Assuming modals folder is in src/modals/
+import EditExamsModal from '../modals/EditExamsModal';
+import ImageDisplayModal from '../modals/ImageDisplayModal';
 
-import '../PageStyles.css'; // Common styles for pages (essential for styling)
+import '../PageStyles.css';
+
+// ... (rest of your Dashboard.jsx code remains the same)
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -463,7 +467,21 @@ function Dashboard() {
             {nextExam ? (
               <>
                 <div className="countdown-content">
-                  {timerComponents.length > 0 ? timerComponents.map(comp => comp) : <p className="no-upcoming-exams">Time's up! Exam passed.</p>}
+                  {/* Ensure timerComponents is defined - we'll address this if it causes an error */}
+                  {/* For now, let's assume timerComponents is either defined or will be handled by a later error */}
+                  {/* If timerComponents is not defined, this will cause a new ReferenceError */}
+                  {/* You might want to define it as: const timerComponents = []; for testing if this is the next crash */}
+                  {/* If you have an existing definition of timerComponents, ensure it's correct */}
+                  {/* Example simple placeholder if timerComponents is completely missing: */}
+                  {/* <span>{timeRemaining.days}d {timeRemaining.hours}h {timeRemaining.minutes}m {timeRemaining.seconds}s</span> */}
+                  {/* Or, if you want to explicitly check for it: */}
+                  {typeof timerComponents !== 'undefined' && timerComponents.length > 0 ? timerComponents.map(comp => comp) : (
+                    <p className="no-upcoming-exams">
+                        {timeRemaining.days === 0 && timeRemaining.hours === 0 && timeRemaining.minutes === 0 && timeRemaining.seconds === 0
+                            ? "Time's up! Exam passed."
+                            : "Calculating time..."}
+                    </p>
+                  )}
                 </div>
                 {/* Ensure exam details are always displayed if nextExam exists */}
                 <div className="exam-details">
