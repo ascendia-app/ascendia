@@ -1,8 +1,19 @@
-// src/pages/Dashboard.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import './PageStyles.css'; // Assuming common styles for pages
-import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download } from 'lucide-react'; // Import Lucide React icons
+import {
+    Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download
+} from 'lucide-react';
+
+// Import Firebase (auth, db, appId) and AuthContext
+import { db, appId } from '../firebaseConfig'; // Ensure appId is imported here
+import { useAuth } from '../contexts/AuthContext';
+import { collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from 'firebase/firestore';
+
+// Import your separated modal components
+import EditExamsModal from '../modals/EditExamsModal';
+import ImageDisplayModal from '../modals/ImageDisplayModal';
+
+import './PageStyles.css'; // Common styles for pages
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -28,199 +39,94 @@ const formatDateWithOrdinal = (dateString) => {
   const day = date.getDate();
   const month = date.toLocaleDateString('en-US', { month: 'long' });
   const year = date.getFullYear();
-
-  // Changed to "Month Day, Year" format
   return `${month} ${day}, ${year}`;
 };
 
-// Exam Editor Modal Component
-const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
-  const [editedExams, setEditedExams] = useState(initialExams || []);
-
-  useEffect(() => {
-    // Deep copy initialExams to prevent direct mutation of prop
-    setEditedExams(JSON.parse(JSON.stringify(initialExams || [])));
-  }, [initialExams, isOpen]); // Reset editedExams when modal opens or initialExams change
-
-  if (!isOpen) return null;
-
-  const handleExamChange = (index, field, value) => {
-    const updatedExams = [...editedExams];
-    updatedExams[index] = { ...updatedExams[index], [field]: value };
-    setEditedExams(updatedExams);
-  };
-
-  const handleAddExam = () => {
-    setEditedExams([...editedExams, { subject: '', component: '', date: '', time: '', session: 'AM' }]); // Default session to AM
-  };
-
-  const handleRemoveExam = (index) => {
-    const updatedExams = editedExams.filter((_, i) => i !== index);
-    setEditedExams(updatedExams);
-  };
-
-  const handleSave = () => {
-    // Filter out any completely empty exam entries before saving
-    const cleanedExams = editedExams.filter(exam =>
-      exam.subject || exam.component || exam.date || exam.time || exam.session
-    );
-    onSave(cleanedExams);
-    onClose();
-  };
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h3>Edit Exams</h3>
-          <button onClick={onClose} className="modal-close-btn">
-            <XCircle size={24} />
-          </button>
-        </div>
-        <div className="modal-body">
-          {editedExams.length === 0 && <p className="no-exams-message">No exams added yet. Click 'Add Exam' to get started!</p>}
-          {editedExams.map((exam, index) => (
-            <div key={index} className="exam-entry">
-              <div className="form-group-inline">
-                <label className="compulsory-field">Subject:</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Physics"
-                  value={exam.subject}
-                  onChange={(e) => handleExamChange(index, 'subject', e.target.value)}
-                  required // Compulsory
-                />
-              </div>
-              <div className="form-group-inline">
-                <label className="compulsory-field">Component:</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Paper 2"
-                  value={exam.component}
-                  onChange={(e) => handleExamChange(index, 'component', e.target.value)}
-                  required // Compulsory
-                />
-              </div>
-              <div className="form-group-inline">
-                <label className="compulsory-field">Date:</label>
-                <input
-                  type="date"
-                  value={exam.date}
-                  onChange={(e) => handleExamChange(index, 'date', e.target.value)}
-                  required // Compulsory
-                />
-              </div>
-              <div className="form-group-inline">
-                <label>Time:</label>
-                <input
-                  type="time"
-                  value={exam.time}
-                  onChange={(e) => handleExamChange(index, 'time', e.target.value)}
-                  // Not required
-                />
-              </div>
-              <div className="form-group-inline">
-                <label className="compulsory-field">Session:</label>
-                <select
-                  value={exam.session}
-                  onChange={(e) => handleExamChange(index, 'session', e.target.value)}
-                  required // Compulsory
-                >
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                  <option value="EV">EV</option>
-                </select>
-              </div>
-              <button onClick={() => handleRemoveExam(index)} className="remove-exam-btn">
-                <Trash2 size={18} /> Remove
-              </button>
-            </div>
-          ))}
-          <button onClick={() => handleAddExam()} className="add-exam-btn">
-            <PlusCircle size={20} /> Add Exam
-          </button>
-        </div>
-        <div className="modal-footer">
-          <button onClick={onClose} className="modal-cancel-btn">Cancel</button>
-          <button onClick={handleSave} className="modal-save-btn">Save Exams</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Image Display Modal Component
-const ImageDisplayModal = ({ isOpen, onClose, imageUrl }) => {
-  if (!isOpen) return null;
-
-  const handleDownloadImage = () => {
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = 'all_exams_schedule.jpg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content image-modal-content">
-        <div className="modal-header">
-          <h3>Your Exam Schedule</h3>
-          <button onClick={onClose} className="modal-close-btn">
-            <XCircle size={24} />
-          </button>
-        </div>
-        <div className="modal-body image-modal-body">
-          {imageUrl ? (
-            <img src={imageUrl} alt="Exam Schedule" className="generated-image" />
-          ) : (
-            <p>No image to display.</p>
-          )}
-        </div>
-        <div className="modal-footer">
-          <button onClick={handleDownloadImage} className="modal-download-btn">
-            <Download size={20} /> Download Image
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 function Dashboard() {
+  const { currentUser, loading } = useAuth(); // Get current user and loading state from AuthContext
+  const [userId, setUserId] = useState(null);
+
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [exams, setExams] = useState([]); // Initialize as empty array
+  const [exams, setExams] = useState([]); // Exams fetched from Firestore
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // New state for image modal
-  const [imageDataUrl, setImageDataUrl] = useState(''); // New state for image data
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [imageDataUrl, setImageDataUrl] = useState('');
   const [timeRemaining, setTimeRemaining] = useState({});
   const [nextExam, setNextExam] = useState(null);
+  const [firebaseError, setFirebaseError] = useState(null); // State for Firebase errors
 
-  // Function to find the next upcoming exam - moved outside useEffect for reusability
+  // --- Effect to set userId once AuthContext loading is complete ---
+  useEffect(() => {
+    if (!loading) {
+      if (currentUser) {
+        setUserId(currentUser.uid);
+        console.log("Dashboard: User authenticated, UID:", currentUser.uid);
+      } else {
+        setUserId(null);
+        setExams([]); // Clear exams if user logs out
+        setNextExam(null);
+        console.log("Dashboard: User not authenticated.");
+        // Optionally redirect to login or show a "please log in" message
+      }
+    }
+  }, [currentUser, loading]);
+
+  // --- Effect for real-time exams data from Firestore ---
+  useEffect(() => {
+    if (!userId || !db) {
+      setExams([]); // Clear exams if no user or db not ready
+      setFirebaseError(null);
+      return;
+    }
+
+    setFirebaseError(null); // Clear previous errors
+    const examsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exams`);
+    console.log(`Dashboard: Subscribing to exams at path: artifacts/${appId}/users/${userId}/exams`);
+
+    const unsubscribe = onSnapshot(examsCollectionRef, (snapshot) => {
+      const fetchedExams = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setExams(fetchedExams);
+      console.log("Dashboard: Fetched exams updated:", fetchedExams.length);
+    }, (error) => {
+      console.error("Dashboard: Error fetching exams from Firestore:", error);
+      setFirebaseError("Failed to load exams. Please check your internet connection or try again later.");
+    });
+
+    // Cleanup function for the snapshot listener
+    return () => {
+      console.log("Dashboard: Unsubscribing from exams listener.");
+      unsubscribe();
+    };
+  }, [userId, db, appId]); // Re-run when userId or db/appId changes
+
+  // --- Function to find the next upcoming exam ---
   const findNextExam = useCallback((currentExams) => {
     const now = new Date().getTime();
     let closestExam = null;
-    let minDifference = Infinity;
 
-    // Filter out exams that have already passed
     const upcomingExams = currentExams.filter(exam => {
       if (exam.date) {
         const examDateTime = getDateTimeForExam(exam).getTime();
         return examDateTime > now;
       }
       return false;
-    });
-
-    upcomingExams.sort((a, b) => getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime());
+    }).sort((a, b) => getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime());
 
     if (upcomingExams.length > 0) {
       closestExam = upcomingExams[0];
     }
     setNextExam(closestExam);
-  }, []); // No dependencies, as it takes exams as an argument
+  }, []);
 
-  // Effect for updating current time
+  // --- Effect to re-evaluate next exam when 'exams' state changes ---
+  useEffect(() => {
+    findNextExam(exams);
+  }, [exams, findNextExam]);
+
+  // --- Effect for updating current time ---
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -228,28 +134,7 @@ function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Effect to load exams from localStorage on component mount and on navigation
-  useEffect(() => {
-    try {
-      const savedExams = localStorage.getItem('userExams');
-      const loadedExams = savedExams ? JSON.parse(savedExams) : [];
-      setExams(loadedExams);
-      findNextExam(loadedExams); // Immediately find next exam after loading
-    } catch (error) {
-      console.error("Failed to parse exams from localStorage:", error);
-      setExams([]);
-      findNextExam([]); // Reset if error
-    }
-  }, []); // Empty array, so it runs once on mount. `findNextExam` is called within.
-
-  // Effect to save exams to localStorage whenever the exams state changes
-  useEffect(() => {
-    localStorage.setItem('userExams', JSON.stringify(exams));
-    // Also re-find next exam whenever exams change, including from editor
-    findNextExam(exams);
-  }, [exams, findNextExam]); // Added findNextExam to dependencies
-
-  // Effect to calculate time remaining for the next exam
+  // --- Effect to calculate time remaining for the next exam ---
   useEffect(() => {
     const countdownTimer = setInterval(() => {
       if (nextExam && nextExam.date) {
@@ -259,8 +144,9 @@ function Dashboard() {
 
         if (difference <= 0) {
           setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-          setNextExam(null); // Mark as passed
-          findNextExam(exams); // Try to find the *next* next exam immediately from current exams state
+          // If exam has passed, find the next one
+          setNextExam(null); // Mark current nextExam as passed
+          findNextExam(exams); // Re-find next exam from current exams list
           return;
         }
 
@@ -276,17 +162,93 @@ function Dashboard() {
     }, 1000);
 
     return () => clearInterval(countdownTimer);
-  }, [nextExam, exams, findNextExam]); // Added exams to dependencies
+  }, [nextExam, exams, findNextExam]);
 
   const formatTime = (value) => String(value).padStart(2, '0');
 
-  const handleSaveExams = (updatedExams) => {
-    setExams(updatedExams);
-    // findNextExam will be called by the exams useEffect
+  // --- Handle Save Exams (Add/Update/Delete reconciliation with Firestore) ---
+  const handleSaveExams = async (updatedExams) => {
+    if (!userId || !db) {
+      console.error("Cannot save exams: User not authenticated or Firestore not ready.");
+      setFirebaseError("Authentication required to save exams.");
+      return;
+    }
+
+    setFirebaseError(null); // Clear previous errors
+
+    try {
+      const currentExamsMap = new Map(exams.map(exam => [exam.id, exam])); // Map existing by Firestore ID
+      const updatedExamsMap = new Map(updatedExams.map(exam => [exam.id || exam.tempId, exam])); // Map incoming by Firestore ID or tempId
+
+      const batchPromises = []; // Collect all Firestore operations
+
+      // 1. Add new exams or Update existing exams
+      for (const updatedExam of updatedExams) {
+        if (updatedExam.id && currentExamsMap.has(updatedExam.id)) {
+          // Existing exam: check for changes and update
+          const currentExam = currentExamsMap.get(updatedExam.id);
+          const hasChanged = Object.keys(updatedExam).some(key =>
+            key !== 'id' && key !== 'tempId' && updatedExam[key] !== currentExam[key]
+          );
+
+          if (hasChanged) {
+            const examDocRef = doc(db, `artifacts/${appId}/users/${userId}/exams`, updatedExam.id);
+            batchPromises.push(updateDoc(examDocRef, {
+              subject: updatedExam.subject,
+              component: updatedExam.component,
+              date: updatedExam.date,
+              time: updatedExam.time,
+              session: updatedExam.session,
+              updatedAt: new Date().toISOString()
+            }));
+            console.log("Dashboard: Updating exam:", updatedExam.id);
+          }
+        } else if (updatedExam.tempId && !updatedExam.id) {
+          // New exam (has tempId but no Firestore ID)
+          const examsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exams`);
+          batchPromises.push(addDoc(examsCollectionRef, {
+            subject: updatedExam.subject,
+            component: updatedExam.component,
+            date: updatedExam.date,
+            time: updatedExam.time,
+            session: updatedExam.session,
+            createdAt: new Date().toISOString()
+          }));
+          console.log("Dashboard: Adding new exam with tempId:", updatedExam.tempId);
+        }
+      }
+
+      // 2. Delete removed exams
+      for (const currentExam of exams) {
+        // Check if the current exam from Firestore is NOT in the updated list (by its Firestore ID)
+        if (!updatedExamsMap.has(currentExam.id)) {
+          const examDocRef = doc(db, `artifacts/${appId}/users/${userId}/exams`, currentExam.id);
+          batchPromises.push(deleteDoc(examDocRef));
+          console.log("Dashboard: Deleting exam:", currentExam.id);
+        }
+      }
+
+      await Promise.all(batchPromises); // Execute all operations
+      console.log("Dashboard: Exam changes synced to Firestore successfully.");
+
+    } catch (error) {
+      console.error("Dashboard: Error saving exams to Firestore:", error);
+      setFirebaseError("Failed to save exams. Please try again.");
+    } finally {
+      setIsEditModalOpen(false); // Close modal regardless of success/failure
+    }
   };
 
-  // Function to generate and download exams table as JPG
+  // --- Function to generate and display exams table as JPG ---
   const handleSeeAllExams = () => {
+    // Only generate if there are exams to display
+    if (exams.length === 0) {
+      setFirebaseError("No exams to display. Add some exams first!");
+      return;
+    }
+
+    setFirebaseError(null); // Clear previous errors
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -296,34 +258,29 @@ function Dashboard() {
     const fontSize = 16;
     const headerFontSize = 18;
 
-    // Define headers for the table (excluding "Time", including "Session")
     const headers = ["Subject", "Component", "Date", "Session"];
 
-    // Sort exams by date before rendering
     const sortedExams = [...exams].sort((a, b) => {
       const dateA = getDateTimeForExam(a).getTime();
       const dateB = getDateTimeForExam(b).getTime();
       return dateA - dateB;
     });
 
-    // Prepare data for rendering
     const columnData = sortedExams.map(exam => ([
       exam.subject || '-',
       exam.component || '-',
-      formatDateWithOrdinal(exam.date), // Use the new formatting function here
-      exam.session || '-' // Include session here
+      formatDateWithOrdinal(exam.date),
+      exam.session || '-'
     ]));
 
-    // Temporarily set font for measurement
     ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    let colWidths = headers.map(header => ctx.measureText(header).width + padding * 2); // Initial width from headers + padding
+    let colWidths = headers.map(header => ctx.measureText(header).width + padding * 2);
 
     ctx.font = `${fontSize}px 'Inter', sans-serif`;
     columnData.forEach(row => {
       row.forEach((cell, i) => {
-        if (cell) { // Ensure cell is not null/undefined for measurement
+        if (cell) {
           const textWidth = ctx.measureText(cell).width;
-          // Update column width only if the cell content is wider than current width
           if (textWidth + padding * 2 > colWidths[i]) {
             colWidths[i] = textWidth + padding * 2;
           }
@@ -331,7 +288,6 @@ function Dashboard() {
       });
     });
 
-    // Ensure 'Session' column is wide enough for "EV" if it wasn't already (due to minimal data)
     const sessionColumnIndex = headers.indexOf("Session");
     if (sessionColumnIndex !== -1) {
       const widestSessionText = Math.max(
@@ -344,49 +300,43 @@ function Dashboard() {
       }
     }
 
-    // Calculate total width of columns
     let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
-
-    // Ensure table has a reasonable minimum width (e.g., 600px)
     const minTableWidth = 600;
     if (totalColWidth < minTableWidth) {
-        // If the calculated total width is less than minTableWidth, expand columns proportionally
         const diff = minTableWidth - totalColWidth;
         const uniformAdd = diff / colWidths.length;
         colWidths = colWidths.map(w => w + uniformAdd);
-        totalColWidth = minTableWidth; // Set total width to minTableWidth
+        totalColWidth = minTableWidth;
     }
 
     const tableHeight = headerHeight + exams.length * rowHeight;
     canvas.width = totalColWidth;
-    canvas.height = tableHeight + padding; // Removed top padding, keeping only bottom padding
+    canvas.height = tableHeight + padding;
 
-    ctx.fillStyle = '#f9f9f9'; // Background color for the image
-    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill entire canvas from top-left
+    ctx.fillStyle = '#f9f9f9';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    let currentY = 0; // Start Y at 0, no initial top padding
+    let currentY = 0;
 
-    // Draw Header
-    ctx.fillStyle = '#ff4d88'; // Header background color (Pink)
-    ctx.fillRect(0, currentY, canvas.width, headerHeight); // Header rectangle starts at Y=0
+    ctx.fillStyle = '#ff4d88';
+    ctx.fillRect(0, currentY, canvas.width, headerHeight);
 
     ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    ctx.fillStyle = 'white'; // Header text color
+    ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     let currentX = 0;
     headers.forEach((header, i) => {
-        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3); // Text positioned relative to Y=0
+        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3);
         currentX += colWidths[i];
     });
-    currentY += headerHeight; // currentY is now `headerHeight`
+    currentY += headerHeight;
 
-    // Draw Rows
     ctx.font = `${fontSize}px 'Inter', sans-serif`;
     columnData.forEach((row, rowIndex) => {
-        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Alternating row colors
-        ctx.fillRect(0, currentY, canvas.width, rowHeight); // Use full canvas width for row background
+        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0';
+        ctx.fillRect(0, currentY, canvas.width, rowHeight);
 
-        ctx.fillStyle = '#333'; // Row text color
+        ctx.fillStyle = '#333';
         currentX = 0;
         row.forEach((cell, colIndex) => {
             ctx.fillText(cell, currentX + padding, currentY + rowHeight / 2 + fontSize / 3);
@@ -395,14 +345,12 @@ function Dashboard() {
         currentY += rowHeight;
     });
 
-    // Convert to image and display in modal
-    const image = canvas.toDataURL('image/jpeg', 0.9); // 0.9 quality
+    const image = canvas.toDataURL('image/jpeg', 0.9);
     setImageDataUrl(image);
-    setIsImageModalOpen(true); // Open the modal
+    setIsImageModalOpen(true);
   };
 
   // Mock data (keep these for other sections)
-  // Updated 'Upcoming Exam' value to reflect nextExam state
   const quickStats = [
     { id: 1, label: "Upcoming Exam", value: nextExam ? `${nextExam.subject} ${nextExam.component}` : "N/A", icon: <CalendarClock size={24} /> },
     { id: 2, label: "Topics Mastered", value: "75%", icon: <GraduationCap size={24} /> },
@@ -424,10 +372,32 @@ function Dashboard() {
     "Set reminder for 'Maths Quiz' next week."
   ];
 
+  // Conditional rendering based on authentication state
+  if (loading) {
+    return (
+      <div className="page-container dashboard-page" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <p className="welcome-message loading-pulse" style={{ color: '#ff4d88' }}>Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="page-container dashboard-page" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <h2 className="page-title">Access Denied</h2>
+        <p className="page-description">Please <Link to="/login" className="inline-link">log in</Link> or <Link to="/getting-started" className="inline-link">register</Link> to view your dashboard.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container dashboard-page">
       <h2 className="page-title">Welcome to Your Dashboard!</h2>
       <p className="page-description">Your personalized hub for Cambridge exam success.</p>
+
+      {firebaseError && (
+        <p className="form-message">{firebaseError}</p>
+      )}
 
       <div className="dashboard-grid-container">
         {/* Time Widget */}
@@ -471,8 +441,10 @@ function Dashboard() {
           ) : (
             <p className="no-upcoming-exams">No upcoming exams added. Click 'Edit Exams' to add one!</p>
           )}
-          {/* MOVED: Action Buttons for Countdown are now INSIDE the countdown-widget */}
-          <div className="countdown-actions"> {/* Removed grid-item grid-column-2-3 class here as it's no longer a direct grid child */}
+        </div>
+
+        {/* Action Buttons for Countdown - Now a separate grid item */}
+        <div className="countdown-actions grid-item grid-column-2-3">
             <button onClick={handleSeeAllExams} className="see-all-exams-btn dashboard-action-btn">
               <Table size={16} /> See All Exams
             </button>
@@ -480,7 +452,6 @@ function Dashboard() {
               <Pencil size={16} /> Edit Exams
             </button>
           </div>
-        </div>
 
         {/* Quick Stats Section */}
         <section className="dashboard-section quick-stats-section grid-item grid-span-full">
@@ -512,7 +483,7 @@ function Dashboard() {
         {/* Recent Activity/Notifications Section */}
         <section className="dashboard-section recent-activity-section grid-item grid-span-full">
           <h3 className="section-heading">Recent Activity & Notifications</h3>
-          <div className="activity-list dashboard-card"> {/* Applying dashboard-card style */}
+          <div className="activity-list dashboard-card">
             {recentActivity.length > 0 ? (
               recentActivity.map((activity, index) => (
                 <div key={index} className="activity-item">
@@ -525,14 +496,15 @@ function Dashboard() {
             )}
           </div>
         </section>
+
       </div> {/* End dashboard-grid-container */}
 
-      {/* Exam Editor Modal */}
-      <ExamEditorModal
+      {/* Edit Exams Modal */}
+      <EditExamsModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveExams}
-        initialExams={exams}
+        initialExams={exams} // Pass exams fetched from Firestore
       />
 
       {/* Image Display Modal */}
