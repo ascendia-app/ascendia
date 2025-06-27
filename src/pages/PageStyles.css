@@ -1594,7 +1594,7 @@ html.dark, body.dark, .app.dark {
 
 .app.dark .username-status.checking { color: #82b1ff; }
 .app.dark .username-status.available { color: #80c793; }
-.app.dark .username-status.taken { color: #f28c8c; }
+.app.status-available.taken { color: #f28c8c; }
 
 .app.dark .submit-button.primary-gradient {
     background: linear-gradient(to right, #ff6b6b, #ffb547); /* Darker gradient for buttons */
