@@ -456,28 +456,26 @@
     display: flex !important; /* Force flex */
     flex-direction: row !important; /* Force horizontal */
     justify-content: center !important; /* Center the segments horizontally */
-    gap: 1rem !important; /* Keep a decent gap on larger screens */
-    width: 100% !important; /* Explicitly take all available width */
-    flex-wrap: nowrap !important; /* CRITICAL: Force no wrapping across all screen sizes */
-    margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
+    gap: 1rem !important; /* Consistent gap between segments */
+    width: 100% !important; /* Ensure it takes full available width */
+    flex-wrap: nowrap !important; /* Prevent wrapping */
+    margin-bottom: 0.5rem; /* Space below segments */
 }
 
-/* Individual countdown segment styling (Days, Hours, Minutes, Seconds) */
 .countdown-widget .countdown-segment {
     display: flex;
-    flex-direction: column; /* Value on top, label below */
+    flex-direction: column; /* Keep value and label stacked vertically within each segment */
     align-items: center;
     justify-content: center;
-    background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.8rem 0.5rem; /* Reverted to more generous padding */
+    background-color: #f0f0f0;
+    padding: 0.8rem 0.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 60px; /* Reverted to more generous min-width */
-    flex-grow: 1; /* Allow segments to grow and take available space */
-    box-sizing: border-box; /* Ensure padding/border are included in width calculation */
-    max-width: 25%; /* Max width to ensure 4 segments can fit in a row */
+    min-width: 60px; /* Minimum width to ensure readability */
+    flex-grow: 0; /* Prevent segments from growing unevenly */
+    flex-shrink: 0; /* Prevent segments from shrinking too much */
+    max-width: 25%; /* Limit to ensure 4 segments fit */
 }
-
 .countdown-widget .countdown-value {
     font-family: 'Montserrat', sans-serif; /* Reverted font family */
     font-size: 2rem; /* Reverted font size */
