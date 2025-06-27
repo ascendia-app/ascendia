@@ -20,7 +20,7 @@ const getDateTimeForExam = (exam) => {
   return new Date(`${dateString}T${timeString}`);
 };
 
-// Helper function to format date with ordinal suffix (e.g., "1st", "2nd", "3rd", "4th")
+// Helper function to format date as "Month Day, Year" (e.g., "July 15, 2025")
 const formatDateWithOrdinal = (dateString) => {
   if (!dateString) return '-';
   const date = new Date(dateString);
@@ -28,15 +28,8 @@ const formatDateWithOrdinal = (dateString) => {
   const month = date.toLocaleDateString('en-US', { month: 'long' });
   const year = date.getFullYear();
 
-  let suffix = 'th';
-  if (day === 1 || day === 21 || day === 31) {
-    suffix = 'st';
-  } else if (day === 2 || day === 22) {
-    suffix = 'nd';
-  } else if (day === 3 || day === 23) {
-    suffix = 'rd';
-  }
-  return `${day}${suffix} ${month}, ${year}`;
+  // Changed to "Month Day, Year" format
+  return `${month} ${day}, ${year}`;
 };
 
 
