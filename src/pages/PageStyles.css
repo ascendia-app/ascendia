@@ -194,6 +194,7 @@
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid #eee; /* Light border */
+  position: relative; /* For positioning internal elements like edit button */
 }
 
 .dashboard-card:hover {
@@ -202,6 +203,8 @@
 }
 
 /* Grid Spanning Classes for varied card sizes */
+/* These classes are applied directly to the .dashboard-card or containing section */
+
 .grid-span-full {
   grid-column: 1 / -1; /* Spans all available columns */
 }
@@ -216,7 +219,7 @@
 
 /* Specific Styles for new Time Widget */
 .time-widget {
-  grid-column: span 1; /* By default, takes 1 column */
+  /* grid-column: span 1; is default */
   background: linear-gradient(to right, #ffcc33, #ff8c42); /* Yellow to orange gradient */
   color: white;
   justify-content: center;
@@ -252,6 +255,7 @@
   padding: 1.5rem;
   text-align: center;
   justify-content: space-between; /* Space out content vertically */
+  position: relative; /* For edit button positioning */
 }
 
 .countdown-widget .widget-icon {
@@ -267,11 +271,21 @@
   margin-bottom: 1rem;
 }
 
+.countdown-content {
+  flex-grow: 1; /* Allow content to take available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center countdown timer vertically */
+  align-items: center;
+  width: 100%;
+}
+
 .countdown-timer {
   display: flex;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
 }
 
 .countdown-segment {
@@ -300,17 +314,48 @@
   margin-top: 0.2rem;
 }
 
-.countdown-finished {
+.no-upcoming-exams {
   font-family: 'Inter', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #e03333; /* Red for finished countdown */
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #e03333; /* Red for no exams */
+  padding: 1rem;
 }
 
 .exam-details {
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: #777;
+  margin-top: 0.5rem;
+}
+
+/* Edit Exams Button */
+.edit-exams-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #ff4d88; /* Pink color for the icon and text */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.edit-exams-btn:hover {
+  background-color: #ffebeb; /* Very light pink background on hover */
+  color: #e03333; /* Slightly darker pink/red on hover */
+}
+
+.edit-exams-btn svg {
+  margin-right: 0.2rem;
 }
 
 
@@ -324,6 +369,7 @@
 /* Quick Stats Grid */
 .quick-stats-section {
   grid-column: 1 / -1; /* Ensure this section spans full width */
+  margin-top: 2rem; /* Add some space after top widgets */
 }
 .stats-grid {
   display: grid;
@@ -434,6 +480,12 @@
   .grid-span-2 {
     grid-column: span 2; /* Still spans 2 columns, but now it's full width */
   }
+  .time-widget {
+    grid-column: auto; /* Allow time widget to be 1 column on tablets */
+  }
+  .countdown-widget {
+    grid-column: span 1; /* Make countdown span 1 column on tablets */
+  }
 }
 
 @media (max-width: 768px) { /* Adjust dashboard sections for small screens */
@@ -453,7 +505,7 @@
     padding: 0 1rem;
   }
 
-  .grid-span-2, .grid-span-full, .grid-tall {
+  .grid-span-2, .grid-span-full, .grid-tall, .grid-item { /* Apply to all grid items on mobile */
     grid-column: auto !important; /* Reset grid spans for mobile */
     grid-row: auto !important; /* Reset grid spans for mobile */
   }
@@ -482,5 +534,222 @@
   }
   .countdown-label {
     font-size: 0.7rem;
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Above everything else */
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 15px; /* More rounded */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  width: 90%;
+  max-width: 700px; /* Max width for modal */
+  max-height: 80vh; /* Max height to prevent overflow */
+  overflow-y: auto; /* Scroll inside modal if content is long */
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+  padding: 0.5rem;
+}
+
+.modal-close-btn:hover {
+  color: #ff4d4d; /* Red on hover */
+}
+
+.modal-body {
+  flex-grow: 1; /* Allow body to grow and fill space */
+  margin-bottom: 1.5rem;
+}
+
+.no-exams-message {
+  font-family: 'Inter', sans-serif;
+  color: #777;
+  text-align: center;
+  padding: 2rem 0;
+  font-style: italic;
+}
+
+.exam-entry {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  position: relative; /* For remove button if positioned absolutely */
+}
+
+.form-group-inline {
+  display: flex;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.form-group-inline input {
+  flex: 1; /* Take equal width */
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group-inline input:focus {
+  outline: none;
+  border-color: #ff8c42; /* Orange focus */
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.remove-exam-btn {
+  background-color: #ff4d4d; /* Red button */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  align-self: flex-end; /* Align to end of its container */
+}
+
+.remove-exam-btn:hover {
+  background-color: #e03333;
+}
+
+.add-exam-btn {
+  background-color: #4CAF50; /* Green button */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-top: 1.5rem;
+  width: fit-content;
+  align-self: center; /* Center the add button */
+}
+
+.add-exam-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.modal-cancel-btn, .modal-save-btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.modal-cancel-btn {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #bbb;
+  transform: translateY(-2px);
+}
+
+.modal-save-btn {
+  background-color: #ff4d88; /* Pink save button */
+  color: white;
+  border: none;
+}
+
+.modal-save-btn:hover {
+  background-color: #e03333; /* Darker pink/red on hover */
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments for Modal */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 1.5rem;
+  }
+  .modal-header h3 {
+    font-size: 1.5rem;
+  }
+  .form-group-inline {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .remove-exam-btn {
+    width: 100%; /* Full width on mobile */
+    align-self: center;
+  }
+  .modal-footer {
+    flex-direction: column;
   }
 }
