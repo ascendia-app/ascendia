@@ -258,25 +258,26 @@ html, body, #root {
   color: #ff6699; /* Icon color on hover matches text */
 }
 
-/* Logout Button Specific Styling within Dropdown */
-.dropdown-item.logout-btn { /* Targeted specifically for red button */
-  background-color: #ff4d4d; /* Bright red */
-  color: white; /* White text for contrast */
-  font-weight: 600; /* Bolder text */
-  border-bottom: none; /* No border for the last item */
+/* Logout Button Specific Styling within Dropdown - Updated */
+.dropdown-item.logout-btn {
+  background-color: white; /* White background */
+  color: #ff4d4d; /* Red text */
+  font-weight: 600;
+  border: none; /* No border/outline */
+  border-bottom: none; /* Ensure no border for the last item */
 }
 
 .dropdown-item.logout-btn:hover {
-  background-color: #e03333; /* Darker red on hover */
-  color: white; /* Keep text white on hover */
+  background-color: #ffebeb; /* Very light red on hover */
+  color: #e03333; /* Darker red on hover */
 }
 
 .dropdown-item.logout-btn .icon svg {
-  color: white; /* White icon for logout button */
+  color: #ff4d4d; /* Red icon */
 }
 
 .dropdown-item.logout-btn:hover .icon svg {
-  color: white; /* Keep icon white on hover */
+  color: #e03333; /* Darker red icon on hover */
 }
 
 
