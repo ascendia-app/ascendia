@@ -2,20 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download
-} from 'lucide-react'; // Using lucide-react now, based on previous instructions for main icons
+} from 'lucide-react'; // Ensure lucide-react is installed: npm install lucide-react
 
-// Import Firebase (db, appId) - assuming these are exported from firebaseConfig.js
-import { db, appId } from '../firebaseConfig'; // Ensure appId is imported here
-import { useAuth } from '../contexts/AuthContext'; // CORRECTED PATH: Go up two levels, then into contexts
-
-import { collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from 'firebase/firestore';
-
+// Import Firebase (db, appId) and AuthContext
+// Adjust these paths if your firebaseConfig.js or contexts folder are structured differently
+import { db, appId } from '../firebaseConfig'; // Assuming firebaseConfig.js is in src/
+import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext.jsx is in src/contexts/
 
 // Import your separated modal components
-import EditExamsModal from '../modals/EditExamsModal';
-import ImageDisplayModal from '../modals/ImageDisplayModal';
+import EditExamsModal from '../modals/EditExamsModal'; // Assuming modals folder is in src/modals/
+import ImageDisplayModal from '../modals/ImageDisplayModal'; // Assuming modals folder is in src/modals/
 
-import './PageStyles.css'; // Common styles for pages
+import '../PageStyles.css'; // <--- THIS IS THE IMPORT IN QUESTION. EXPECTS PageStyles.css IN src/
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -45,7 +43,9 @@ const formatDateWithOrdinal = (dateString) => {
 };
 
 function Dashboard() {
-  const { currentUser, loading } = useAuth(); // Get current user and loading state from AuthContext
+  // Use useAuth hook for authentication state
+  const { currentUser, loading } = useAuth();
+  // userId will be set after authentication loads and currentUser is available
   const [userId, setUserId] = useState(null);
 
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -57,38 +57,42 @@ function Dashboard() {
   const [nextExam, setNextExam] = useState(null);
   const [firebaseError, setFirebaseError] = useState(null); // State for Firebase errors
 
-  // --- Effect to set userId once AuthContext loading is complete ---
+  // --- Effect to set userId once AuthContext loading is complete and currentUser is available ---
   useEffect(() => {
-    if (!loading) {
+    if (!loading) { // Once AuthContext has finished its initial loading check
       if (currentUser) {
         setUserId(currentUser.uid);
         console.log("Dashboard: User authenticated, UID:", currentUser.uid);
       } else {
-        setUserId(null);
-        setExams([]); // Clear exams if user logs out
+        setUserId(null); // No user signed in
+        setExams([]); // Clear exams if no user
         setNextExam(null);
         console.log("Dashboard: User not authenticated.");
-        // Optionally redirect to login or show a "please log in" message
+        // If you want to force redirect unauthenticated users, do it here.
+        // e.g., history.push('/login');
       }
     }
-  }, [currentUser, loading]);
+  }, [currentUser, loading]); // Depend on currentUser and loading from AuthContext
 
   // --- Effect for real-time exams data from Firestore ---
   useEffect(() => {
+    // Only subscribe if userId and db are available
     if (!userId || !db) {
-      setExams([]); // Clear exams if no user or db not ready
-      setFirebaseError(null);
+      setExams([]); // Clear exams if prerequisites are not met
+      setFirebaseError(null); // Clear any old errors
       return;
     }
 
-    setFirebaseError(null); // Clear previous errors
+    setFirebaseError(null); // Clear previous errors before attempting new fetch
+    // Construct the collection path using the provided appId and userId
     const examsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exams`);
     console.log(`Dashboard: Subscribing to exams at path: artifacts/${appId}/users/${userId}/exams`);
 
+    // Set up the real-time listener
     const unsubscribe = onSnapshot(examsCollectionRef, (snapshot) => {
       const fetchedExams = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+        id: doc.id, // Firestore document ID
+        ...doc.data() // Other exam data
       }));
       setExams(fetchedExams);
       console.log("Dashboard: Fetched exams updated:", fetchedExams.length);
@@ -97,46 +101,56 @@ function Dashboard() {
       setFirebaseError("Failed to load exams. Please check your internet connection or try again later.");
     });
 
-    // Cleanup function for the snapshot listener
+    // Cleanup function: unsubscribe from the listener when the component unmounts or dependencies change
     return () => {
       console.log("Dashboard: Unsubscribing from exams listener.");
       unsubscribe();
     };
-  }, [userId, db, appId]); // Re-run when userId or db/appId changes
+    // Dependencies for this useEffect: re-run if userId, db, or appId change
+  }, [userId, db, appId]);
 
-  // --- Function to find the next upcoming exam ---
+
+  // --- Function to find the next upcoming exam from the fetched 'exams' list ---
   const findNextExam = useCallback((currentExams) => {
     const now = new Date().getTime();
     let closestExam = null;
 
-    const upcomingExams = currentExams.filter(exam => {
-      if (exam.date) {
-        const examDateTime = getDateTimeForExam(exam).getTime();
-        return examDateTime > now;
-      }
-      return false;
-    }).sort((a, b) => getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime());
+    const upcomingExams = currentExams
+      .filter(exam => {
+        // Ensure exam.date exists before attempting to create a Date object
+        if (exam.date) {
+          const examDateTime = getDateTimeForExam(exam).getTime();
+          return examDateTime > now; // Only consider exams in the future
+        }
+        return false;
+      })
+      .sort((a, b) => {
+        // Sort by dateTime to find the soonest upcoming exam
+        return getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime();
+      });
 
+    // Set the closest exam if any upcoming exams exist
     if (upcomingExams.length > 0) {
       closestExam = upcomingExams[0];
     }
     setNextExam(closestExam);
-  }, []);
+  }, []); // useCallback memoizes this function, only recreated if dependencies change (none here)
 
-  // --- Effect to re-evaluate next exam when 'exams' state changes ---
+  // --- Effect to re-evaluate next exam whenever the 'exams' state changes ---
   useEffect(() => {
     findNextExam(exams);
-  }, [exams, findNextExam]);
+  }, [exams, findNextExam]); // Re-run when 'exams' data or findNextExam function changes
 
-  // --- Effect for updating current time ---
+
+  // --- Effect for updating current time (for the clock widget) ---
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
+    }, 1000); // Update every second
+    return () => clearInterval(timer); // Cleanup on component unmount
   }, []);
 
-  // --- Effect to calculate time remaining for the next exam ---
+  // --- Effect to calculate time remaining for the next exam (for countdown widget) ---
   useEffect(() => {
     const countdownTimer = setInterval(() => {
       if (nextExam && nextExam.date) {
@@ -145,13 +159,14 @@ function Dashboard() {
         const difference = examDateTime.getTime() - now.getTime();
 
         if (difference <= 0) {
+          // If the exam has passed or is now, set time to zero and find the next one
           setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-          // If exam has passed, find the next one
           setNextExam(null); // Mark current nextExam as passed
-          findNextExam(exams); // Re-find next exam from current exams list
+          findNextExam(exams); // Re-find the next exam from the updated list
           return;
         }
 
+        // Calculate time units
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
@@ -159,92 +174,24 @@ function Dashboard() {
 
         setTimeRemaining({ days, hours, minutes, seconds });
       } else {
-        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 }); // Reset if no next exam
+        // If there's no next exam, reset time remaining
+        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
-    }, 1000);
+    }, 1000); // Update every second
 
-    return () => clearInterval(countdownTimer);
-  }, [nextExam, exams, findNextExam]);
+    return () => clearInterval(countdownTimer); // Cleanup on component unmount or nextExam change
+  }, [nextExam, exams, findNextExam]); // Re-run if nextExam, exams, or findNextExam changes
 
-  const formatTime = (value) => String(value).padStart(2, '0');
+  // Helper to format single-digit numbers with leading zero
+  const formatTimeValue = (value) => String(value).padStart(2, '0');
 
-  // --- Handle Save Exams (Add/Update/Delete reconciliation with Firestore) ---
-  const handleSaveExams = async (updatedExams) => {
-    if (!userId || !db) {
-      console.error("Cannot save exams: User not authenticated or Firestore not ready.");
-      setFirebaseError("Authentication required to save exams.");
-      return;
-    }
-
-    setFirebaseError(null); // Clear previous errors
-
-    try {
-      const currentExamsMap = new Map(exams.map(exam => [exam.id, exam])); // Map existing by Firestore ID
-      const updatedExamsMap = new Map(updatedExams.map(exam => [exam.id || exam.tempId, exam])); // Map incoming by Firestore ID or tempId
-
-      const batchPromises = []; // Collect all Firestore operations
-
-      // 1. Add new exams or Update existing exams
-      for (const updatedExam of updatedExams) {
-        if (updatedExam.id && currentExamsMap.has(updatedExam.id)) {
-          // Existing exam: check for changes and update
-          const currentExam = currentExamsMap.get(updatedExam.id);
-          const hasChanged = Object.keys(updatedExam).some(key =>
-            key !== 'id' && key !== 'tempId' && updatedExam[key] !== currentExam[key]
-          );
-
-          if (hasChanged) {
-            const examDocRef = doc(db, `artifacts/${appId}/users/${userId}/exams`, updatedExam.id);
-            batchPromises.push(updateDoc(examDocRef, {
-              subject: updatedExam.subject,
-              component: updatedExam.component,
-              date: updatedExam.date,
-              time: updatedExam.time,
-              session: updatedExam.session,
-              updatedAt: new Date().toISOString()
-            }));
-            console.log("Dashboard: Updating exam:", updatedExam.id);
-          }
-        } else if (updatedExam.tempId && !updatedExam.id) {
-          // New exam (has tempId but no Firestore ID)
-          const examsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exams`);
-          batchPromises.push(addDoc(examsCollectionRef, {
-            subject: updatedExam.subject,
-            component: updatedExam.component,
-            date: updatedExam.date,
-            time: updatedExam.time,
-            session: updatedExam.session,
-            createdAt: new Date().toISOString()
-          }));
-          console.log("Dashboard: Adding new exam with tempId:", updatedExam.tempId);
-        }
-      }
-
-      // 2. Delete removed exams
-      for (const currentExam of exams) {
-        // Check if the current exam from Firestore is NOT in the updated list (by its Firestore ID)
-        if (!updatedExamsMap.has(currentExam.id)) {
-          const examDocRef = doc(db, `artifacts/${appId}/users/${userId}/exams`, currentExam.id);
-          batchPromises.push(deleteDoc(examDocRef));
-          console.log("Dashboard: Deleting exam:", currentExam.id);
-        }
-      }
-
-      await Promise.all(batchPromises); // Execute all operations
-      console.log("Dashboard: Exam changes synced to Firestore successfully.");
-
-    } catch (error) {
-      console.error("Dashboard: Error saving exams to Firestore:", error);
-      setFirebaseError("Failed to save exams. Please try again.");
-    } finally {
-      setIsEditModalOpen(false); // Close modal regardless of success/failure
-    }
+  // --- Handlers for opening modals ---
+  const handleEditExams = () => {
+    setIsEditModalOpen(true);
   };
 
-
-  // --- Function to generate and display exams table as JPG ---
   const handleSeeAllExams = () => {
-    // Only generate if there are exams to display
+    // Logic to generate the image (from previous prompt's code)
     if (exams.length === 0) {
       setFirebaseError("No exams to display. Add some exams first!");
       return;
@@ -319,27 +266,25 @@ function Dashboard() {
     ctx.fillStyle = '#f9f9f9';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    let currentY = 0;
-
-    ctx.fillStyle = '#ff4d88';
-    ctx.fillRect(0, currentY, canvas.width, headerHeight);
-
     ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = '#ff4d88'; // Header background color
+    ctx.fillRect(0, 0, canvas.width, headerHeight); // Draw header background
+
+    ctx.fillStyle = 'white'; // Header text color
     ctx.textAlign = 'left';
     let currentX = 0;
     headers.forEach((header, i) => {
-        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3);
+        ctx.fillText(header, currentX + padding, headerHeight / 2 + headerFontSize / 3);
         currentX += colWidths[i];
     });
-    currentY += headerHeight;
+    currentY = headerHeight; // Start body drawing from below header
 
     ctx.font = `${fontSize}px 'Inter', sans-serif`;
     columnData.forEach((row, rowIndex) => {
-        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0';
+        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Alternating row colors
         ctx.fillRect(0, currentY, canvas.width, rowHeight);
 
-        ctx.fillStyle = '#333';
+        ctx.fillStyle = '#333'; // Body text color
         currentX = 0;
         row.forEach((cell, colIndex) => {
             ctx.fillText(cell, currentX + padding, currentY + rowHeight / 2 + fontSize / 3);
@@ -350,10 +295,93 @@ function Dashboard() {
 
     const image = canvas.toDataURL('image/jpeg', 0.9);
     setImageDataUrl(image);
-    setIsImageModalOpen(true);
+    setIsImageModalOpen(true); // Open the ImageDisplayModal
   };
 
-  // Mock data (keep these for other sections)
+  // --- Handle Save Exams (Add/Update/Delete reconciliation with Firestore) ---
+  // This function is passed to EditExamsModal and receives the updated list of exams
+  const handleSaveExams = async (updatedExams) => {
+    if (!userId || !db) {
+      console.error("Cannot save exams: User not authenticated or Firestore not ready.");
+      setFirebaseError("Authentication required to save exams.");
+      return;
+    }
+
+    setFirebaseError(null); // Clear previous errors
+
+    try {
+      // Create maps for efficient lookup of current and updated exams
+      const currentExamsMap = new Map(exams.map(exam => [exam.id, exam])); // Map existing by Firestore ID
+      // Map incoming by Firestore ID (for existing) or tempId (for new)
+      const updatedExamsMap = new Map(updatedExams.map(exam => [exam.id || exam.tempId, exam]));
+
+      const batchPromises = []; // Array to collect all Firestore write operations
+
+      // 1. Process updated/new exams from the modal
+      for (const updatedExam of updatedExams) {
+        if (updatedExam.id && currentExamsMap.has(updatedExam.id)) {
+          // This exam exists in Firestore (has an 'id') and was in the original list
+          // Check if any fields have actually changed before updating
+          const currentExam = currentExamsMap.get(updatedExam.id);
+          const hasChanged = Object.keys(updatedExam).some(key =>
+            // Exclude 'id' and 'tempId' from change detection
+            key !== 'id' && key !== 'tempId' && updatedExam[key] !== currentExam[key]
+          );
+
+          if (hasChanged) {
+            const examDocRef = doc(db, `artifacts/${appId}/users/${userId}/exams`, updatedExam.id);
+            // Push an update operation to the batch
+            batchPromises.push(updateDoc(examDocRef, {
+              subject: updatedExam.subject,
+              component: updatedExam.component,
+              date: updatedExam.date,
+              time: updatedExam.time,
+              session: updatedExam.session,
+              updatedAt: new Date().toISOString() // Record update timestamp
+            }));
+            console.log("Dashboard: Queued update for exam ID:", updatedExam.id);
+          }
+        } else if (updatedExam.tempId && !updatedExam.id) {
+          // This is a new exam (has 'tempId' but no Firestore 'id')
+          const examsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exams`);
+          // Push an add operation to the batch
+          batchPromises.push(addDoc(examsCollectionRef, {
+            subject: updatedExam.subject,
+            component: updatedExam.component,
+            date: updatedExam.date,
+            time: updatedExam.time,
+            session: updatedExam.session,
+            createdAt: new Date().toISOString() // Record creation timestamp
+          }));
+          console.log("Dashboard: Queued add for new exam with tempId:", updatedExam.tempId);
+        }
+      }
+
+      // 2. Process deletions: Find exams that were in the original list but are NOT in the updated list
+      for (const currentExam of exams) {
+        // Check if the Firestore ID of the current exam exists in the updatedExamsMap keys
+        if (!updatedExamsMap.has(currentExam.id)) {
+          const examDocRef = doc(db, `artifacts/${appId}/users/${userId}/exams`, currentExam.id);
+          // Push a delete operation to the batch
+          batchPromises.push(deleteDoc(examDocRef));
+          console.log("Dashboard: Queued delete for exam ID:", currentExam.id);
+        }
+      }
+
+      // Execute all batched Firestore operations simultaneously
+      await Promise.all(batchPromises);
+      console.log("Dashboard: All exam changes synced to Firestore successfully.");
+
+    } catch (error) {
+      console.error("Dashboard: Error saving exams to Firestore:", error);
+      setFirebaseError("Failed to save exams. Please try again.");
+    } finally {
+      setIsEditModalOpen(false); // Always close the modal after attempting save
+    }
+  };
+
+
+  // Mock data (keep these for other sections until actual data fetching is implemented)
   const quickStats = [
     { id: 1, label: "Upcoming Exam", value: nextExam ? `${nextExam.subject} ${nextExam.component}` : "N/A", icon: <CalendarClock size={24} /> },
     { id: 2, label: "Topics Mastered", value: "75%", icon: <GraduationCap size={24} /> },
@@ -370,13 +398,12 @@ function Dashboard() {
   // Placeholder for recent activity until we have a real activity collection
   // For now, these are hardcoded for display purposes.
   const recentActivity = [
-    { id: 'a1', description: "Completed 'Kinematics' in Physics.", timestamp: new Date(Date.now() - 5 * 60 * 1000) },
-    { id: 'a2', description: "Attempted May/June 2023 Paper 1.", timestamp: new Date(Date.now() - 30 * 60 * 1000) },
-    { id: 'a3', description: "Reviewed Chemistry topic 'Stoichiometry'.", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
-    { id: 'a4', description: "Updated 'Forces and Motion' notes.", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-    { id: 'a5', description: "Set reminder for 'Maths Quiz' next week.", timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000) },
+    { id: 'a1', description: "Completed 'Kinematics' in Physics.", timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString() },
+    { id: 'a2', description: "Attempted May/June 2023 Paper 1.", timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
+    { id: 'a3', description: "Reviewed Chemistry topic 'Stoichiometry'.", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+    { id: 'a4', description: "Updated 'Forces and Motion' notes.", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
+    { id: 'a5', description: "Set reminder for 'Maths Quiz' next week.", timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString() },
   ];
-
 
   // Conditional rendering based on authentication state
   if (loading) {
@@ -399,9 +426,14 @@ function Dashboard() {
   return (
     <div className="app">
         {/* Placeholder for Header, UserProfileWidget, ThemeToggle, NotificationsDropdown */}
-        {/* You should have these components imported and rendered here,
-            e.g., <Header><Bell size={24} ... /><UserProfileWidget /><ThemeToggle /></Header>
-            and {isNotificationsOpen && <NotificationsDropdown ... />} */}
+        {/* These components are typically rendered in App.js or a Layout component
+            that wraps Dashboard. If they are directly in Dashboard, ensure they are imported. */}
+        {/* <Header>
+            <Bell size={24} className="nav-bell-icon" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} />
+            <UserProfileWidget />
+            <ThemeToggle />
+        </Header>
+        {isNotificationsOpen && <NotificationsDropdown onClose={() => setIsNotificationsOpen(false)} userId={userId} />} */}
 
       <main className="page-container dashboard-page">
         <h1 className="page-title">Dashboard</h1>
@@ -428,10 +460,10 @@ function Dashboard() {
             {nextExam ? (
               <>
                 <div className="countdown-content">
-                  {timerComponents.length > 0 ? timerComponents : <p className="no-upcoming-exams">Time's up! Exam passed.</p>}
+                  {timerComponents.length > 0 ? timerComponents.map(comp => comp) : <p className="no-upcoming-exams">Time's up! Exam passed.</p>}
                 </div>
+                {/* Ensure exam details are always displayed if nextExam exists */}
                 <div className="exam-details">
-                    {/* Display exam details here below countdown */}
                     <h3>{nextExam.subject} - {nextExam.component}</h3>
                     <p>Date: {formatDateWithOrdinal(nextExam.date)}</p>
                     {nextExam.time && <p>Time: {nextExam.time} {nextExam.session}</p>}
@@ -450,6 +482,7 @@ function Dashboard() {
             ) : (
               <div className="no-upcoming-exams">
                 <p>No upcoming exams scheduled.</p>
+                {/* This button should also call handleEditExams */}
                 <button onClick={handleEditExams} className="dashboard-action-btn">
                   <PlusCircle size={16} /> Add Exams
                 </button>
@@ -489,10 +522,11 @@ function Dashboard() {
             <h3 className="section-heading">Recent Activity & Notifications</h3>
             <div className="activity-list dashboard-card">
               {recentActivity.length > 0 ? (
-                recentActivity.map((activity, index) => (
+                recentActivity.map((activity) => (
                   <div key={activity.id} className="activity-item">
                     <Bell size={16} className="activity-icon" /> {/* Using lucide-react Bell icon */}
                     <p>{activity.description}</p>
+                    {/* Convert ISO string back to readable date for display */}
                     <span className="timestamp">{new Date(activity.timestamp).toLocaleString()}</span>
                   </div>
                 ))
@@ -509,7 +543,7 @@ function Dashboard() {
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           onSave={handleSaveExams}
-          initialExams={exams} // Pass current exams for editing
+          initialExams={exams} // Pass current exams fetched from Firestore
         />
 
         <ImageDisplayModal

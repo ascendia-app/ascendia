@@ -4,7 +4,7 @@
     import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import { auth, db } from '../firebaseConfig'; // Import auth and db
-    import './PageStyles.css';
+    import '../PageStyles.css';
 
     function GettingStarted() {
       const [email, setEmail] = useState('');

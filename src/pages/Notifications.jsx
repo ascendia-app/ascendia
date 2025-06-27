@@ -1,7 +1,7 @@
 // src/pages/Notifications.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './PageStyles.css'; // Reusing PageStyles for consistency
+import '../PageStyles.css'; // Reusing PageStyles for consistency
 
 function Notifications() {
   // Mock data for tasks/notifications

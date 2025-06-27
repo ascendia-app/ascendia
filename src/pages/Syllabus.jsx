@@ -4,7 +4,7 @@ import { db, appId } from '../firebaseConfig';
 import { useAuth } from '../contexts/AuthContext';
 import { PlusCircle, Trash2, XCircle, ChevronDown, CheckSquare, Square, NotepadText } from 'lucide-react'; // Ensure all used icons are imported
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import './PageStyles.css';
+import '../PageStyles.css';
 
 // Predefined subject data by level
 const PREDEFINED_SUBJECTS = {

@@ -3,7 +3,7 @@
     import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
     import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
     import { auth } from '../firebaseConfig'; // Import auth
-    import './PageStyles.css';
+    import '../PageStyles.css';
 
     function Login() {
       const [email, setEmail] = useState(''); // Changed to email for Firebase Auth

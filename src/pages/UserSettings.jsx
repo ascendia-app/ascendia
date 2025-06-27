@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './PageStyles.css'; // Reusing PageStyles for consistency
+import '../PageStyles.css'; // Reusing PageStyles for consistency
 
 function UserSettings() {
   return (
