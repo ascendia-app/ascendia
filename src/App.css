@@ -259,44 +259,24 @@ html, body, #root {
 }
 
 /* Logout Button Specific Styling within Dropdown */
-.logout-btn {
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
+.dropdown-item.logout-btn { /* Targeted specifically for red button */
+  background-color: #ff4d4d; /* Bright red */
+  color: white; /* White text for contrast */
+  font-weight: 600; /* Bolder text */
+  border-bottom: none; /* No border for the last item */
 }
 
-/* Apply dropdown-item styles directly to logout-btn for consistency */
-.logout-btn.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.9rem 1.2rem;
-  color: #333;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
-  font-family: 'Inter', sans-serif;
-  border-bottom: none; /* Ensure no border on logout if it's last */
+.dropdown-item.logout-btn:hover {
+  background-color: #e03333; /* Darker red on hover */
+  color: white; /* Keep text white on hover */
 }
 
-.logout-btn.dropdown-item:hover {
-  background-color: #f7f7f7;
-  color: #ff6699;
+.dropdown-item.logout-btn .icon svg {
+  color: white; /* White icon for logout button */
 }
 
-.logout-btn.dropdown-item .icon svg {
-  width: 18px;
-  height: 18px;
-  color: #888;
-  transition: color 0.2s;
-}
-
-.logout-btn.dropdown-item:hover .icon svg {
-  color: #ff6699;
+.dropdown-item.logout-btn:hover .icon svg {
+  color: white; /* Keep icon white on hover */
 }
 
 
@@ -349,14 +329,12 @@ html, body, #root {
   font-size: 6.5rem; /* Even larger font size */
   font-weight: 900; /* Extra bold */
   margin-bottom: 1.5rem; /* Increased margin */
-  /* Gradient colors for the text fill */
-  background: linear-gradient(to right, #ff007f, #ff7f00, #ffea00); /* Hot Pink, Bright Orange, Bright Yellow */
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* NEW: Plain pink color with dropshadow, no gradient web clipping */
+  color: #ff4d88; /* Plain pink color */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Subtle drop shadow */
+  /* Removed: background, -webkit-background-clip, background-clip, -webkit-text-fill-color */
   animation: floatUp 1.5s ease-out;
   letter-spacing: 5px; /* Adds more spacing for better visual */
-  /* --- TEXT-SHADOW REMOVED: Only plain gradient fill as requested --- */
   transform: translateZ(0); /* Keeps h1 in the 'foreground' for parallax */
 }
 

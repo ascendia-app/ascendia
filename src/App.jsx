@@ -21,7 +21,7 @@ import UserSettings from './pages/UserSettings';
 function App() {
   const { currentUser, loading } = useAuth(); // AuthContext's loading state (for initial Firebase Auth readiness)
   const [displayedUsername, setDisplayedUsername] = useState('');
-  const [isUsernameLoading, setIsUsernameLoading] = useState(false); // NEW: State for username fetch loading
+  const [isUsernameLoading, setIsUsernameLoading] = useState(false); // State for username fetch loading
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
@@ -73,11 +73,9 @@ function App() {
             console.log("Fetched username from Firestore:", userDocSnap.data().username);
           } else {
             console.warn("No 'username' field found in Firestore for UID:", currentUser.uid, ". Displaying email prefix.");
-            // If doc doesn't exist or username field is missing, fallback already set.
           }
         } catch (error) {
           console.error("Error fetching username from Firestore:", error);
-          // If there's an error during fetch, keep the email prefix fallback.
         } finally {
           setIsUsernameLoading(false); // End loading regardless of success/failure
         }
@@ -91,7 +89,7 @@ function App() {
       console.log("Auth state determined, attempting to fetch username...");
       fetchUsername();
     }
-  }, [currentUser, loading, db]); // Rerun when currentUser, loading, or db instance changes
+  }, [currentUser, loading, db]);
 
   // Effect to handle clicks outside the dropdown
   useEffect(() => {
@@ -141,7 +139,7 @@ function App() {
           <div className="nav-buttons">
             {/* Conditional rendering based on authentication and username loading status */}
             {loading || isUsernameLoading ? (
-              <span className="welcome-message loading-pulse">Loading...</span> // Show loading state for auth or username fetch
+              <span className="welcome-message loading-pulse">Loading...</span>
             ) : currentUser ? (
               <div className="user-profile-widget" ref={dropdownRef}>
                 <div className="user-info-trigger" onClick={toggleDropdown}>
@@ -153,22 +151,7 @@ function App() {
                 </div>
                 {isDropdownOpen && (
                   <div className="dropdown-menu">
-                    <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <span className="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
-                          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
-                        </svg>
-                      </span>
-                      User Settings
-                    </Link>
-                    <button onClick={handleLogout} className="dropdown-item">
-                      <span className="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="17 16 22 12 17 8"/><line x1="22" x2="11" y1="12" y2="12"/>
-                        </svg>
-                      </span>
-                      Log Out
-                    </button>
+                    {/* Dashboard on top */}
                     <Link to="/dashboard" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                       <span className="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard">
@@ -177,29 +160,48 @@ function App() {
                         </span>
                         Dashboard
                       </Link>
-                      <Link to="/help" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                        <span className="icon">
+                    {/* User Settings */}
+                    <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                      <span className="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
+                          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </span>
+                      User Settings
+                    </Link>
+                    {/* Help */}
+                    <Link to="/help" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                      <span className="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-help-circle">
                                 <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
                             </svg>
                         </span>
                         Help
                       </Link>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <Link to="/login" className="login-btn">Login</Link>
-                  <Link to="/getting-started" className="start-btn">Get Started</Link>
-                </>
-              )}
-            </div>
-            <button className="toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
-              <div className="circle"></div>
-            </button>
+                    {/* Log Out button in red */}
+                    <button onClick={handleLogout} className="dropdown-item logout-btn"> {/* Added logout-btn class */}
+                      <span className="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="17 16 22 12 17 8"/><line x1="22" x2="11" y1="12" y2="12"/>
+                        </svg>
+                      </span>
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link to="/login" className="login-btn">Login</Link>
+                <Link to="/getting-started" className="start-btn">Get Started</Link>
+              </>
+            )}
           </div>
-        </header>
+          <button className="toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
+            <div className="circle"></div>
+          </button>
+        </div>
+      </header>
 
         {/* Main content area where different routes will render their components */}
         <div className="main-content-area">
