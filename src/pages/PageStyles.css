@@ -858,3 +858,434 @@
     width: 100%; /* Full width on mobile */
   }
 }
+/* --- New Syllabus Checklist Styles --- */
+
+.syllabus-page {
+  /* Inherits .page-container styles */
+  max-width: 100%; /* Ensure it spans full width */
+  align-items: flex-start; /* Align content to the left within the page */
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  box-sizing: border-box;
+}
+
+.syllabus-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr; /* Left panel 1fr, Right content 2.5fr */
+  gap: 2rem;
+  width: 100%;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  align-items: start; /* Align grid items to the start of their row */
+}
+
+/* Syllabus Subjects Panel (Left Column) */
+.syllabus-subjects-panel {
+  /* Inherits dashboard-card styles */
+  padding: 1.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Make it fill the height of the grid area */
+  position: sticky; /* Make it sticky */
+  top: 1rem; /* Adjust as needed for header space */
+  align-self: start; /* Ensure it sticks to the top of its grid cell */
+}
+
+.panel-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #ffcc33;
+  padding-bottom: 0.5rem;
+}
+
+.add-subject-section, .search-subject-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.add-subject-input, .search-subject-input {
+  flex-grow: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+
+.add-subject-btn {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.add-subject-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+.search-subject-section {
+  position: relative;
+}
+.search-subject-input {
+  padding-right: 2.5rem; /* Make space for icon */
+}
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+
+.subject-list {
+  flex-grow: 1;
+  overflow-y: auto; /* Scrollable list of subjects */
+  padding-right: 5px; /* Space for scrollbar */
+}
+
+.subject-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.subject-item:hover {
+  background-color: #e6e6e6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.subject-item.selected {
+  background-color: #ff4d88; /* Pink for selected */
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(255, 77, 136, 0.2);
+}
+
+.subject-item.selected .delete-subject-btn {
+  color: white; /* White delete icon on pink background */
+}
+
+.delete-subject-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d; /* Red for delete icon */
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex; /* To center icon */
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Make it round */
+  transition: background-color 0.2s;
+}
+.delete-subject-btn:hover {
+  background-color: rgba(255, 77, 77, 0.2); /* Light red on hover */
+}
+
+
+/* Syllabus Content Panel (Right Column) */
+.syllabus-content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.no-subject-selected-message {
+  padding: 3rem;
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  font-style: italic;
+  justify-content: center; /* Center content in card */
+  align-items: center;
+  min-height: 200px; /* Give it some height */
+}
+
+.syllabus-header-with-chart {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Heading takes 2 parts, chart 1 part */
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem; /* Space before add topic section */
+}
+
+.syllabus-header-with-chart .panel-heading {
+  margin-bottom: 0; /* Adjust margin for grid layout */
+}
+
+/* Progress Chart */
+.progress-chart-container {
+  /* Inherits dashboard-card styles */
+  padding: 1rem; /* Adjust padding for chart */
+  height: 250px; /* Fixed height for consistent chart size */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progress-chart-container h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.no-progress-data {
+  font-style: italic;
+  color: #777;
+  text-align: center;
+  padding: 1rem;
+}
+
+.mastered-summary {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ff4d88;
+  margin-top: 0.5rem;
+}
+
+/* Recharts specific styles (optional, but good for fine-tuning) */
+.recharts-wrapper {
+  overflow: visible !important; /* Ensure tooltips are not cut off */
+}
+.recharts-legend-wrapper {
+  margin-top: -10px !important; /* Pull legend up closer to chart */
+}
+
+/* Syllabus Items List */
+.add-topic-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.add-topic-input {
+  flex-grow: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+.add-topic-btn {
+  background-color: #ff8c42; /* Orange */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.add-topic-btn:hover {
+  background-color: #e07b3b;
+  transform: translateY(-1px);
+}
+
+.syllabus-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.syllabus-item-card {
+  /* Inherits dashboard-card styles */
+  padding: 1.2rem 1.5rem;
+  align-items: flex-start; /* Align content to left within card */
+  text-align: left;
+  flex-direction: row; /* Make content and controls side-by-side */
+  justify-content: space-between;
+}
+
+.item-main-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* Allow text to take space */
+  gap: 1rem;
+  flex-wrap: wrap; /* Allow wrapping if text is long */
+}
+
+.item-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  flex-grow: 1;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0; /* Prevent controls from shrinking */
+}
+
+.status-dropdown {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  background-color: white; /* Ensure background is white */
+}
+.status-dropdown:focus {
+  outline: none;
+  border-color: #ff8c42;
+}
+
+/* Status specific colors for dropdown */
+.status-dropdown.status-not-started {
+  color: #ff4d4d; /* Red */
+  border-color: #ff4d4d;
+}
+.status-dropdown.status-in-progress {
+  color: #ffcc33; /* Yellow */
+  border-color: #ffcc33;
+}
+.status-dropdown.status-mastered {
+  color: #4CAF50; /* Green */
+  border-color: #4CAF50;
+}
+
+.notes-btn, .delete-topic-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+.notes-btn {
+  color: #6a6a6a;
+}
+.notes-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.delete-topic-btn {
+  color: #ff4d4d;
+}
+.delete-topic-btn:hover {
+  background-color: rgba(255, 77, 77, 0.2);
+}
+
+.no-items-message {
+  padding: 2rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+/* Notes Modal Specific Styles (reusing existing modal structure) */
+.notes-modal-content {
+  max-width: 600px;
+}
+.notes-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  resize: vertical; /* Allow vertical resizing */
+}
+.notes-textarea:focus {
+  outline: none;
+  border-color: #ff8c42;
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+/* Responsive Adjustments for Syllabus Page */
+@media (max-width: 992px) { /* Tablets */
+  .syllabus-grid-container {
+    grid-template-columns: 1fr; /* Stack columns vertically */
+    padding: 0 1.5rem;
+  }
+  .syllabus-subjects-panel {
+    position: static; /* Remove sticky positioning on smaller screens */
+    height: auto; /* Auto height */
+    margin-bottom: 2rem;
+  }
+  .syllabus-header-with-chart {
+    grid-template-columns: 1fr; /* Stack heading and chart */
+    text-align: center;
+  }
+  .syllabus-header-with-chart .panel-heading {
+    text-align: center;
+  }
+  .progress-chart-container {
+    height: 220px; /* Adjust height for smaller screens */
+    padding: 0.8rem;
+  }
+  .item-controls {
+    flex-wrap: wrap; /* Allow controls to wrap if space is tight */
+    justify-content: center; /* Center controls when wrapped */
+    margin-top: 0.5rem;
+  }
+  .syllabus-item-card {
+    flex-direction: column; /* Stack item content and controls vertically */
+    align-items: flex-start; /* Align content to left */
+  }
+}
+
+@media (max-width: 768px) { /* Smaller Mobile */
+  .syllabus-page {
+    padding: 1rem;
+  }
+  .panel-heading {
+    font-size: 1.4rem;
+  }
+  .add-subject-section, .add-topic-section {
+    flex-direction: column;
+  }
+  .add-subject-btn, .add-topic-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .subject-item, .syllabus-item-card {
+    padding: 0.6rem 0.8rem;
+  }
+  .item-text, .status-dropdown, .notes-btn, .delete-topic-btn {
+    font-size: 0.95rem;
+  }
+  .form-group-inline {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-group-inline label {
+    width: 100%;
+    text-align: left;
+  }
+  .remove-exam-btn {
+    width: 100%;
+    align-self: center;
+  }
+}
