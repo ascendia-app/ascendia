@@ -1,10 +1,33 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs } from 'firebase/firestore';
-import { db, appId } from '../firebaseConfig'; // Import db and appId
-import { useAuth } from '../contexts/AuthContext'; // Import useAuth hook
-import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle } from 'lucide-react';
+import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore'; // Added setDoc
+import { db, appId } from '../firebaseConfig';
+import { useAuth } from '../contexts/AuthContext';
+import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle, ChevronDown, CheckSquare, Square } from 'lucide-react'; // Added new icons
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import './PageStyles.css'; // Your main CSS file
+import './PageStyles.css';
+
+// Predefined subject data by level
+const PREDEFINED_SUBJECTS = {
+  'O Level': [
+    { code: '5054', name: 'Physics' },
+    { code: '5070', name: 'Chemistry' },
+    { code: '5090', name: 'Biology' },
+    { code: '4024', name: 'Mathematics' },
+    { code: '2058', name: 'Islamiyat' },
+    { code: '2059', name: 'Pakistan Studies' },
+    { code: '1123', name: 'English Language' },
+    { code: '2281', name: 'Economics' },
+    { code: '5014', name: 'Environmental Management' },
+    { code: '7100', name: 'Commerce' },
+    { code: '2251', name: 'Sociology' },
+  ],
+  'IGCSE': [
+    // Add IGCSE subjects here when provided
+  ],
+  'A Level': [
+    // Add A Level subjects here when provided
+  ],
+};
 
 // Helper for status colors
 const STATUS_COLORS = {
@@ -57,25 +80,29 @@ const NotesModal = ({ isOpen, onClose, initialNotes, onSaveNotes }) => {
 
 
 function Syllabus() {
-  const { currentUser, loading } = useAuth(); // Use the auth context
-  const [userId, setUserId] = useState(null); // Local state for userId
-  const [subjects, setSubjects] = useState([]);
+  const { currentUser, loading } = useAuth();
+  const [userId, setUserId] = useState(null);
+  const [subjects, setSubjects] = useState([]); // Subjects added by the user (from Firestore)
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedSubjectName, setSelectedSubjectName] = useState('');
   const [syllabusItems, setSyllabusItems] = useState([]);
-  const [newSubjectName, setNewSubjectName] = useState('');
-  const [newTopicText, setNewTopicText] = useState('');
-  const [searchSubjectTerm, setSearchSubjectTerm] = useState('');
-  const [filteredSubjects, setFilteredSubjects] = useState([]);
+
+  // New states for level-based subject selection
+  const [selectedLevel, setSelectedLevel] = useState('O Level'); // Default to O Level
+  const [predefinedSubjectsForLevel, setPredefinedSubjectsForLevel] = useState([]);
+  const [subjectsToAdd, setSubjectsToAdd] = useState([]); // List of subject codes to be added by user
+  const [searchSubjectTerm, setSearchSubjectTerm] = useState(''); // For filtering user's added subjects
 
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [currentNotes, setCurrentNotes] = useState('');
   const [currentTopicIdForNotes, setCurrentTopicIdForNotes] = useState(null);
 
+  const [newTopicText, setNewTopicText] = useState(''); // State for adding new topic
+
 
   // Set userId from AuthContext
   useEffect(() => {
-    if (!loading) { // Only set userId once auth state is known
+    if (!loading) {
       if (currentUser) {
         setUserId(currentUser.uid);
         console.log("Syllabus.jsx: User ID set:", currentUser.uid);
@@ -90,11 +117,17 @@ function Syllabus() {
     }
   }, [currentUser, loading]);
 
-  // Fetch Subjects for the User
+  // Update predefined subjects when level changes
   useEffect(() => {
-    if (loading || !userId || !db) { // Wait for auth loading to complete and userId to be available
+    setPredefinedSubjectsForLevel(PREDEFINED_SUBJECTS[selectedLevel] || []);
+    setSubjectsToAdd([]); // Clear selected subjects to add when level changes
+  }, [selectedLevel]);
+
+  // Fetch Subjects for the User (from Firestore)
+  useEffect(() => {
+    if (loading || !userId || !db) {
       console.log("Syllabus.jsx: Skipping subject fetch - loading:", loading, "userId:", userId);
-      setSubjects([]); // Clear subjects if not ready
+      setSubjects([]);
       return;
     }
 
@@ -104,13 +137,13 @@ function Syllabus() {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedSubjects = snapshot.docs.map(doc => ({
-        id: doc.id,
+        id: doc.id, // Firestore document ID (which is the subject code here)
         ...doc.data()
       }));
       setSubjects(fetchedSubjects);
       console.log("Syllabus.jsx: Fetched subjects:", fetchedSubjects.length);
 
-      // If no subject is selected, or the selected one was deleted, auto-select the first
+      // Auto-select first subject if none selected or current selected subject was deleted
       if (!selectedSubjectId || !fetchedSubjects.some(s => s.id === selectedSubjectId)) {
         if (fetchedSubjects.length > 0) {
           setSelectedSubjectId(fetchedSubjects[0].id);
@@ -129,24 +162,21 @@ function Syllabus() {
 
     return () => {
       console.log("Syllabus.jsx: Unsubscribing from subjects listener.");
-      unsubscribe(); // Cleanup snapshot listener
+      unsubscribe();
     }
-  }, [userId, db, selectedSubjectId, appId, loading]); // Re-run if userId, db, selectedSubjectId, appId, or loading changes
+  }, [userId, db, selectedSubjectId, appId, loading]);
 
-  // Filter Subjects based on search term
-  useEffect(() => {
-    const term = searchSubjectTerm.toLowerCase();
-    setFilteredSubjects(
-      subjects.filter(subject => subject.name.toLowerCase().includes(term))
-    );
-  }, [subjects, searchSubjectTerm]);
-
+  // Filter Subjects based on search term (for user's added subjects)
+  const filteredUserSubjects = subjects.filter(subject =>
+    subject.name.toLowerCase().includes(searchSubjectTerm.toLowerCase()) ||
+    subject.id.toLowerCase().includes(searchSubjectTerm.toLowerCase()) // Allow search by code too
+  );
 
   // Fetch Syllabus Items for the Selected Subject
   useEffect(() => {
     if (loading || !userId || !db || !selectedSubjectId) {
       console.log("Syllabus.jsx: Skipping syllabus item fetch - loading:", loading, "userId:", userId, "selectedSubjectId:", selectedSubjectId);
-      setSyllabusItems([]); // Clear items if not ready
+      setSyllabusItems([]);
       return;
     }
 
@@ -167,21 +197,21 @@ function Syllabus() {
 
     return () => {
       console.log(`Syllabus.jsx: Unsubscribing from topics listener for ${selectedSubjectName}.`);
-      unsubscribe(); // Cleanup snapshot listener
+      unsubscribe();
     }
-  }, [userId, db, selectedSubjectId, selectedSubjectName, appId, loading]); // Re-run if any of these change
+  }, [userId, db, selectedSubjectId, selectedSubjectName, appId, loading]);
 
   // Data for the progress chart
   const getChartData = useCallback(() => {
     const statusCounts = syllabusItems.reduce((acc, item) => {
       acc[item.status] = (acc[item.status] || 0) + 1;
       return acc;
-    }, { "Not Started": 0, "In Progress": 0, "Mastered": 0 }); // Ensure all statuses are present
+    }, { "Not Started": 0, "In Progress": 0, "Mastered": 0 });
 
     return Object.keys(statusCounts).map(status => ({
       name: status,
       value: statusCounts[status],
-    })).filter(data => data.value > 0); // Only show statuses with values > 0
+    })).filter(data => data.value > 0);
   }, [syllabusItems]);
 
   const totalTopics = syllabusItems.length;
@@ -190,20 +220,45 @@ function Syllabus() {
 
   // Handlers for Firestore operations
 
-  const handleAddSubject = async () => {
-    if (!userId || !newSubjectName.trim()) return;
+  const handleToggleSubjectToAdd = (subjectCode) => {
+    setSubjectsToAdd(prev =>
+      prev.includes(subjectCode)
+        ? prev.filter(code => code !== subjectCode)
+        : [...prev, subjectCode]
+    );
+  };
+
+  const handleAddSelectedSubjects = async () => {
+    if (!userId || subjectsToAdd.length === 0) return;
     try {
-      console.log(`Syllabus.jsx: Adding subject '${newSubjectName.trim()}' for user ${userId}.`);
       const subjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects`);
-      await addDoc(subjectsCollectionRef, {
-        name: newSubjectName.trim(),
-        createdAt: new Date().toISOString(),
+      const addPromises = subjectsToAdd.map(async (subjectCode) => {
+        // Find the full subject object from the predefined list
+        const subjectData = predefinedSubjectsForLevel.find(s => s.code === subjectCode);
+        if (subjectData) {
+          // Check if subject already exists in user's Firestore list to prevent re-adding
+          const existingSubject = subjects.find(s => s.id === subjectCode);
+          if (!existingSubject) {
+            console.log(`Syllabus.jsx: Adding predefined subject '${subjectData.name}' (${subjectData.code}) for user ${userId}.`);
+            await setDoc(doc(subjectsCollectionRef, subjectData.code), { // Use setDoc with explicit ID
+              name: subjectData.name,
+              level: selectedLevel, // Store the level
+              createdAt: new Date().toISOString(),
+            });
+          } else {
+            console.log(`Syllabus.jsx: Subject '${subjectData.name}' (${subjectData.code}) already exists, skipping.`);
+          }
+        }
       });
-      setNewSubjectName('');
+      await Promise.all(addPromises);
+      setSubjectsToAdd([]); // Clear selections after adding
+      alert('Selected subjects added!'); // Simple alert for now, can be replaced by custom modal
     } catch (e) {
-      console.error("Syllabus.jsx: Error adding subject: ", e);
+      console.error("Syllabus.jsx: Error adding selected subjects: ", e);
+      alert('Error adding subjects. Please try again.');
     }
   };
+
 
   const handleAddTopic = async () => {
     if (!userId || !selectedSubjectId || !newTopicText.trim()) return;
@@ -248,56 +303,47 @@ function Syllabus() {
     } catch (e) {
       console.error("Syllabus.jsx: Error saving notes: ", e);
     }
-    // No need to close modal here, it will be closed by onSave in modal component
   };
 
-
   const handleDeleteTopic = async (itemId) => {
-    // IMPORTANT: Replaced `window.confirm` with a custom modal/message box for Canvas compatibility.
-    // For now, I'm using a simple `console.log` + direct delete. In a production app,
-    // you would implement a custom confirmation modal UI.
-    console.warn("Syllabus.jsx: Deleting topic confirmed (via console). In production, implement custom modal for confirmation.");
-    if (!userId || !selectedSubjectId || !itemId) return;
-    try {
-      console.log(`Syllabus.jsx: Deleting topic ${itemId}.`);
-      const topicDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects/${selectedSubjectId}/syllabusItems`, itemId);
-      await deleteDoc(topicDocRef);
-    } catch (e) {
-      console.error("Syllabus.jsx: Error deleting topic: ", e);
+    if (confirm('Are you sure you want to delete this topic?')) { // Using confirm for simplicity for now
+      if (!userId || !selectedSubjectId || !itemId) return;
+      try {
+        console.log(`Syllabus.jsx: Deleting topic ${itemId}.`);
+        const topicDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects/${selectedSubjectId}/syllabusItems`, itemId);
+        await deleteDoc(topicDocRef);
+      } catch (e) {
+        console.error("Syllabus.jsx: Error deleting topic: ", e);
+      }
     }
   };
 
   const handleDeleteSubject = async (subjectIdToDelete) => {
-    // IMPORTANT: Replaced `window.confirm` with a custom modal/message box for Canvas compatibility.
-    // For now, I'm using a simple `console.log` + direct delete. In a production app,
-    // you would implement a custom confirmation modal UI.
-    console.warn("Syllabus.jsx: Deleting subject confirmed (via console). In production, implement custom modal for confirmation.");
-    if (!userId || !subjectIdToDelete) return;
-    try {
-      console.log(`Syllabus.jsx: Deleting subject ${subjectIdToDelete} and its topics.`);
-      // Delete all syllabus items within the subject's subcollection first
-      const syllabusItemsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects/${subjectIdToDelete}/syllabusItems`);
-      const q = query(syllabusItemsCollectionRef);
-      const snapshot = await getDocs(q);
-      const deletePromises = [];
-      snapshot.docs.forEach((d) => {
-        deletePromises.push(deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/subjects/${subjectIdToDelete}/syllabusItems`, d.id)));
-      });
-      await Promise.all(deletePromises);
+    if (confirm('Deleting a subject will also delete all its topics. Are you sure?')) { // Using confirm for simplicity for now
+      if (!userId || !subjectIdToDelete) return;
+      try {
+        console.log(`Syllabus.jsx: Deleting subject ${subjectIdToDelete} and its topics.`);
+        const syllabusItemsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects/${subjectIdToDelete}/syllabusItems`);
+        const q = query(syllabusItemsCollectionRef);
+        const snapshot = await getDocs(q);
+        const deletePromises = [];
+        snapshot.docs.forEach((d) => {
+          deletePromises.push(deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/subjects/${subjectIdToDelete}/syllabusItems`, d.id)));
+        });
+        await Promise.all(deletePromises);
 
-      // Then delete the subject document itself
-      const subjectDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects`, subjectIdToDelete);
-      await deleteDoc(subjectDocRef);
+        const subjectDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects`, subjectIdToDelete);
+        await deleteDoc(subjectDocRef);
 
-      // Clear selected subject if it was the one deleted
-      if (selectedSubjectId === subjectIdToDelete) {
-        setSelectedSubjectId(null);
-        setSelectedSubjectName('');
-        setSyllabusItems([]);
+        if (selectedSubjectId === subjectIdToDelete) {
+          setSelectedSubjectId(null);
+          setSelectedSubjectName('');
+          setSyllabusItems([]);
+        }
+        console.log(`Syllabus.jsx: Subject ${subjectIdToDelete} deleted successfully.`);
+      } catch (e) {
+        console.error("Syllabus.jsx: Error deleting subject: ", e);
       }
-      console.log(`Syllabus.jsx: Subject ${subjectIdToDelete} deleted successfully.`);
-    } catch (e) {
-      console.error("Syllabus.jsx: Error deleting subject: ", e);
     }
   };
 
@@ -310,25 +356,57 @@ function Syllabus() {
       <div className="syllabus-grid-container">
         {/* Left Column: Subject Management */}
         <div className="syllabus-subjects-panel dashboard-card">
-          <h3 className="panel-heading">Your Subjects</h3>
-          <div className="add-subject-section">
-            <input
-              type="text"
-              placeholder="Add New Subject (e.g., Biology)"
-              value={newSubjectName}
-              onChange={(e) => setNewSubjectName(e.target.value)}
-              onKeyPress={(e) => { if (e.key === 'Enter') handleAddSubject(); }}
-              className="add-subject-input"
-            />
-            <button onClick={handleAddSubject} className="add-subject-btn">
-              <PlusCircle size={18} /> Add
+          <h3 className="panel-heading">Add Subjects</h3>
+          <div className="level-select-section">
+            <label htmlFor="select-level" className="select-level-label">Select Level:</label>
+            <select
+              id="select-level"
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value)}
+              className="level-dropdown"
+            >
+              {Object.keys(PREDEFINED_SUBJECTS).map(level => (
+                <option key={level} value={level}>{level}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="predefined-subject-list">
+            <h4>{selectedLevel} Subjects:</h4>
+            {predefinedSubjectsForLevel.length > 0 ? (
+              predefinedSubjectsForLevel.map(subject => (
+                <div
+                  key={subject.code}
+                  className={`predefined-subject-item ${subjectsToAdd.includes(subject.code) ? 'selected' : ''}`}
+                  onClick={() => handleToggleSubjectToAdd(subject.code)}
+                >
+                  <span>{subject.name} ({subject.code})</span>
+                  {subjectsToAdd.includes(subject.code) ? (
+                    <CheckSquare size={20} color="#4CAF50" />
+                  ) : (
+                    <Square size={20} color="#999" />
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="no-items-message">No subjects defined for this level yet.</p>
+            )}
+            <button
+              onClick={handleAddSelectedSubjects}
+              className="add-selected-subjects-btn"
+              disabled={subjectsToAdd.length === 0}
+            >
+              <PlusCircle size={18} /> Add Selected Subjects ({subjectsToAdd.length})
             </button>
           </div>
 
+          <hr className="divider" /> {/* Divider between add section and user's subjects */}
+
+          <h3 className="panel-heading">Your Added Subjects</h3>
           <div className="search-subject-section">
             <input
               type="text"
-              placeholder="Search Subjects..."
+              placeholder="Search My Subjects..."
               value={searchSubjectTerm}
               onChange={(e) => setSearchSubjectTerm(e.target.value)}
               className="search-subject-input"
@@ -338,9 +416,9 @@ function Syllabus() {
 
           <div className="subject-list">
             {loading ? (
-              <p className="loading-message">Loading subjects...</p>
-            ) : filteredSubjects.length > 0 ? (
-              filteredSubjects.map(subject => (
+              <p className="loading-message">Loading your subjects...</p>
+            ) : filteredUserSubjects.length > 0 ? (
+              filteredUserSubjects.map(subject => (
                 <div
                   key={subject.id}
                   className={`subject-item ${selectedSubjectId === subject.id ? 'selected' : ''}`}
@@ -349,7 +427,7 @@ function Syllabus() {
                     setSelectedSubjectName(subject.name);
                   }}
                 >
-                  <span>{subject.name}</span>
+                  <span>{subject.name} ({subject.id})</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDeleteSubject(subject.id); }}
                     className="delete-subject-btn"
@@ -360,7 +438,7 @@ function Syllabus() {
                 </div>
               ))
             ) : (
-              <p className="no-items-message">No subjects found. Add one above!</p>
+              <p className="no-items-message">No subjects added yet. Use the 'Add Subjects' section above.</p>
             )}
           </div>
         </div>

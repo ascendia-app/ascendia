@@ -1223,54 +1223,536 @@
   box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
 }
 
+/* --- New Syllabus Checklist Styles --- */
+
+.syllabus-page {
+  max-width: 100%;
+  align-items: flex-start;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  box-sizing: border-box;
+}
+
+.syllabus-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: 2rem;
+  width: 100%;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+/* Syllabus Subjects Panel (Left Column) */
+.syllabus-subjects-panel {
+  padding: 1.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+}
+
+.panel-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #ffcc33;
+  padding-bottom: 0.5rem;
+}
+
+/* Level Select Section */
+.level-select-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.select-level-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.level-dropdown {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  background-color: white;
+  appearance: none; /* Remove default arrow */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1.2em;
+  cursor: pointer;
+}
+.level-dropdown:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+
+/* Predefined Subject List (for selection) */
+.predefined-subject-list {
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  max-height: 300px; /* Make it scrollable */
+  overflow-y: auto;
+  border: 1px solid #eee;
+}
+
+.predefined-subject-list h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.predefined-subject-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.4rem;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.predefined-subject-item:hover {
+  background-color: #f5f5f5;
+  border-color: #bbb;
+}
+
+.predefined-subject-item.selected {
+  background-color: #e0ffe0; /* Light green when selected */
+  border-color: #4CAF50; /* Green border */
+  box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+/* Add Selected Subjects Button */
+.add-selected-subjects-btn {
+  background-color: #6200EE; /* Purple */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.add-selected-subjects-btn:hover:not(:disabled) {
+  background-color: #3700B3;
+  transform: translateY(-1px);
+}
+.add-selected-subjects-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+  margin: 1.5rem 0;
+}
+
+
+/* Existing styles below, modified or reused as needed */
+
+.add-subject-section, .search-subject-section { /* Renamed search-subject-section to make it specific to user's subjects */
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.add-subject-input, .search-subject-input {
+  flex-grow: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+
+.add-subject-btn { /* This button is no longer used in the new UI */
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.add-subject-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+.search-subject-section {
+  position: relative;
+  margin-top: 1rem; /* Added margin to separate from divider */
+}
+.search-subject-input {
+  padding-right: 2.5rem; /* Make space for icon */
+}
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+
+.subject-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.subject-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.subject-item:hover {
+  background-color: #e6e6e6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.subject-item.selected {
+  background-color: #ff4d88;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(255, 77, 136, 0.2);
+}
+
+.subject-item.selected .delete-subject-btn {
+  color: white;
+}
+
+.delete-subject-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+.delete-subject-btn:hover {
+  background-color: rgba(255, 77, 77, 0.2);
+}
+
+
+/* Syllabus Content Panel (Right Column) */
+.syllabus-content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.no-subject-selected-message {
+  padding: 3rem;
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  font-style: italic;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.syllabus-header-with-chart {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.syllabus-header-with-chart .panel-heading {
+  margin-bottom: 0;
+}
+
+/* Progress Chart */
+.progress-chart-container {
+  padding: 1rem;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progress-chart-container h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.no-progress-data {
+  font-style: italic;
+  color: #777;
+  text-align: center;
+  padding: 1rem;
+}
+
+.mastered-summary {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ff4d88;
+  margin-top: 0.5rem;
+}
+
+/* Recharts specific styles (optional, but good for fine-tuning) */
+.recharts-wrapper {
+  overflow: visible !important;
+}
+.recharts-legend-wrapper {
+  margin-top: -10px !important;
+}
+
+/* Syllabus Items List */
+.add-topic-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.add-topic-input {
+  flex-grow: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+.add-topic-btn {
+  background-color: #ff8c42; /* Orange */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.add-topic-btn:hover {
+  background-color: #e07b3b;
+  transform: translateY(-1px);
+}
+
+.syllabus-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.syllabus-item-card {
+  padding: 1.2rem 1.5rem;
+  align-items: flex-start;
+  text-align: left;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.item-main-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.item-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  flex-grow: 1;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.status-dropdown {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  background-color: white;
+}
+.status-dropdown:focus {
+  outline: none;
+  border-color: #ff8c42;
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+/* Status specific colors for dropdown */
+.status-dropdown.status-not-started {
+  color: #ff4d4d;
+  border-color: #ff4d4d;
+}
+.status-dropdown.status-in-progress {
+  color: #ffcc33;
+  border-color: #ffcc33;
+}
+.status-dropdown.status-mastered {
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.notes-btn, .delete-topic-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+.notes-btn {
+  color: #6a6a6a;
+}
+.notes-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.delete-topic-btn {
+  color: #ff4d4d;
+}
+.delete-topic-btn:hover {
+  background-color: rgba(255, 77, 77, 0.2);
+}
+
+.no-items-message {
+  padding: 2rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+/* Notes Modal Specific Styles (reusing existing modal structure) */
+.notes-modal-content {
+  max-width: 600px;
+}
+.notes-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  resize: vertical;
+}
+.notes-textarea:focus {
+  outline: none;
+  border-color: #ff8c42;
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
 /* Responsive Adjustments for Syllabus Page */
-@media (max-width: 992px) { /* Tablets */
+@media (max-width: 992px) {
   .syllabus-grid-container {
-    grid-template-columns: 1fr; /* Stack columns vertically */
+    grid-template-columns: 1fr;
     padding: 0 1.5rem;
   }
   .syllabus-subjects-panel {
-    position: static; /* Remove sticky positioning on smaller screens */
-    height: auto; /* Auto height */
+    position: static;
+    height: auto;
     margin-bottom: 2rem;
   }
   .syllabus-header-with-chart {
-    grid-template-columns: 1fr; /* Stack heading and chart */
+    grid-template-columns: 1fr;
     text-align: center;
   }
   .syllabus-header-with-chart .panel-heading {
     text-align: center;
   }
   .progress-chart-container {
-    height: 220px; /* Adjust height for smaller screens */
+    height: 220px;
     padding: 0.8rem;
   }
   .item-controls {
-    flex-wrap: wrap; /* Allow controls to wrap if space is tight */
-    justify-content: center; /* Center controls when wrapped */
+    flex-wrap: wrap;
+    justify-content: center;
     margin-top: 0.5rem;
   }
   .syllabus-item-card {
-    flex-direction: column; /* Stack item content and controls vertically */
-    align-items: flex-start; /* Align content to left */
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
-@media (max-width: 768px) { /* Smaller Mobile */
+@media (max-width: 768px) {
   .syllabus-page {
     padding: 1rem;
   }
   .panel-heading {
     font-size: 1.4rem;
   }
-  .add-subject-section, .add-topic-section {
+  .add-subject-section, .add-topic-section, .level-select-section { /* Added level-select-section */
     flex-direction: column;
   }
-  .add-subject-btn, .add-topic-btn {
+  .add-subject-btn, .add-topic-btn, .add-selected-subjects-btn { /* Added add-selected-subjects-btn */
     width: 100%;
     justify-content: center;
   }
-  .subject-item, .syllabus-item-card {
+  .subject-item, .syllabus-item-card, .predefined-subject-item { /* Added predefined-subject-item */
     padding: 0.6rem 0.8rem;
   }
   .item-text, .status-dropdown, .notes-btn, .delete-topic-btn {
