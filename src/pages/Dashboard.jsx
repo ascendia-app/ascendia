@@ -13,7 +13,7 @@ import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext.jsx i
 import EditExamsModal from '../modals/EditExamsModal'; // Assuming modals folder is in src/modals/
 import ImageDisplayModal from '../modals/ImageDisplayModal'; // Assuming modals folder is in src/modals/
 
-import '../PageStyles.css'; // <--- THIS IS THE IMPORT IN QUESTION. EXPECTS PageStyles.css IN src/
+import '../PageStyles.css'; // Common styles for pages (essential for styling)
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -428,12 +428,15 @@ function Dashboard() {
         {/* Placeholder for Header, UserProfileWidget, ThemeToggle, NotificationsDropdown */}
         {/* These components are typically rendered in App.js or a Layout component
             that wraps Dashboard. If they are directly in Dashboard, ensure they are imported. */}
-        {/* <Header>
+        {/* If you have these uncommented in your actual code, ensure they are imported */}
+        {/*
+        <Header>
             <Bell size={24} className="nav-bell-icon" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} />
             <UserProfileWidget />
             <ThemeToggle />
         </Header>
-        {isNotificationsOpen && <NotificationsDropdown onClose={() => setIsNotificationsOpen(false)} userId={userId} />} */}
+        {isNotificationsOpen && <NotificationsDropdown onClose={() => setIsNotificationsOpen(false)} userId={userId} />}
+        */}
 
       <main className="page-container dashboard-page">
         <h1 className="page-title">Dashboard</h1>
@@ -464,7 +467,7 @@ function Dashboard() {
                 </div>
                 {/* Ensure exam details are always displayed if nextExam exists */}
                 <div className="exam-details">
-                    <h3>{nextExam.subject} - {nextExam.component}</h3>
+                    <h3>{nextExam.subject || 'N/A'} - {nextExam.component || 'N/A'}</h3>
                     <p>Date: {formatDateWithOrdinal(nextExam.date)}</p>
                     {nextExam.time && <p>Time: {nextExam.time} {nextExam.session}</p>}
                 </div>
