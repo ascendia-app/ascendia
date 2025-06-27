@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './PageStyles.css'; // Assuming common styles for pages
-import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table } from 'lucide-react'; // Import Lucide React icons
+import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download } from 'lucide-react'; // Import Lucide React icons
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -19,7 +19,6 @@ const getDateTimeForExam = (exam) => {
   }
   return new Date(`${dateString}T${timeString}`);
 };
-
 
 // Exam Editor Modal Component
 const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
@@ -137,6 +136,45 @@ const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
   );
 };
 
+// Image Display Modal Component
+const ImageDisplayModal = ({ isOpen, onClose, imageUrl }) => {
+  if (!isOpen) return null;
+
+  const handleDownloadImage = () => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = 'all_exams_schedule.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content image-modal-content">
+        <div className="modal-header">
+          <h3>Your Exam Schedule</h3>
+          <button onClick={onClose} className="modal-close-btn">
+            <XCircle size={24} />
+          </button>
+        </div>
+        <div className="modal-body image-modal-body">
+          {imageUrl ? (
+            <img src={imageUrl} alt="Exam Schedule" className="generated-image" />
+          ) : (
+            <p>No image to display.</p>
+          )}
+        </div>
+        <div className="modal-footer">
+          <button onClick={handleDownloadImage} className="modal-download-btn">
+            <Download size={20} /> Download Image
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -150,6 +188,8 @@ function Dashboard() {
     }
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // New state for image modal
+  const [imageDataUrl, setImageDataUrl] = useState(''); // New state for image data
   const [timeRemaining, setTimeRemaining] = useState({});
   const [nextExam, setNextExam] = useState(null);
 
@@ -241,24 +281,32 @@ function Dashboard() {
     const headerHeight = 50;
     const fontSize = 16;
     const headerFontSize = 18;
-    const tableWidth = 800; // Fixed width for the table image
+    const initialTableWidth = 800; // Starting width for the table image
+
+    // Define headers for the table
     const headers = ["Subject", "Component", "Date", "Time", "Session"];
 
-    // Calculate dynamic column widths based on content
+    // Prepare data for rendering, including inferred time
     const columnData = exams.map(exam => ([
-      exam.subject,
-      exam.component,
-      exam.date,
-      exam.time || (exam.session ? `${getDateTimeForExam(exam).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''), // Display inferred time for optional
-      exam.session
+      exam.subject || '-',
+      exam.component || '-',
+      exam.date || '-',
+      exam.time ? new Date(`2000-01-01T${exam.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : (exam.session ? `${getDateTimeForExam(exam).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}` : '-'),
+      exam.session || '-'
     ]));
 
+    // Temporarily set font for measurement
+    ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
     let colWidths = headers.map(header => ctx.measureText(header).width);
+
+    ctx.font = `${fontSize}px 'Inter', sans-serif`;
     columnData.forEach(row => {
       row.forEach((cell, i) => {
-        const textWidth = ctx.measureText(cell).width;
-        if (textWidth > colWidths[i]) {
-          colWidths[i] = textWidth;
+        if (cell) { // Ensure cell is not null/undefined for measurement
+          const textWidth = ctx.measureText(cell).width;
+          if (textWidth > colWidths[i]) {
+            colWidths[i] = textWidth;
+          }
         }
       });
     });
@@ -266,18 +314,25 @@ function Dashboard() {
     // Add padding to column widths
     colWidths = colWidths.map(width => width + padding * 2);
 
-    // If total width exceeds tableWidth, scale down or adjust
+    // Calculate total width of columns. Ensure minimum width for readability if no content
     let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
-    if (totalColWidth < tableWidth) { // Distribute remaining space
-        const diff = tableWidth - totalColWidth;
+
+    // Ensure table has a reasonable minimum width and adjust if calculated width is too small
+    const minTableWidth = 600;
+    if (totalColWidth < minTableWidth) {
+        const diff = minTableWidth - totalColWidth;
         const uniformAdd = diff / colWidths.length;
         colWidths = colWidths.map(w => w + uniformAdd);
-        totalColWidth = tableWidth; // Recalculate or just set to tableWidth
+        totalColWidth = minTableWidth;
+    } else if (totalColWidth > initialTableWidth) { // Scale down if too wide, or just let it be wider
+        // For simplicity, if content makes it wider, allow it to be wider
+    } else {
+        // If it's less than initialTableWidth but more than minTableWidth, just use calculated
     }
 
 
     const tableHeight = headerHeight + exams.length * rowHeight;
-    canvas.width = totalColWidth; // Use calculated total width
+    canvas.width = totalColWidth;
     canvas.height = tableHeight + padding * 2; // Add some vertical padding
 
     ctx.fillStyle = '#f9f9f9'; // Background color for the image
@@ -287,12 +342,12 @@ function Dashboard() {
 
     // Draw Header
     ctx.fillStyle = '#ff4d88'; // Header background color (Pink)
-    ctx.fillRect(padding, currentY, totalColWidth - padding * 2, headerHeight);
+    ctx.fillRect(0, currentY, canvas.width, headerHeight); // Use full canvas width for header background
 
     ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
     ctx.fillStyle = 'white'; // Header text color
     ctx.textAlign = 'left';
-    let currentX = padding;
+    let currentX = 0; // Start at 0 for drawing within the canvas's left edge
     headers.forEach((header, i) => {
         ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3);
         currentX += colWidths[i];
@@ -303,10 +358,10 @@ function Dashboard() {
     ctx.font = `${fontSize}px 'Inter', sans-serif`;
     columnData.forEach((row, rowIndex) => {
         ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Alternating row colors
-        ctx.fillRect(padding, currentY, totalColWidth - padding * 2, rowHeight);
+        ctx.fillRect(0, currentY, canvas.width, rowHeight); // Use full canvas width for row background
 
         ctx.fillStyle = '#333'; // Row text color
-        currentX = padding;
+        currentX = 0;
         row.forEach((cell, colIndex) => {
             ctx.fillText(cell, currentX + padding, currentY + rowHeight / 2 + fontSize / 3);
             currentX += colWidths[colIndex];
@@ -314,14 +369,10 @@ function Dashboard() {
         currentY += rowHeight;
     });
 
-    // Convert to image and download
+    // Convert to image and display in modal
     const image = canvas.toDataURL('image/jpeg', 0.9); // 0.9 quality
-    const link = document.createElement('a');
-    link.href = image;
-    link.download = 'all_exams_schedule.jpg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    setImageDataUrl(image);
+    setIsImageModalOpen(true); // Open the modal
   };
 
 
@@ -387,13 +438,16 @@ function Dashboard() {
                   <span className="countdown-label">Secs</span>
                 </div>
               </div>
-              <p className="exam-details">{nextExam.subject} {nextExam.component} on {new Date(`${nextExam.date}T${nextExam.time}`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })} ({nextExam.session})</p>
+              <p className="exam-details">
+                {nextExam.subject} {nextExam.component} on {new Date(`${nextExam.date}T${nextExam.time || '00:00'}`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} ({nextExam.session})
+                {nextExam.time && ` at ${new Date(`${nextExam.date}T${nextExam.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`}
+              </p>
             </div>
           ) : (
             <p className="no-upcoming-exams">No upcoming exams added. Click 'Edit Exams' to add one!</p>
           )}
           
-          {/* Edit Exams Button */}
+          {/* Action Buttons */}
           <div className="countdown-actions">
             <button onClick={handleSeeAllExams} className="see-all-exams-btn">
               <Table size={16} /> See All Exams
@@ -456,6 +510,13 @@ function Dashboard() {
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveExams}
         initialExams={exams}
+      />
+
+      {/* Image Display Modal */}
+      <ImageDisplayModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        imageUrl={imageDataUrl}
       />
     </div>
   );

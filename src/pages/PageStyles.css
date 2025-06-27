@@ -332,12 +332,15 @@
 /* Actions below countdown */
 .countdown-actions {
   display: flex;
-  justify-content: flex-end; /* Align to the right */
+  flex-direction: column; /* Stack buttons vertically */
+  justify-content: flex-end; /* Align to the bottom right */
+  align-items: flex-end; /* Align buttons to the right edge of their container */
   gap: 0.5rem; /* Space between buttons */
   width: 100%;
   position: absolute; /* Position relative to countdown-widget */
   bottom: 1rem;
   right: 1rem;
+  padding-right: 1rem; /* Add padding to prevent buttons sticking to edge */
 }
 
 /* Edit Exams Button */
@@ -498,6 +501,13 @@
     position: static; /* Remove absolute positioning */
     margin-top: 1rem; /* Add some space */
     justify-content: center; /* Center buttons */
+    align-items: center; /* Center vertically on mobile */
+    flex-direction: row; /* Go back to row for smaller screens if desired */
+    flex-wrap: wrap; /* Allow wrapping */
+  }
+  .edit-exams-btn, .see-all-exams-btn {
+    width: auto; /* Allow buttons to size content */
+    flex-grow: 1; /* Grow equally */
   }
 }
 
@@ -547,6 +557,14 @@
   }
   .countdown-label {
     font-size: 0.7rem;
+  }
+  .countdown-actions { /* Ensure buttons stack on very small screens */
+    flex-direction: column;
+    align-items: center;
+  }
+  .edit-exams-btn, .see-all-exams-btn {
+    width: 100%; /* Full width for buttons on very small screens */
+    padding: 0.8rem;
   }
 }
 
@@ -767,6 +785,50 @@
   transform: translateY(-2px);
 }
 
+/* New Image Modal Styles */
+.image-modal-content {
+  max-width: 90%; /* Max width for the image modal */
+  padding: 1.5rem; /* Slightly less padding */
+}
+
+.image-modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 60vh; /* Control image height */
+  overflow: auto; /* Scroll if image is too large */
+}
+
+.generated-image {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Remove extra space below image */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.modal-download-btn {
+  background-color: #4CAF50; /* Green for download button */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.modal-download-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
 /* Responsive adjustments for Modal */
 @media (max-width: 600px) {
   .modal-content {
@@ -790,5 +852,8 @@
   }
   .modal-footer {
     flex-direction: column;
+  }
+  .modal-download-btn {
+    width: 100%; /* Full width on mobile */
   }
 }
