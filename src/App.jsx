@@ -256,7 +256,7 @@ function App() {
       </header>
 
         {/* Main content area where different routes will render their components */}
-        <div className="main-content-area">{
+        <div className="main-content-area">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -270,7 +270,7 @@ function App() {
             <Route path="/user-settings" element={<UserSettings />} />
             <Route path="/notifications" element={<Notifications />} />
           </Routes>
-}</div>
+        </div>
       </div>
   );
 }
