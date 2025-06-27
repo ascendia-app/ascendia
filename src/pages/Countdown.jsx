@@ -59,7 +59,9 @@ const Countdown = ({ exams, onEditExams, onSeeAllExams }) => {
             <h3 className="widget-title">Next Exam</h3>
             {nearestExam ? (
                 <>
+                    {/* This div is the flex container for horizontal arrangement */}
                     <div className="countdown-content">
+                        {/* Each of these is a flex item that stacks its own content vertically */}
                         <div className="countdown-segment">
                             <span className="countdown-value">{timeLeft.days}</span>
                             <span className="countdown-label">Days</span>
