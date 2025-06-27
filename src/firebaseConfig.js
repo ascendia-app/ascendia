@@ -3,28 +3,50 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// IMPORTANT: Use these global variables provided by the Canvas environment.
-// DO NOT hardcode your Firebase configuration here.
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+// IMPORTANT: Your ACTUAL Firebase project configuration
+// This will be used as a fallback if the Canvas environment doesn't provide __firebase_config correctly.
+const FALLBACK_FIREBASE_CONFIG = {
+apiKey: "AIzaSyC5xNK1gThitsLgSnzF7iujPKUEsnqA1jA",
+authDomain: "ascendia-app.firebaseapp.com",
+projectId: "ascendia-app",
+storageBucket: "ascendia-app.firebasestorage.app",
+messagingSenderId: "537890941125",
+appId: "1:537890941125:web:b3bdbd902b5ac7b5d6e8ac"
+};
+
+// Prioritize Canvas-provided appId, fallback to default or your config's appId if needed
+const appId = typeof __app_id !== 'undefined' && __app_id !== 'default-app-id'
+  ? String(__app_id)
+  : (FALLBACK_FIREBASE_CONFIG.appId.split(':')[0] === '1' ? FALLBACK_FIREBASE_CONFIG.appId.split(':')[2] : 'default-app-id'); // Extract only the client appId part if it's formatted like "1:senderId:web:appId" or use a safe default
+
+
 const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-// Robustly parse __firebase_config, ensuring it's always a valid JSON object
-const firebaseConfigRaw = typeof __firebase_config !== 'undefined' && __firebase_config !== null
-  ? String(__firebase_config) // Ensure it's a string, even if it's a non-string primitive
-  : '{}'; // Default to an empty JSON string if undefined or null
-
 let firebaseConfig = {};
+const firebaseConfigRawFromCanvas = typeof __firebase_config !== 'undefined' && __firebase_config !== null
+  ? String(__firebase_config)
+  : '{}';
+
 try {
-  firebaseConfig = JSON.parse(firebaseConfigRaw);
+  const parsedCanvasConfig = JSON.parse(firebaseConfigRawFromCanvas);
+  // Check if the parsed config from Canvas is not empty and has an apiKey
+  if (Object.keys(parsedCanvasConfig).length > 0 && parsedCanvasConfig.apiKey) {
+    firebaseConfig = parsedCanvasConfig;
+    console.log("Firebase Init: Using Canvas-provided config.");
+  } else {
+    firebaseConfig = FALLBACK_FIREBASE_CONFIG;
+    console.warn("Firebase Init: Canvas config is empty or invalid. Falling back to hardcoded config.");
+  }
 } catch (e) {
-  console.error("Error parsing __firebase_config. Raw value:", firebaseConfigRaw, "Error:", e);
-  // firebaseConfig remains {} if parsing fails, leading to potential Firebase initialization errors.
+  console.error("Firebase Init Error: Failed to parse __firebase_config. Falling back to hardcoded. Error:", e);
+  firebaseConfig = FALLBACK_FIREBASE_CONFIG;
 }
 
 // --- Debugging Logs (Check your browser console for these values) ---
-console.log("Firebase Init Debug: __app_id =", appId);
-console.log("Firebase Init Debug: __firebase_config (raw string) =", firebaseConfigRaw);
-console.log("Firebase Init Debug: firebaseConfig (parsed object) =", firebaseConfig);
+console.log("Firebase Init Debug: Resolved App ID =", appId);
+console.log("Firebase Init Debug: __firebase_config (raw string from Canvas) =", firebaseConfigRawFromCanvas);
+console.log("Firebase Init Debug: Final firebaseConfig (parsed object) =", firebaseConfig);
+console.log("Firebase Init Debug: Initial Auth Token provided =", !!initialAuthToken); // Check if token exists
 // --- End Debugging Logs ---
 
 let app;
