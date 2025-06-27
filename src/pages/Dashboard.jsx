@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react'; // Added useMemo
 import { Link } from 'react-router-dom';
 import {
     Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download
 } from 'lucide-react';
 
 // Import necessary Firestore functions
-import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore'; // <--- ADD THIS LINE
+import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // Import Firebase (db, appId) and AuthContext
 import { db, appId } from '../firebaseConfig';
@@ -16,8 +16,6 @@ import EditExamsModal from '../modals/EditExamsModal';
 import ImageDisplayModal from '../modals/ImageDisplayModal';
 
 import '../PageStyles.css';
-
-// ... (rest of your Dashboard.jsx code remains the same)
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -57,7 +55,7 @@ function Dashboard() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageDataUrl, setImageDataUrl] = useState('');
-  const [timeRemaining, setTimeRemaining] = useState({});
+  const [timeRemaining, setTimeRemaining] = useState({}); // State to hold calculated time remaining
   const [nextExam, setNextExam] = useState(null);
   const [firebaseError, setFirebaseError] = useState(null); // State for Firebase errors
 
@@ -188,6 +186,24 @@ function Dashboard() {
 
   // Helper to format single-digit numbers with leading zero
   const formatTimeValue = (value) => String(value).padStart(2, '0');
+
+  // Define timerComponents using useMemo to optimize re-renders
+  const timerComponents = useMemo(() => {
+    const components = [];
+    Object.keys(timeRemaining).forEach((interval) => {
+      // Only render if value is greater than 0, or if it's seconds and there's any time left
+      if (timeRemaining[interval] > 0 || (interval === 'seconds' && Object.values(timeRemaining).some(val => val > 0))) {
+        components.push(
+          <div key={interval} className="countdown-segment">
+            <span className="countdown-value">{formatTimeValue(timeRemaining[interval])}</span>
+            <span className="countdown-label">{interval}</span>
+          </div>
+        );
+      }
+    });
+    return components;
+  }, [timeRemaining]); // Re-calculate only when timeRemaining changes
+
 
   // --- Handlers for opening modals ---
   const handleEditExams = () => {
@@ -467,15 +483,8 @@ function Dashboard() {
             {nextExam ? (
               <>
                 <div className="countdown-content">
-                  {/* Ensure timerComponents is defined - we'll address this if it causes an error */}
-                  {/* For now, let's assume timerComponents is either defined or will be handled by a later error */}
-                  {/* If timerComponents is not defined, this will cause a new ReferenceError */}
-                  {/* You might want to define it as: const timerComponents = []; for testing if this is the next crash */}
-                  {/* If you have an existing definition of timerComponents, ensure it's correct */}
-                  {/* Example simple placeholder if timerComponents is completely missing: */}
-                  {/* <span>{timeRemaining.days}d {timeRemaining.hours}h {timeRemaining.minutes}m {timeRemaining.seconds}s</span> */}
-                  {/* Or, if you want to explicitly check for it: */}
-                  {typeof timerComponents !== 'undefined' && timerComponents.length > 0 ? timerComponents.map(comp => comp) : (
+                  {/* Now timerComponents is correctly defined via useMemo */}
+                  {timerComponents.length > 0 ? timerComponents : (
                     <p className="no-upcoming-exams">
                         {timeRemaining.days === 0 && timeRemaining.hours === 0 && timeRemaining.minutes === 0 && timeRemaining.seconds === 0
                             ? "Time's up! Exam passed."
