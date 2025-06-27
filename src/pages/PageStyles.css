@@ -453,12 +453,12 @@
 }
 
 .countdown-widget .countdown-content {
-    display: flex; /* Changed to flex for side-by-side */
-    flex-direction: row; /* Arranges items side-by-side */
-    justify-content: center; /* Centers the segments horizontally */
-    gap: 1rem; /* Reverted to more generous gap */
-    width: 100%; /* Explicitly take all available width */
-    flex-wrap: nowrap !important; /* Force no wrapping across all screen sizes */
+    display: flex !important; /* Force flex */
+    flex-direction: row !important; /* Force horizontal */
+    justify-content: center !important; /* Center the segments horizontally */
+    gap: 1rem !important; /* Keep a decent gap on larger screens */
+    width: 100% !important; /* Explicitly take all available width */
+    flex-wrap: nowrap !important; /* CRITICAL: Force no wrapping across all screen sizes */
     margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
 }
 
