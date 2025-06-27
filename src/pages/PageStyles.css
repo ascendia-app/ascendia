@@ -257,6 +257,10 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
+.gs-button.download-windows {
+    background-color: #0078D4; /* Windows blue */
+}
+
 .gs-button.download-windows:hover {
     transform: translateY(-3px);
     background-color: #005bb5;
@@ -453,7 +457,7 @@
     display: flex; /* Changed to flex for side-by-side */
     flex-direction: row; /* Arranges items side-by-side */
     justify-content: center; /* Centers the segments horizontally */
-    gap: 0.6rem; /* Reduced gap between each segment for tighter fit */
+    gap: 0.4rem; /* Further reduced gap between each segment for tighter fit */
     width: 100%;
     flex-wrap: nowrap; /* Prevent wrapping on larger screens, force side-by-side */
     margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
@@ -466,15 +470,16 @@
     align-items: center;
     justify-content: center;
     background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.4rem 0.2rem; /* Further adjusted padding for a more compact look */
+    padding: 0.3rem 0.1rem; /* Further adjusted padding for a more compact look */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 52px; /* Ensures segments have a consistent, smaller width to fit */
+    min-width: 50px; /* Ensures segments have a consistent, even smaller width to fit */
+    max-width: 60px; /* Prevent segments from becoming too wide on very large screens */
 }
 
 .countdown-widget .countdown-value {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.3rem; /* Slightly smaller font for values */
+    font-size: 1.2rem; /* Even smaller font for values */
     font-weight: 700;
     color: #ff4d88; /* Pinkish orange */
     line-height: 1.2; /* Adjust line height for better spacing */
@@ -482,7 +487,7 @@
 }
 
 .countdown-widget .countdown-label {
-    font-size: 0.6rem; /* Slightly smaller font for labels */
+    font-size: 0.55rem; /* Even smaller font for labels */
     color: #777;
     text-transform: uppercase;
 }
@@ -860,7 +865,7 @@
   transition: background-color 0.2s, transform 0.2s;
   width: 100%;
   justify-content: center;
-  margin-top: 1rem; /* Added margin to separate it from the list */
+  margin-top: 1rem; /* Added margin to separate it from the button */
 }
 .add-selected-subjects-btn:hover:not(:disabled) {
   background-color: #3700B3;
@@ -1912,11 +1917,27 @@ html.dark, body.dark, .app.dark {
     }
 
     .grid-span-2 {
-        grid-column: span 2; /* Span full width for some elements on smaller screens */
+        grid-column: span 2; /* Still spans 2 columns, but now it's full width */
     }
 
-    .time-widget, .countdown-widget {
-        grid-column: span 1; /* Ensure they each take one column */
+    .time-widget {
+        grid-column: auto; /* Allow time widget to be 1 column on tablets */
+    }
+
+    .countdown-widget {
+        grid-column: span 1; /* Make countdown span 1 column on tablets */
+    }
+
+    .countdown-actions { /* Adjust positioning for smaller screens if needed */
+        grid-column: span 2; /* Span full width on 2-column layout */
+        justify-content: center; /* Center buttons */
+        margin-top: 1rem;
+        padding-right: 2rem; /* Match new grid padding */
+    }
+
+    .dashboard-action-btn {
+        width: auto; /* Allow buttons to size content */
+        flex-grow: 1; /* Grow equally */
     }
 
     .dashboard-page .page-title,
