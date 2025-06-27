@@ -5,9 +5,10 @@ import { useAuth } from './contexts/AuthContext';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
+import { Bell } from 'lucide-react'; // Import Bell icon
 
 // Import pages
-import Home from './pages/Home'; // Updated: Import the new Home component
+import Home from './pages/Home';
 import Syllabus from './pages/Syllabus';
 import Papers from './pages/Papers';
 import Tracker from './pages/Tracker';
@@ -16,7 +17,8 @@ import Planner from './pages/Planner';
 import GettingStarted from './pages/GettingStarted';
 import Login from './pages/Login';
 import UserSettings from './pages/UserSettings';
-import Dashboard from './pages/Dashboard'; // NEW: Import Dashboard component (you need to create this file)
+import Dashboard from './pages/Dashboard';
+import Notifications from './pages/Notifications';
 
 
 function App() {
@@ -62,6 +64,7 @@ function App() {
     const fetchUsername = async () => {
       if (currentUser) {
         setIsUsernameLoading(true);
+        // Fallback to email prefix initially
         setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
 
         try {
@@ -140,28 +143,30 @@ function App() {
             {loading || isUsernameLoading ? (
               <span className="welcome-message loading-pulse">Loading...</span>
             ) : currentUser ? (
-              <div className="user-profile-widget" ref={dropdownRef}>
-                <div className="user-info-trigger" onClick={toggleDropdown}>
-                  <div className="avatar-circle">
-                    {displayedUsername ? displayedUsername.charAt(0).toUpperCase() : (currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?')}
+              // NEW: Explicit div wrapper for authenticated user elements
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="user-profile-widget" ref={dropdownRef}>
+                  <div className="user-info-trigger" onClick={toggleDropdown}>
+                    <div className="avatar-circle">
+                      {displayedUsername ? displayedUsername.charAt(0).toUpperCase() : (currentUser && currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?')}
+                    </div>
+                    <span className="welcome-message">Hello, {displayedUsername || (currentUser.email ? currentUser.email.split('@')[0] : 'User')}!</span>
+                    <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>&#9660;</span>
                   </div>
-                  <span className="welcome-message">Hello, {displayedUsername || (currentUser.email ? currentUser.email.split('@')[0] : 'User')}!</span>
-                  <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>&#9660;</span>
-                </div>
-                {isDropdownOpen && (
-                  <div className="dropdown-menu">
-                    <Link to="/dashboard" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <span className="icon">
+                  {isDropdownOpen && (
+                    <div className="dropdown-menu">
+                      <Link to="/dashboard" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <span className="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard">
                                 <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
                             </svg>
                         </span>
                         Dashboard
                       </Link>
-                    <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <span className="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
-                          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+                      <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <span className="icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
                         </svg>
                       </span>
                       User Settings
@@ -183,8 +188,12 @@ function App() {
                       Log Out
                     </button>
                   </div>
-                )}
-              </div>
+                </div>
+                {/* NEW: Bell icon for notifications, visible when logged in */}
+                <Link to="/notifications" className="bell-icon-link" aria-label="Notifications">
+                    <Bell size={24} className="nav-bell-icon" />
+                </Link>
+              </div> // This is the new closing div for the authenticated user content.
             ) : (
               <>
                 <Link to="/login" className="login-btn">Login</Link>
@@ -201,8 +210,8 @@ function App() {
         {/* Main content area where different routes will render their components */}
         <div className="main-content-area">
           <Routes>
-            <Route path="/" element={<Home />} /> {/* Use the new Home component */}
-            <Route path="/dashboard" element={<Dashboard />} /> {/* NEW: Route for Dashboard */}
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/syllabus" element={<Syllabus />} />
             <Route path="/papers" element={<Papers />} />
             <Route path="/tracker" element={<Tracker />} />
@@ -211,6 +220,7 @@ function App() {
             <Route path="/getting-started" element={<GettingStarted />} />
             <Route path="/login" element={<Login />} />
             <Route path="/user-settings" element={<UserSettings />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Routes>
         </div>
       </div>
