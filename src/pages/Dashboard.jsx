@@ -279,15 +279,15 @@ function Dashboard() {
     const fontSize = 16;
     const headerFontSize = 18;
 
-    // Define headers for the table (excluding "Time")
+    // Define headers for the table (excluding "Time", including "Session")
     const headers = ["Subject", "Component", "Date", "Session"];
 
-    // Prepare data for rendering, ensuring 'Time' is excluded
+    // Prepare data for rendering
     const columnData = exams.map(exam => ([
       exam.subject || '-',
       exam.component || '-',
       exam.date || '-',
-      exam.session || '-'
+      exam.session || '-' // Include session here
     ]));
 
     // Temporarily set font for measurement
