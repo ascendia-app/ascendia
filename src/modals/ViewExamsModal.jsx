@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { XCircle, Download } from 'lucide-react'; // Icons for close and download
-import '../ModalStyles.css'; // Import the new modal specific styles
+import { XCircle, Download } from 'lucide-react';
+import '../ModalStyles.css';
 
 // Helper function to format date as "Month Day, Year" (e.g., "July 15, 2025")
 const formatDateForDisplay = (dateString) => {

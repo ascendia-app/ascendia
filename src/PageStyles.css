@@ -442,7 +442,7 @@
     justify-content: space-between; /* Distribute space vertically */
     align-items: center;
     min-height: 220px; /* Match height of time widget */
-    position: relative; /* REQUIRED for absolute positioning of buttons inside */
+    position: relative; /* CRITICAL: This MUST be relative for children's absolute positioning */
     padding-bottom: 3.5rem; /* Make space for absolutely positioned buttons at the bottom */
 }
 
@@ -497,15 +497,33 @@
 }
 
 .countdown-widget .exam-details {
-    /* Removed for now, as per user request */
-    display: none;
+    /* No change here, was already conditionally hidden or rendered */
+    text-align: center;
+    margin-top: 0.5rem;
+    color: #444;
 }
+.countdown-widget .exam-details h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+.countdown-widget .exam-details p {
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
 
 .countdown-widget .no-upcoming-exams {
     font-size: 1rem;
     color: #777;
     font-style: italic;
     padding: 1rem;
+    display: flex; /* Make it flex to center content */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Take full height of parent to center vertically */
+    box-sizing: border-box;
 }
 
 /* Countdown Action Buttons (Edit & See All) - NOW ABSOLUTELY POSITIONED */
@@ -517,7 +535,7 @@
     gap: 0.5rem; /* Small gap between buttons */
     z-index: 10; /* Ensure they are above other elements if needed */
     justify-content: flex-end; /* Align buttons to the right within their container */
-    /* Remove width/padding as they are now absolutely positioned */
+    /* REMOVED: outline: 2px solid red; */
 }
 
 /* Specific styling for the buttons in countdown-actions - MADE THEM EVEN SMALLER AND SLEEKER */
@@ -539,6 +557,7 @@
     cursor: pointer; /* Ensure cursor is pointer */
     white-space: nowrap; /* Prevent text from wrapping */
     min-width: 80px; /* Ensure a minimum width so they don't collapse too much */
+    /* REMOVED: outline: 2px solid blue; */
 }
 
 .countdown-actions .dashboard-action-btn:hover {
@@ -555,7 +574,7 @@
     stroke: currentColor; /* Ensure SVG strokes with currentColor */
     fill: none; /* Ensure SVG is outlined */
     width: 16px; /* Reduced size for quick action icons */
-    height: 16px; /* Reduced size for quick action icons */
+    height: 16px;
     transition: color 0.2s; /* Smooth color transition for icon */
 }
 .countdown-actions .dashboard-action-btn:hover svg {
@@ -909,7 +928,7 @@
   padding: 0.8rem 1rem;
   margin-bottom: 0.5rem;
   background-color: #f0f0f0;
-  border-radius: 8鸣;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
@@ -1153,1410 +1172,386 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Darker, more prominent overlay */
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    opacity: 0; /* Start hidden for animation */
-    transition: opacity 0.3s ease-out; /* Smooth fade-in */
+    z-index: 1000; /* Ensure it's on top of everything */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
 }
 
-/* To ensure clickability, when modal is NOT active, it should not block events */
-.modal-overlay:not(.active) {
-    pointer-events: none; /* Crucial: Do not block clicks when not visible */
-}
-
-
+/* When modal is active */
 .modal-overlay.active {
-    opacity: 1; /* Fade in */
-    pointer-events: auto; /* Allow clicks on the overlay itself */
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Allow clicks on the overlay itself to close */
 }
 
+/* --- Modal Content Container --- */
 .modal-content {
-    background-color: #fff;
-    border-radius: 18px; /* More rounded corners for modern look */
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25); /* Stronger, softer shadow */
-    padding: 2.5rem; /* More generous padding */
-    width: 90%;
-    max-width: 650px; /* Slightly adjusted max-width */
-    max-height: 85vh; /* Allow more height for content */
-    overflow-y: auto; /* Scroll inside modal if content is long */
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    position: relative;
+    max-width: 90%;
+    max-height: 90%; /* Allow content to scroll if needed */
+    overflow-y: auto; /* Enable scrolling for content if it exceeds max-height */
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
     display: flex;
     flex-direction: column;
-    transform: translateY(20px); /* Start slightly below for animation */
-    opacity: 0; /* Start hidden for animation */
-    transition: all 0.3s ease-out; /* Smooth slide-up and fade-in */
+    align-items: center;
 }
 
 .modal-overlay.active .modal-content {
-    transform: translateY(0); /* Slide up to final position */
-    opacity: 1; /* Fade in */
+    transform: translateY(0);
+    opacity: 1;
 }
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem; /* More space below header */
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee; /* Subtle separator */
+/* Specific size for large modals like ViewExamsModal */
+.modal-content.large-modal {
+    max-width: 800px; /* Wider for tables */
+    width: 90%;
+    padding: 2rem;
 }
 
-.modal-header h3 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 2rem; /* Larger, more prominent title */
-    font-weight: 700; /* Bolder */
-    color: #ff4d88; /* Consistent accent color */
-    margin: 0;
-}
 
+/* --- Modal Elements --- */
 .modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
     background: none;
     border: none;
     cursor: pointer;
-    color: #999;
-    font-size: 1.8rem; /* Larger icon */
-    line-height: 1;
-    transition: color 0.2s, transform 0.2s;
-    padding: 0.2rem; /* More space around clickable area */
-    border-radius: 50%; /* Make it circular */
+    padding: 0.5rem;
+    color: #ff4d88; /* Vibrant close icon */
+    transition: transform 0.2s ease, color 0.2s;
 }
 
 .modal-close-btn:hover {
-    color: #ff4d4d; /* Red on hover */
-    transform: rotate(90deg); /* Subtle spin */
+    transform: scale(1.1);
+    color: #ff8c42; /* Slightly different color on hover */
 }
 
-.modal-body {
-  flex-grow: 1; /* Allow body to grow and fill space */
-  margin-bottom: 1.5rem;
-}
-
-.no-exams-message {
-  font-family: 'Inter', sans-serif;
-  color: #777;
-  text-align: center;
-  padding: 1rem;
-  font-size: 1.1rem; /* Slightly larger text */
-  font-style: normal; /* Remove italic for a cleaner look */
-}
-
-/* Exam Card (Sleek & Modern Update for exam list in modals) */
-.exam-card {
-    background-color: #fcfcfc; /* Very light background for contrast */
-    border: 1px solid #e0e0e0; /* Softer border */
-    border-radius: 12px; /* More rounded */
-    padding: 1.2rem 1.5rem; /* More generous padding */
-    margin-bottom: 1rem;
-    display: flex;
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.06); /* Subtle depth */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.exam-card:hover {
-    transform: translateY(-3px); /* Lift on hover */
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-}
-
-.exam-details-text {
-    flex-grow: 1;
-    text-align: left;
-    margin-right: 1rem; /* Space between text and actions */
-}
-
-.exam-details-text h4 {
+.modal-title {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.25rem; /* Larger title */
-    font-weight: 700; /* Bolder */
-    color: #333;
-    margin-bottom: 0.4rem; /* More space */
-    line-height: 1.2;
-}
-
-.exam-details-text p {
-    font-size: 0.95rem; /* Slightly larger paragraph */
-    color: #666;
-    margin: 0.2rem 0; /* Small margin between paragraphs */
-}
-
-.exam-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-shrink: 0;
-    margin-top: 0; /* Reset margin for flex alignment */
-}
-
-.exam-action-btn {
-    background: #fff; /* White background for buttons */
-    border: 1px solid #ddd; /* Light border */
-    cursor: pointer;
-    padding: 0.6rem; /* More padding for larger clickable area */
-    border-radius: 8px; /* More rounded button */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    color: #6a6a6a; /* Default icon color */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
-}
-.exam-action-btn svg {
-    width: 24px; /* Icon size */
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-}
-.exam-action-btn:hover {
-    background-color: #f0f0f0;
-    color: #333;
-    border-color: #c0c0c0;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-}
-.exam-action-btn.delete {
-    color: #ff4d4d;
-    border-color: #ffb3b3; /* Lighter red border */
-}
-.exam-action-btn.delete:hover {
-    background-color: #ffeded; /* Very light red background */
-    color: #cc0000;
-    border-color: #ff4d4d;
-}
-.exam-action-btn.edit {
-    color: #6200EE; /* Purple for edit */
-    border-color: #d1c4e9; /* Lighter purple border */
-}
-.exam-action-btn.edit:hover {
-    background-color: #ede7f6; /* Very light purple background */
-    color: #3700B3;
-    border-color: #6200EE;
-}
-
-/* Modal form adjustments (specific for EditExamsModal) */
-.edit-exams-modal .form-group {
-    margin-bottom: 1rem; /* Slightly less vertical space for exam entries */
-}
-.edit-exams-modal .form-group-inline {
-    margin-bottom: 0.8rem; /* Slightly less vertical space for inline groups */
-}
-
-/* Individual exam entry styling within EditExamsModal */
-.exam-entry {
-    background-color: #f8f8f8;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    padding: 1rem;
-    margin-bottom: 1.2rem; /* Space between entries */
-    display: flex;
-    flex-direction: column; /* Stack fields vertically on small screens */
-    gap: 0.8rem; /* Space between stacked fields */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    position: relative; /* For positioning remove button */
-}
-
-.exam-entry .form-group-inline {
-    margin-bottom: 0; /* Remove default margin from inline group */
-}
-
-.exam-entry .remove-exam-btn {
-    background-color: #fcebeb; /* Light red background */
-    color: #dc3545; /* Red text */
-    border: 1px solid #f5c6cb;
-    border-radius: 8px;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-    margin-top: 0.8rem; /* Space from last input */
-    align-self: flex-end; /* Align to the right/end within the flex column */
-}
-.exam-entry .remove-exam-btn:hover {
-    background-color: #f8d7da;
-    color: #a71d2a;
-    border-color: #721c24;
-}
-
-/* Add Exam button inside Edit Exams Modal */
-.add-exam-btn {
-    background-color: #e6f7ff; /* Light blue */
-    color: #007bff; /* Blue text */
-    border: 1px solid #99d9ff;
-    border-radius: 8px;
-    padding: 0.7rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff4d88;
+    margin-bottom: 1.5rem;
+    text-align: center;
     width: 100%;
-    margin-top: 1rem; /* Space from the last exam entry */
-}
-.add-exam-btn:hover {
-    background-color: #cceeff;
-    color: #0056b3;
-    border-color: #0056b3;
 }
 
-/* Modal Footer for Edit Exams Modal */
-.modal-footer {
+.modal-action-btn {
     display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-    margin-top: 1.5rem; /* Space from modal body */
-}
-
-.modal-cancel-btn {
-    background-color: #f0f0f0;
-    color: #555;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-}
-.modal-cancel-btn:hover {
-    background-color: #e0e0e0;
-    color: #333;
-    border-color: #c0c0c0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    margin-top: 1.5rem; /* Space from content above */
 }
 
-.modal-save-btn {
+.modal-action-btn.primary-gradient {
     background: linear-gradient(to right, #ff4d88, #ff8c42);
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-.modal-save-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
-/* Image Display Modal specific styles */
-.image-modal-content {
-    max-width: 900px; /* Wider for image display */
-    padding: 1.5rem;
-    align-items: center; /* Center image within modal */
+.modal-action-btn.primary-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
 }
-.image-modal-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem 0;
-    min-height: 200px; /* Ensure some height for image */
-    background-color: #f8f8f8; /* Light background for image container */
-    border-radius: 10px;
+
+.modal-action-btn.secondary-btn {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
 }
-.generated-image {
-    max-width: 100%; /* Ensure image fits within modal */
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+.modal-action-btn.secondary-btn:hover {
+    background-color: #e5e5e5;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
 }
-.modal-download-btn {
-    background-color: #4CAF50; /* Green for download */
+
+.modal-action-btn.download-btn { /* Specific style for download button */
+    background-color: #4CAF50; /* Green */
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 0.7rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
+}
+
+.modal-action-btn.download-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+}
+
+.no-exams-message {
+    color: #777;
+    font-style: italic;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* --- Form specific styles for modals (from EditExamsModal) --- */
+.modal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 1.5rem 2rem; /* Row gap and column gap */
+    width: 100%;
+    margin-top: 1rem;
+    max-height: 40vh; /* Make form scrollable if it gets too long */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+/* Individual form group styling within the modal */
+.modal-form-grid .form-group {
+    margin-bottom: 0; /* Override default margin from PageStyles.css */
+}
+
+.modal-form-grid .form-group label {
+    margin-bottom: 0.5rem; /* Keep a small margin below labels */
+}
+
+/* Style for individual exam input rows in EditExamsModal */
+.exam-input-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 0.8fr 0.5fr 40px; /* Subject, Component, Date, Time, Session, Delete button */
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #eee;
+}
+
+.exam-input-row:last-of-type {
+    border-bottom: none; /* No dashed line after the last input row */
+}
+
+.exam-input-row input,
+.exam-input-row select {
+    width: 100%; /* Ensure inputs take full width of their grid column */
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.exam-input-row input:focus,
+.exam-input-row select:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.exam-input-row .delete-exam-btn {
+    background: none;
+    border: none;
+    color: #dc3545; /* Red for delete icon */
     cursor: pointer;
+    padding: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, color 0.2s;
+    font-size: 1.2rem;
+    margin-left: auto; /* Push to the right */
+}
+
+.exam-input-row .delete-exam-btn:hover {
+    transform: scale(1.1);
+    color: #c82333;
+}
+
+.add-exam-btn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: background-color 0.2s, transform 0.2s;
-}
-.modal-download-btn:hover:not(:disabled) {
-    background-color: #388E3C;
-    transform: translateY(-2px);
-}
-.modal-download-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background-color: #cccccc;
-}
-
-
-/* Notifications Dropdown */
-.notifications-dropdown-container {
-    position: absolute;
-    top: 60px; /* Adjust based on header height */
-    right: 2rem; /* Align with nav-right padding */
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    width: 350px; /* Fixed width for the dropdown */
-    max-height: 400px;
-    overflow-y: auto;
-    z-index: 1001; /* Above other elements like modals */
-    padding: 1rem;
-    border: 1px solid #eee;
-    animation: fadeInScale 0.2s ease-out;
-}
-
-@keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.notifications-dropdown-container h4 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.3rem;
+    background-color: #28a745; /* Green for add button */
+    color: white;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #333;
+    transition: background-color 0.2s;
+    margin-top: 1.5rem;
     margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #f0f0f0;
 }
 
-.notification-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.8rem;
-    padding: 0.8rem 0;
-    border-bottom: 1px solid #f9f9f9;
+.add-exam-btn:hover {
+    background-color: #218838;
+}
+
+/* --- Table Styles for ViewExamsModal --- */
+.modal-table-container {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling for narrow screens */
+    margin-top: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    max-height: 60vh; /* Limit height and make table scrollable vertically */
+    overflow-y: auto;
+}
+
+.exams-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove space between cells */
+    min-width: 600px; /* Ensure table doesn't get too narrow on small screens */
+}
+
+.exams-table th,
+.exams-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Inter', sans-serif;
+}
+
+.exams-table th {
+    background-color: #f8f8f8; /* Light grey header background */
     color: #555;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.exams-table tbody tr:nth-child(even) {
+    background-color: #fbfbfb; /* Slightly different background for even rows */
+}
+
+.exams-table tbody tr:hover {
+    background-color: #f0f8ff; /* Light blue on hover */
+}
+
+.exams-table td {
+    color: #333;
     font-size: 0.95rem;
 }
 
-.notification-item:last-child {
-    border-bottom: none;
-}
-
-.notification-item .icon {
-    flex-shrink: 0;
-    color: #ff8c42; /* Orange for notification icons */
-    fill: none;
-    stroke: currentColor;
-    width: 20px;
-    height: 20px;
-    margin-top: 2px; /* Align with text */
-}
-
-.notification-item .message {
-    flex-grow: 1;
-    line-height: 1.4;
-}
-
-.notification-item .timestamp {
-    font-size: 0.75rem;
-    color: #999;
-    flex-shrink: 0;
-    text-align: right;
-}
-
-.no-notifications-message {
-    padding: 1rem;
-    text-align: center;
-    color: #777;
-    font-style: italic;
-    font-size: 0.9rem;
-}
-
-.see-all-notifications-link {
-    display: block;
-    text-align: center;
-    margin-top: 1rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid #f0f0f0;
-    font-size: 0.9rem;
-    color: #ff4d88; /* Pink link color */
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-}
-
-.see-all-notifications-link:hover {
-    color: #ff8c42;
-    text-decoration: underline;
-}
-
-/* --- DARK MODE STYLES (FROM App.css) --- */
-html.dark, body.dark, .app.dark {
-    background-color: #2c2c2c; /* Darker background */
-    color: #e0e0e0; /* Lighter text */
-}
-
-.app.dark .header {
-    background: linear-gradient(to right, #3a3a3a, #1a1a1a); /* Darker gradient for header */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-}
-
-.app.dark .logo {
-    color: #f0f0f0;
-}
-
-.app.dark .nav-links a {
-    color: #c0c0c0;
-}
-
-.app.dark .nav-links a:hover {
-    color: #fff;
-}
-
-.app.dark .login-btn {
-    color: #f0f0f0;
-    border-color: #f0f0f0;
-}
-
-.app.dark .login-btn:hover {
-    background-color: rgba(240, 240, 240, 0.1);
-}
-
-.app.dark .start-btn {
-    background: linear-gradient(to right, #5a5a5a, #3a3a3a);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.app.dark .start-btn:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-}
-
-.app.dark .bell-icon-link .nav-bell-icon {
-    color: #e0e0e0; /* Bell icon white in dark mode */
-}
-
-.app.dark .user-profile-widget .user-info-trigger {
-    color: #e0e0e0;
-}
-
-.app.dark .avatar-circle {
-    background-color: #555;
-    color: #eee;
-}
-
-.app.dark .dropdown-arrow {
-    color: #c0c0c0;
-}
-
-.app.dark .dropdown-menu {
-    background-color: #3a3a3a;
-    border-color: #555;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
-
-.app.dark .dropdown-item {
-    color: #c0c0c0;
-}
-
-.app.dark .dropdown-item:hover {
-    background-color: #4a4a4a;
-    color: #fff;
-}
-
-.app.dark .dropdown-item .icon svg {
-    color: #c0c0c0; /* Icons in dropdown menu */
-}
-.app.dark .dropdown-item:hover .icon svg {
-    color: #fff; /* Icons in dropdown menu on hover */
-}
-
-
-.app.dark .logout-btn {
-    color: #ff6b6b; /* Red for logout in dark mode */
-}
-
-.app.dark .logout-btn:hover {
-    background-color: rgba(255, 107, 107, 0.2);
-}
-
-.app.dark .toggle .circle {
-    transform: translateX(20px); /* Move circle for dark mode */
-    background-color: #f0f0f0; /* White circle in dark mode */
-}
-
-/* This rule will currently have no visual effect if .app.dark is not applied */
-.app.dark .toggle .circle {
-  left: 26px; /* End position for dark mode */
-}
-
-/* Dark mode dashboard styles */
-.app.dark .dashboard-page {
-    background-color: #2c2c2c;
-}
-
-.app.dark .dashboard-page .page-title,
-.app.dark .dashboard-page .page-description,
-.app.dark .dashboard-section .section-heading {
-    color: #f0f0f0; /* Lighter text for titles/headings */
-}
-
-.app.dark .dashboard-card {
-    background-color: #3a3a3a; /* Darker card background */
-    border-color: #4a4a4a;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-
-.app.dark .dashboard-card:hover {
-    box-shadow: 0 8px 15px rgba(0,0,0,0.6);
-}
-
-.app.dark .time-widget {
-    background: linear-gradient(to right, #4a4a4a, #2a2a2a); /* Darker gradient for time widget */
-}
-
-.app.dark .countdown-widget {
-    background-color: #3a3a3a; /* Darker countdown widget background */
-    color: #e0e0e0;
-    border-color: #4a4a4a;
-}
-
-.app.dark .countdown-widget .widget-title {
-    color: #f0f0f0;
-}
-
-.app.dark .countdown-widget .countdown-segment {
-    background-color: #4a4a4a; /* Darker segment background */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.app.dark .countdown-widget .countdown-value {
-    color: #ff6b6b; /* Adjust pink for dark mode */
-}
-
-.app.dark .countdown-widget .countdown-label {
-    color: #c0c0c0;
-}
-
-/* Removed exam details in dark mode as well */
-.app.dark .countdown-widget .exam-details {
-    display: none;
-}
-
-/* Dark mode for countdown-actions (now absolutely positioned) */
-.app.dark .countdown-actions .dashboard-action-btn {
-    background-color: #3a3a3a;
-    color: #c0c0c0;
-    border-color: #ff6b6b; /* Darker border for actions */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}
-
-.app.dark .countdown-actions .dashboard-action-btn:hover {
-    background-color: #ff6b6b;
-    color: #3a3a3a;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-}
-
-.app.dark .countdown-actions .dashboard-action-btn svg {
-    color: #c0c0c0; /* Icons in dark mode */
-}
-.app.dark .countdown-actions .dashboard-action-btn:hover svg {
-    color: #3a3a3a; /* Icons hover in dark mode */
-}
-
-
-.app.dark .quick-stats-section .stat-card {
-    background-color: #4a4a4a; /* Darker stat card */
-}
-
-.app.dark .stat-label,
-.app.dark .link-name,
-.app.dark .activity-item p,
-.app.dark .no-activity {
-    color: #c0c0c0; /* Lighter text for these elements */
-}
-
-.app.dark .stat-value {
-    color: #ff6b6b; /* Dark mode stat value color */
-}
-
-.app.dark .activity-item {
-    border-color: #4a4a4a; /* Darker border for activity items */
-}
-
-.app.dark .activity-icon {
-    color: #ff6b6b; /* Dark mode activity icon color */
-}
-
-/* Dark mode for auth forms and related components */
-.app.dark .auth-form {
-    background-color: #3a3a3a;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    border-color: #4a4a4a;
-}
-
-.app.dark .form-group label {
-    color: #f0f0f0;
-}
-
-.app.dark .form-group input, .app.dark .form-group select, .app.dark .form-group textarea {
-    background-color: #4a4a4a;
-    border-color: #666;
-    color: #f0f0f0;
-}
-
-.app.dark .form-group input:focus, .app.dark .form-group select:focus, .app.dark .form-group textarea:focus {
-    border-color: #ff8c42;
-    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.4);
-}
-
-.app.dark .username-status.checking { color: #82b1ff; }
-.app.dark .username-status.available { color: #80c793; }
-.app.status-available.taken { color: #f28c8c; }
-
-.app.dark .submit-button.primary-gradient {
-    background: linear-gradient(to right, #ff6b6b, #ffb547); /* Darker gradient for buttons */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-}
-
-.app.dark .submit-button.primary-gradient:hover:not(:disabled) {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-}
-
-.app.dark .form-message {
-    background-color: #5a3a3a;
-    color: #f28c8c;
-    border-color: #7a4a4a;
-}
-
-.app.dark .form-message.success {
-    background-color: #3a5a3a;
-    color: #80c793;
-    border-color: #4a7a4a;
-}
-
-.app.dark .auth-footer-links {
-    color: #c0c0c0;
-}
-
-.app.dark .auth-footer-links .inline-link {
-    color: #ff6b6b;
-}
-
-.app.dark .auth-footer-links .inline-link:hover {
-    color: #ffb547;
-}
-
-.app.dark .download-section {
-    border-top-color: #4a4a4a;
-}
-
-.app.dark .section-title {
-    color: #f0f0f0;
-}
-
-.app.dark .gs-button.download-windows {
-    background-color: #1a74bb;
-}
-.app.dark .gs-button.download-windows:hover {
-    background-color: #125e98;
-}
-
-.app.dark .gs-button.download-macos {
-    background-color: #7a7a7a;
-}
-.app.dark .gs-button.download-macos:hover {
-    background-color: #6a6a6a;
-}
-
-.app.dark .download-link-detailed {
-    background-color: #4a4a4a;
-    border-color: #666;
-    color: #f0f0f0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.app.dark .download-link-detailed:hover {
-    background-color: #5a5a5a;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-.app.dark .download-link-detailed .icon {
-    color: #a270f5;
-}
-
-.app.dark .back-to-home-button {
-    background-color: #4a4a4a;
-    color: #c0c0c0;
-}
-
-.app.dark .back-to-home-button:hover {
-    background-color: #5a5a5a;
-    color: #f0f0f0;
-}
-
-/* Dark mode for syllabus */
-.app.dark .syllabus-page {
-    background-color: #2c2c2c;
-}
-
-.app.dark .syllabus-subjects-panel,
-.app.dark .syllabus-content-panel .dashboard-card { /* Applies to overall card structure */
-    background-color: #3a3a3a;
-    border-color: #4a4a4a;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-.app.dark .panel-heading {
-    color: #f0f0f0;
-    border-bottom-color: #ffb547;
-}
-.app.dark .select-level-label {
-    color: #c0c0c0;
-}
-.app.dark .level-dropdown {
-    background-color: #4a4a4a;
-    border-color: #666;
-    color: #f0f0f0;
-}
-.app.dark .dropdown-arrow-icon {
-    color: #999;
-}
-.app.dark .predefined-subject-list {
-    background-color: #4a4a4a;
-    border-color: #666;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-}
-.app.dark .predefined-subject-list h4 {
-    color: #f0f0f0;
-    border-bottom-color: #5a5a5a;
-}
-.app.dark .predefined-subject-item {
-    background-color: #5a5a5a;
-    border-color: #777;
-    color: #e0e0e0;
-}
-.app.dark .predefined-subject-item:hover {
-    background-color: #6a6a6a;
-    border-color: #999;
-}
-.app.dark .predefined-subject-item.selected {
-    background-color: #4CAF50; /* Green remains in dark mode */
-    border-color: #4CAF50;
-    color: white;
-    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.4);
-}
-.app.dark .add-selected-subjects-btn {
-    background-color: #673ab7; /* Darker purple */
-}
-.app.dark .add-selected-subjects-btn:hover:not(:disabled) {
-    background-color: #5e2e9c;
-}
-
-.app.dark .divider {
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-}
-
-.app.dark .subject-item {
-    background-color: #4a4a4a;
-    border-color: #666;
-    color: #e0e0e0;
-}
-.app.dark .subject-item:hover {
-    background-color: #5a5a5a;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-.app.dark .subject-item.selected {
-    background-color: #ff6b6b; /* Darker pink for selected */
-    color: white;
-    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
-}
-
-.app.dark .delete-subject-btn {
-    color: #f28c8c; /* Darker red */
-}
-.app.dark .delete-subject-btn:hover {
-    background-color: rgba(242, 140, 140, 0.2);
-}
-
-.app.dark .syllabus-header-with-chart .panel-heading {
-    color: #f0f0f0;
-}
-.app.dark .progress-chart-container h4 {
-    color: #f0f0f0;
-}
-.app.dark .no-progress-data {
-    color: #c0c0c0;
-}
-.app.dark .mastered-summary {
-    color: #ff6b6b; /* Dark mode pink */
-}
-
-.app.dark .add-topic-input {
-    background-color: #4a4a4a;
-    border-color: #666;
-    color: #f0f0f0;
-}
-.app.dark .add-topic-btn {
-    background-color: #ffb547; /* Darker orange */
-}
-.app.dark .add-topic-btn:hover {
-    background-color: #e09f3f;
-}
-
-.app.dark .syllabus-items-list {
-    background-color: #3a3a3a; /* Ensure the container itself has a dark background if it's a card */
-}
-
-.app.dark .syllabus-item-card {
-    background-color: #4a4a4a;
-    border-color: #666;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-.app.dark .item-text {
-    color: #f0f0f0;
-}
-.app.dark .status-dropdown {
-    background-color: #5a5a5a;
-    border-color: #777;
-    color: #e0e0e0;
-}
-.app.dark .status-dropdown:focus {
-    border-color: #ffb547;
-    box-shadow: 0 0 0 3px rgba(255, 181, 71, 0.4);
-}
-.app.dark .status-dropdown.status-not-started {
-    color: #f28c8c;
-    border-color: #f28c8c;
-}
-.app.dark .status-dropdown.status-in-progress {
-    color: #ffdd99;
-    border-color: #ffdd99;
-}
-.app.dark .status-dropdown.status-mastered {
-    color: #80c793;
-    border-color: #80c793;
-}
-
-.app.dark .notes-btn {
-    color: #c0c0c0;
-}
-.app.dark .notes-btn:hover {
-    background-color: #6a6a6a;
-    color: #f0f0f0;
-}
-.app.dark .delete-topic-btn {
-    color: #f28c8c;
-}
-.app.dark .delete-topic-btn:hover {
-    background-color: rgba(242, 140, 140, 0.2);
-}
-.app.dark .no-items-message {
-    color: #c0c0c0;
-}
-
-/* Dark mode for modals */
-.app.dark .modal-content {
-    background-color: #3a3a3a;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    border-color: #4a4a4a;
-}
-.app.dark .modal-header h3 {
-    color: #f0f0f0;
-    border-bottom-color: #5a5a5a;
-}
-.app.dark .modal-close-btn {
-    color: #c0c0c0;
-}
-.app.dark .modal-close-btn:hover {
-    color: #f28c8c;
-}
-.app.dark .no-exams-message {
-    color: #c0c0c0;
-}
-.app.dark .exam-card {
-    background-color: #4a4a4a;
-    border: 1px solid #666; /* Darker border */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-.app.dark .exam-card:hover {
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-}
-
-.app.dark .exam-details-text h4 {
-    color: #f0f0f0;
-}
-.app.dark .exam-details-text p {
-    color: #c0c0c0;
-}
-.app.dark .exam-action-btn {
-    background: #5a5a5a; /* Darker background for action buttons */
-    border-color: #777; /* Darker border */
-    color: #c0c0c0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-.app.dark .exam-action-btn svg {
-    color: #c0c0c0; /* Ensure icon color is right */
-}
-.app.dark .exam-action-btn:hover {
-    background-color: #6a6a6a;
-    color: #f0f0f0;
-    border-color: #999;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-}
-.app.dark .exam-action-btn.delete {
-    color: #f28c8c;
-    border-color: #7a4a4a; /* Darker red border */
-}
-.app.dark .exam-action-btn.delete:hover {
-    background-color: #5a3a3a; /* Darker red hover */
-    color: #f28c8c;
-    border-color: #f28c8c;
-}
-.app.dark .exam-action-btn.edit {
-    color: #a270f5; /* Darker purple for edit */
-    border-color: #7d57bc; /* Darker purple border */
-}
-.app.dark .exam-action-btn.edit:hover {
-    background-color: #673ab7; /* Darker purple hover */
-    color: #f0f0f0;
-    border-color: #a270f5;
-}
-
-/* Dark mode for EditExamsModal specific styles */
-.app.dark .edit-exams-modal .exam-entry {
-    background-color: #4a4a4a;
-    border-color: #666;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-.app.dark .edit-exams-modal .exam-entry .remove-exam-btn {
-    background-color: #5a3a3a;
-    color: #f28c8c;
-    border-color: #7a4a4a;
-}
-.app.dark .edit-exams-modal .exam-entry .remove-exam-btn:hover {
-    background-color: #7a4a4a;
-    color: #f8c8c8;
-    border-color: #f28c8c;
-}
-.app.dark .edit-exams-modal .add-exam-btn {
-    background-color: #4a6a7a; /* Darker blue */
-    color: #99d9ff;
-    border-color: #6699b3;
-}
-.app.dark .edit-exams-modal .add-exam-btn:hover {
-    background-color: #5a7a8a;
-    color: #cceeff;
-    border-color: #88b3cc;
-}
-.app.dark .modal-footer .modal-cancel-btn {
-    background-color: #4a4a4a;
-    color: #c0c0c0;
-    border-color: #666;
-}
-.app.dark .modal-footer .modal-cancel-btn:hover {
-    background-color: #5a5a5a;
-    color: #f0f0f0;
-    border-color: #999;
-}
-.app.dark .modal-footer .modal-save-btn {
-    background: linear-gradient(to right, #ff6b6b, #ffb547);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-}
-.app.dark .modal-footer .modal-save-btn:hover {
-    box-shadow: 0 6px 15px rgba(0,0,0,0.35);
-}
-.app.dark .image-modal-body {
-    background-color: #3a3a3a;
-}
-.app.dark .modal-download-btn {
-    background-color: #388E3C; /* Darker green */
-}
-.app.dark .modal-download-btn:hover:not(:disabled) {
-    background-color: #2e7d32;
-}
-
-
-/* Dark mode for notifications dropdown */
-.app.dark .notifications-dropdown-container {
-    background-color: #3a3a3a;
-    border-color: #4a4a4a;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-.app.dark .notifications-dropdown-container h4 {
-    color: #f0f0f0;
-    border-bottom-color: #5a5a5a;
-}
-
-.app.dark .notification-item {
-    color: #e0e0e0;
-    border-bottom-color: #4a4a4a;
-}
-
-.app.dark .notification-item .icon {
-    color: #ffb547; /* Dark mode orange for notification icons */
-}
-
-.app.dark .notification-item .timestamp {
-    color: #c0c0c0;
-}
-
-.app.dark .no-notifications-message {
-    color: #c0c0c0;
-}
-
-.app.dark .see-all-notifications-link {
-    color: #ff6b6b; /* Dark mode pink link */
-    border-top-color: #4a4a4a;
-}
-
-.app.dark .see-all-notifications-link:hover {
-    color: #ffb547; /* Dark mode orange hover */
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 992px) {
-    .dashboard-grid-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
-        padding: 0 2rem;
-    }
-
-    .grid-span-2 {
-        grid-column: span 2; /* Still spans 2 columns, but now it's full width */
-    }
-
-    .time-widget {
-        grid-column: auto; /* Allow time widget to be 1 column on tablets */
-    }
-
-    .countdown-widget {
-        grid-column: span 1; /* Make countdown span 1 column on tablets */
-    }
-
-    /* Countdown actions will naturally flow as a separate grid item */
-    /* REMOVED: .countdown-actions is now inside countdown-widget */
-
-    .dashboard-page .page-title,
-    .dashboard-page .page-description {
-        padding-left: 2rem; /* Maintain padding */
-    }
-
-    .syllabus-grid-container {
-        grid-template-columns: 1fr; /* Single column layout for syllabus */
-        padding: 0 1.5rem;
-    }
-
-    .syllabus-subjects-panel {
-        position: static; /* Remove sticky on mobile */
-        height: auto;
-        align-self: auto;
-        margin-bottom: 2rem;
-    }
-
-    .syllabus-header-with-chart {
-        grid-template-columns: 1fr; /* Stack header and chart */
-    }
-
-    /* Modal adjustments for medium screens */
-    .modal-content {
-        padding: 2rem;
-        max-width: 550px;
-    }
-    .modal-header h3 {
-        font-size: 1.8rem;
-    }
-
-    /* Edit Exams Modal on Medium Screens */
-    .edit-exams-modal .exam-entry {
-        flex-direction: row; /* Keep fields inline for tablet sizes */
-        flex-wrap: wrap; /* Allow wrapping if content is too long */
-        justify-content: space-between; /* Distribute items */
-        align-items: center;
-        gap: 0.5rem; /* Smaller gap */
-    }
-    .edit-exams-modal .form-group-inline {
-        flex-grow: 1; /* Allow each input to grow */
-        min-width: 150px; /* Ensure inputs don't get too small */
-    }
-    .edit-exams-modal .form-group-inline label {
-        width: auto; /* Allow labels to size naturally */
-        text-align: left; /* Align labels to the left */
-        margin-right: 0.5rem;
-    }
-    .edit-exams-modal .remove-exam-btn {
-        margin-top: 0; /* Align with inputs */
-        align-self: center; /* Center vertically */
-        padding: 0.3rem 0.6rem; /* Smaller padding */
-        font-size: 0.75rem; /* Smaller font */
-    }
-    .image-modal-content {
-        max-width: 700px; /* Adjust image modal width */
-    }
-}
-
+/* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
-    .header {
-        padding: 0.8rem 1rem;
-    }
-
-    .nav-left {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav-links {
-        display: none; /* Hide main nav links on very small screens */
-    }
-
-    .logo {
-        font-size: 1.8rem;
-    }
-
-    .nav-right {
-        gap: 0.5rem;
-    }
-
-    .nav-buttons {
-        gap: 0.5rem;
-    }
-
-    .login-btn, .start-btn {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    .user-profile-widget .user-info-trigger .welcome-message {
-        display: none; /* Hide welcome message on small screens */
-    }
-
     .dashboard-grid-container {
-        grid-template-columns: 1fr; /* Single column on small screens */
-        padding: 0 1rem; /* Reduce padding */
-        gap: 1.5rem;
+        grid-template-columns: 1fr; /* Single column layout on small screens */
+        padding: 0 1.5rem; /* Reduce padding for mobile */
+    }
+
+    .grid-span-2, .grid-span-full {
+        grid-column: auto; /* Reset span to single column */
     }
 
     .dashboard-page .page-title,
     .dashboard-page .page-description {
-        padding-left: 1rem; /* Adjust for smaller screen padding */
+        padding-left: 1.5rem; /* Match mobile padding */
+        text-align: center !important; /* Center titles on mobile for better appearance */
     }
 
-    .time-widget, .countdown-widget, .grid-span-2, .grid-span-full {
-        grid-column: auto !important; /* Ensure all grid items stack on mobile */
+    .time-widget, .countdown-widget {
+        min-height: 180px; /* Adjust height for mobile */
     }
 
     .countdown-widget .countdown-content {
-        /* Force flex properties for small screens */
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important; /* This is absolutely critical for no wrapping */
-        justify-content: center !important;
-        gap: 0.5rem !important; /* Reduce gap to give segments more space */
-        width: 100% !important; /* Explicitly take all available width */
+        flex-wrap: wrap !important; /* Allow segments to wrap on very small screens */
+        justify-content: space-around !important; /* Distribute evenly if wrapping */
+        gap: 0.5rem !important; /* Smaller gap */
     }
-
     .countdown-widget .countdown-segment {
-        /* Distribute space equally, allowing some shrinking but prioritizing fitting in one row */
-        flex: 1 1 22% !important; /* flex-grow, flex-shrink, flex-basis: roughly 100% / 4 segments = 25%, slightly less to account for gap */
-        min-width: 40px !important; /* A very small minimum to ensure they don't disappear */
-        max-width: 25% !important; /* Ensure no segment tries to take more than its share */
-        padding: 0.4rem 0.1rem !important; /* Minimal padding */
-        box-sizing: border-box !important; /* Crucial for width calculation */
+        min-width: 45%; /* Allow segments to take half width if wrapped */
+        padding: 0.5rem; /* Less padding on small screens */
     }
-
     .countdown-widget .countdown-value {
-        font-size: 1.2rem !important; /* Reduce font size further to fit */
-        line-height: 1.2 !important;
+        font-size: 1.5rem; /* Smaller font for values */
     }
-
     .countdown-widget .countdown-label {
-        font-size: 0.6rem !important; /* Reduce label font size further */
-        line-height: 1.2 !important;
-        text-align: center;
+        font-size: 0.7rem; /* Smaller font for labels */
     }
-
-    /* Countdown actions - now inside the widget, adjust positioning for mobile */
     .countdown-actions {
-        position: absolute;
-        bottom: 0.8rem; /* Closer to the bottom on small screens */
-        right: 1rem; /* Closer to the right on small screens */
-        gap: 0.3rem; /* Even smaller gap */
-        flex-direction: row; /* Keep them horizontal if space allows */
-        flex-wrap: wrap; /* Allow wrapping if really squeezed */
-        justify-content: flex-end; /* Keep to the right */
-    }
-    .countdown-actions .dashboard-action-btn {
-        flex-grow: 0; /* Do not grow */
-        width: auto; /* Auto width */
-        min-width: unset; /* Remove min-width constraint */
-        padding: 0.2rem 0.5rem; /* Even smaller padding */
-        font-size: 0.6rem; /* Even smaller font size */
-    }
-    .countdown-actions .dashboard-action-btn svg {
-        width: 14px; /* Smaller icon size */
-        height: 14px;
+        position: static; /* Make static on small screens to flow normally */
+        width: 100%;
+        justify-content: center; /* Center buttons horizontally */
+        margin-top: 1rem; /* Space them from content above */
+        padding: 0 1.5rem; /* Add horizontal padding */
+        bottom: auto; /* Reset bottom */
+        right: auto; /* Reset right */
+        /* REMOVED: outline: none; */
     }
 
+    .countdown-actions .dashboard-action-btn {
+        min-width: unset; /* Allow buttons to shrink based on content */
+        flex-grow: 1; /* Allow them to fill available space */
+        font-size: 0.75rem; /* Slightly larger text on smaller screens when static */
+        padding: 0.4rem 0.8rem; /* Slightly more padding */
+        /* REMOVED: outline: none; */
+    }
 
     .stats-grid, .links-grid {
-        grid-template-columns: 1fr; /* Stack stats and links on mobile */
-    }
-
-    .page-title {
-        font-size: 2.2rem;
-    }
-    .page-description {
-        font-size: 1rem;
-    }
-    .dashboard-section .section-heading {
-        font-size: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust minwidth for smaller cards */
     }
 
     .syllabus-grid-container {
-        padding: 0 1rem;
+      grid-template-columns: 1fr; /* Stack panels on mobile */
+      padding: 0 1.5rem;
     }
     .syllabus-subjects-panel {
-        padding: 1rem;
+      position: static; /* Remove sticky on mobile */
+      height: auto;
+      margin-bottom: 2rem;
     }
 
-    /* Modal adjustments for smaller screens */
-    .modal-content {
-        padding: 1.8rem;
-        max-width: 95%; /* Take more width on small screens */
+    .modal-content.large-modal {
+        padding: 1.5rem; /* Smaller padding for mobile modal */
+        width: 95%; /* Take more width on mobile */
     }
-    .modal-header h3 {
-        font-size: 1.6rem;
+    .modal-form-grid {
+        grid-template-columns: 1fr; /* Single column form on mobile */
+        gap: 1rem;
     }
-    .exam-card {
-        flex-direction: column; /* Stack details and actions */
-        align-items: flex-start;
-        gap: 0.8rem;
-        padding: 1rem 1.2rem;
+    .exam-input-row {
+        grid-template-columns: 1fr 1fr; /* Two columns for inputs on mobile, with delete btn */
+        row-gap: 0.5rem;
+        padding-bottom: 1rem;
     }
-    .exam-details-text {
-        margin-right: 0;
-        width: 100%;
+    .exam-input-row input,
+    .exam-input-row select {
+        grid-column: span 1; /* Ensure inputs take full available column width */
     }
-    .exam-actions {
-        width: 100%;
-        justify-content: flex-end; /* Align actions to the right */
-        margin-top: 0.5rem;
+    .exam-input-row label {
+        text-align: left; /* Align labels left on mobile for better flow */
+        width: auto;
+        flex-grow: 1;
     }
-
-    /* Edit Exams Modal on Small Screens */
-    .edit-exams-modal .exam-entry {
-        flex-direction: column; /* Stack fields vertically again for small phones */
-        align-items: stretch; /* Stretch items to fill width */
-        gap: 0.6rem;
-    }
-    .edit-exams-modal .form-group-inline {
-        flex-direction: column; /* Stack label and input */
-        align-items: flex-start; /* Align label/input to start */
-        width: 100%; /* Take full width */
-        gap: 0.2rem; /* Small gap between label and input */
-    }
-    .edit-exams-modal .form-group-inline label {
-        width: auto; /* Let label size naturally */
-        text-align: left;
-    }
-    .edit-exams-modal .form-group-inline input,
-    .edit-exams-modal .form-group-inline select {
-        width: 100%; /* Input takes full width */
-        min-width: unset; /* Remove min-width constraint */
-    }
-    .edit-exams-modal .remove-exam-btn {
-        margin-top: 0.8rem; /* Restore margin-top */
-        align-self: flex-end; /* Align to end */
-        width: auto; /* Auto width */
-    }
-
-
-    .notifications-dropdown-container {
-        right: 1rem; /* Adjust positioning for smaller screens */
-        width: calc(100% - 2rem); /* Full width minus padding */
+    .exam-input-row .delete-exam-btn {
+        grid-column: 2 / 3; /* Place delete button in the second column */
+        justify-self: end; /* Align to the end of its grid column */
+        margin-left: 0;
+        margin-top: -3px; /* Adjust vertically */
     }
 }
 
-@media (max-width: 480px) {
-    .header {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .nav-left {
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .nav-right {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .countdown-widget .countdown-content {
-        /* Absolute strictness for smallest screens */
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important; /* THIS IS THE MOST IMPORTANT PART: PREVENT WRAPPING */
-        justify-content: space-between !important; /* Distribute space as much as possible */
-        align-items: stretch !important; /* Stretch to fill height */
-        gap: 0.2rem !important; /* Minimize gap to save space */
-        padding: 0 0.2rem !important; /* Small padding on content itself */
-        box-sizing: border-box !important;
-    }
-
-    .countdown-widget .countdown-segment {
-        /* Precise flex-basis to ensure 4 fit side-by-side, allowing minimal shrinking */
-        flex: 0 0 calc(25% - 0.2rem) !important; /* 25% for each minus a tiny bit for gap */
-        min-width: calc(25% - 0.2rem) !important; /* Enforce this minimum width */
-        max-width: calc(25% - 0.2rem) !important; /* Enforce this maximum width */
-        padding: 0.2rem 0.1rem !important; /* Very minimal padding */
-        box-sizing: border-box !important; /* Absolutely crucial */
-    }
-    .countdown-widget .countdown-value {
-        font-size: 1.0rem !important; /* Further reduce font size */
-        line-height: 1 !important;
-    }
-    .countdown-widget .countdown-label {
-        font-size: 0.45rem !important; /* Further reduce label font size */
-        line-height: 1 !important;
-        word-break: break-word; /* Allow long words to break */
-        text-align: center;
-    }
-
-    .countdown-actions {
-        flex-direction: column; /* Stack quick action buttons on very small screens */
-        align-items: center;
-    }
-    .countdown-actions .dashboard-action-btn {
-        width: 100%;
-        max-width: 200px; /* Ensure they don't get too wide */
-    }
-
-    /* Modal adjustments for very small screens */
-    .modal-content {
-        padding: 1.2rem;
-    }
-    .modal-header {
-        margin-bottom: 1.5rem;
-    }
-    .modal-header h3 {
-        font-size: 1.4rem;
-    }
-    .exam-details-text h4 {
-        font-size: 1.1rem;
-    }
-    .exam-details-text p {
-        font-size: 0.85rem;
-    }
-    .exam-action-btn {
-        padding: 0.4rem;
-    }
-    .exam-action-btn svg {
-        width: 20px;
-        height: 20px;
-    }
+/* Landscape tablet (larger mobiles) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .dashboard-grid-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+  }
+  .grid-span-2 {
+    grid-column: span 1; /* Reset span to avoid odd layouts on tablet */
+  }
 }

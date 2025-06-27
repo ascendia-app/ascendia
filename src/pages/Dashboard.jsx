@@ -14,11 +14,10 @@ import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext.jsx i
 
 // Import your separated modal components
 import EditExamsModal from '../modals/EditExamsModal'; // Assuming modals folder is in src/modals/
-import ViewExamsModal from '../modals/ViewExamsModal'; // <-- NEW: Import the ViewExamsModal
-// import ImageDisplayModal from '../modals/ImageDisplayModal'; // <-- REMOVED: No longer needed for 'See All' functionality
+import ViewExamsModal from '../modals/ViewExamsModal'; // NEW: Import the ViewExamsModal
 
 import '../PageStyles.css'; // Common styles for pages (essential for styling)
-import '../ModalStyles.css'; // <-- NEW: Import the general modal styles
+import '../ModalStyles.css'; // NEW: Import the general modal styles
 
 
 // Helper function to format date and time for Date object construction
@@ -57,9 +56,8 @@ function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exams, setExams] = useState([]); // Exams fetched from Firestore
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false); // <-- NEW: State for ViewExamsModal
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false); // State for ViewExamsModal
   const [firebaseError, setFirebaseError] = useState(null); // State for Firebase errors
-  // const [imageDataUrl, setImageDataUrl] = useState(''); // <-- REMOVED: No longer needed with ViewExamsModal
   const [timeRemaining, setTimeRemaining] = useState({}); // State to hold calculated time remaining
   const [nextExam, setNextExam] = useState(null);
 
@@ -87,6 +85,7 @@ function Dashboard() {
     if (!userId || !db) {
       setExams([]); // Clear exams if prerequisites are not met
       setFirebaseError(null); // Clear any old errors
+      console.log("Dashboard: Firestore subscription skipped. userId:", userId, "db:", db); // Debug log
       return;
     }
 
@@ -102,7 +101,9 @@ function Dashboard() {
         ...doc.data() // Other exam data
       }));
       setExams(fetchedExams);
-      console.log("Dashboard: Fetched exams updated:", fetchedExams.length);
+      console.log("Dashboard: Fetched exams updated:", fetchedExams.length, "exams.");
+      // After fetching exams, re-find the next exam
+      findNextExam(fetchedExams);
     }, (error) => {
       console.error("Dashboard: Error fetching exams from Firestore:", error);
       setFirebaseError("Failed to load exams. Please check your internet connection or try again later.");
@@ -114,7 +115,7 @@ function Dashboard() {
       unsubscribe();
     };
     // Dependencies for this useEffect: re-run if userId, db, or appId change
-  }, [userId, db, appId]);
+  }, [userId, db, appId, findNextExam]); // Added findNextExam to dependencies to ensure it's up-to-date
 
 
   // --- Function to find the next upcoming exam from the fetched 'exams' list ---
@@ -138,15 +139,13 @@ function Dashboard() {
 
     // Set the closest exam if any upcoming exams exist
     if (upcomingExams.length > 0) {
-      closestExam = upcomingExams[0];
+      closestExam = upcomingExusam;
+      console.log("Dashboard: Next upcoming exam found:", closestExam.subject, closestExam.component); // Debug log
+    } else {
+      console.log("Dashboard: No upcoming exams found."); // Debug log
     }
     setNextExam(closestExam);
   }, []); // useCallback memoizes this function, only recreated if dependencies change (none here)
-
-  // --- Effect to re-evaluate next exam whenever the 'exams' state changes ---
-  useEffect(() => {
-    findNextExam(exams);
-  }, [exams, findNextExam]); // Re-run when 'exams' data or findNextExam function changes
 
 
   // --- Effect for updating current time (for the clock widget) ---
@@ -170,6 +169,7 @@ function Dashboard() {
           setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
           setNextExam(null); // Mark current nextExam as passed
           findNextExam(exams); // Re-find the next exam from the updated list
+          console.log("Dashboard: Next exam passed, re-calculating next exam."); // Debug log
           return;
         }
 
@@ -213,16 +213,19 @@ function Dashboard() {
   // --- Handlers for opening modals ---
   const handleEditExams = () => {
     setIsEditModalOpen(true);
+    console.log("Edit Exams button clicked. isEditModalOpen set to TRUE. Current value:", isEditModalOpen); // Debug log
   };
 
   const handleSeeAllExams = () => {
     // Check if there are exams to view
     if (exams.length === 0) {
       setFirebaseError("No exams to display. Add some exams first!");
+      console.log("See All Exams clicked, but no exams to display. Setting firebaseError."); // Debug log
       return;
     }
     setFirebaseError(null); // Clear previous errors
-    setIsViewModalOpen(true); // <-- NEW: Open the ViewExamsModal
+    setIsViewModalOpen(true); // Open the ViewExamsModal
+    console.log("See All Exams button clicked. isViewModalOpen set to TRUE. Current value:", isViewModalOpen); // Debug log
   };
 
   // --- Handle Save Exams (Add/Update/Delete reconciliation with Firestore) ---
@@ -332,6 +335,8 @@ function Dashboard() {
     { id: 'a5', description: "Set reminder for 'Maths Quiz' next week.", timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString() },
   ];
 
+  console.log("Dashboard Render: currentUser:", !!currentUser, "loading:", loading, "nextExam:", !!nextExam, "exams.length:", exams.length); // Primary debug log on render
+
   // Conditional rendering based on authentication state
   if (loading) {
     return (
@@ -352,19 +357,6 @@ function Dashboard() {
 
   return (
     <div className="app">
-        {/* Placeholder for Header, UserProfileWidget, ThemeToggle, NotificationsDropdown */}
-        {/* These components are typically rendered in App.js or a Layout component
-            that wraps Dashboard. If you have these uncommented in your actual code,
-            ensure they are imported and have their necessary props/state handlers. */}
-        {/*
-        <Header>
-            <Bell size={24} className="nav-bell-icon" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} />
-            <UserProfileWidget />
-            <ThemeToggle />
-        </Header>
-        {isNotificationsOpen && <NotificationsDropdown onClose={() => setIsNotificationsOpen(false)} userId={userId} />}
-        */}
-
       <main className="page-container dashboard-page">
         <h1 className="page-title">Dashboard</h1>
         <p className="page-description">Welcome back! Here's a quick overview of your academic journey.</p>
@@ -414,7 +406,7 @@ function Dashboard() {
                       <Pencil size={16} /> Edit
                     </button>
                 </div>
-                {/* --- End Action Buttons --- */}
+                {console.log("Dashboard Render: Showing 'See All' and 'Edit' buttons.")} {/* Debug log */}
               </>
             ) : (
               <div className="no-upcoming-exams">
@@ -423,6 +415,7 @@ function Dashboard() {
                 <button onClick={handleEditExams} className="dashboard-action-btn">
                   <PlusCircle size={16} /> Add Exams
                 </button>
+                {console.log("Dashboard Render: Showing 'Add Exams' button.")} {/* Debug log */}
               </div>
             )}
           </div>
@@ -478,14 +471,14 @@ function Dashboard() {
         {/* Modals rendered here, controlled by state */}
         <EditExamsModal
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={() => { setIsEditModalOpen(false); console.log("Edit Exams modal closed. isEditModalOpen set to FALSE."); }} // Debug log
           onSave={handleSaveExams}
           initialExams={exams} // Pass current exams fetched from Firestore
         />
 
-        <ViewExamsModal // <-- NEW: Render ViewExamsModal
+        <ViewExamsModal // NEW: Render ViewExamsModal
           isOpen={isViewModalOpen}
-          onClose={() => setIsViewModalOpen(false)}
+          onClose={() => { setIsViewModalOpen(false); console.log("View Exams modal closed. isViewModalOpen set to FALSE."); }} // Debug log
           exams={exams} // Pass all exams to the ViewExamsModal
         />
       </main>

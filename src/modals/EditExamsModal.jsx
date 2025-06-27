@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { PlusCircle, Trash2, XCircle } from 'lucide-react'; // Lucide React icons for plus, trash, and close
-
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { XCircle, PlusCircle, Trash2 } from 'lucide-react';
+import '../ModalStyles.css'; 
 /**
  * EditExamsModal Component
  *
