@@ -469,10 +469,10 @@
     align-items: center;
     justify-content: center;
     background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.8rem 0.9rem; /* Adjusted padding for a more compact look */
+    padding: 0.7rem 0.8rem; /* Adjusted padding for a more compact look */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 75px; /* Ensures segments have a consistent, slightly larger width to prevent wrapping */
+    min-width: 70px; /* Ensures segments have a consistent, slightly larger width to prevent wrapping */
 }
 
 .countdown-widget .countdown-value {
@@ -519,7 +519,7 @@
 /* Specific styling for the buttons in countdown-actions */
 .countdown-actions .dashboard-action-btn {
     background-color: white; /* Solid white background */
-    color: #ff4d88; /* Pink text */
+    color: #555; /* Grey text */
     padding: 0.4rem 0.8rem; /* Smaller padding for a compact look */
     border: 1px solid #ff4d88; /* Pink border */
     border-radius: 6px; /* Slightly smaller border radius */
@@ -542,12 +542,12 @@
 }
 
 .countdown-actions .dashboard-action-btn svg { /* Icon in these buttons */
-    color: #ff4d88; /* Pink icon */
+    color: #555; /* Grey icon */
     background: none;
     background-clip: unset;
     fill: currentColor; /* Ensure SVG fills with currentColor */
-    width: 14px; /* Smaller icons for these buttons */
-    height: 14px;
+    width: 20px; /* Larger icons for these buttons */
+    height: 20px;
     transition: color 0.2s; /* Smooth color transition for icon */
 }
 
@@ -591,7 +591,7 @@
 }
 
 .stat-icon { /* INCREASED ICON SIZE FOR QUICK STATS */
-  font-size: 50px;
+  font-size: 60px; /* Larger font size */
   color: #ff8c42; /* Orange color for icons */
   margin-bottom: 0.8rem;
 }
@@ -1488,7 +1488,11 @@
     padding: 1.5rem; /* Adjust card padding */
   }
 
-  .countdown-timer .countdown-segment {
+  .countdown-widget .countdown-content {
+    flex-wrap: wrap; /* Re-enable wrapping on small screens */
+  }
+
+  .countdown-widget .countdown-segment {
     min-width: 50px; /* Smaller segments on mobile */
     padding: 0.6rem 0.3rem;
   }
