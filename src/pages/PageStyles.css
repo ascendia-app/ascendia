@@ -329,11 +329,19 @@
   margin-top: 0.5rem;
 }
 
-/* Edit Exams Button */
-.edit-exams-btn {
-  position: absolute;
+/* Actions below countdown */
+.countdown-actions {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  gap: 0.5rem; /* Space between buttons */
+  width: 100%;
+  position: absolute; /* Position relative to countdown-widget */
   bottom: 1rem;
   right: 1rem;
+}
+
+/* Edit Exams Button */
+.edit-exams-btn, .see-all-exams-btn {
   background: none;
   border: none;
   color: #ff4d88; /* Pink color for the icon and text */
@@ -349,12 +357,12 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.edit-exams-btn:hover {
+.edit-exams-btn:hover, .see-all-exams-btn:hover {
   background-color: #ffebeb; /* Very light pink background on hover */
   color: #e03333; /* Slightly darker pink/red on hover */
 }
 
-.edit-exams-btn svg {
+.edit-exams-btn svg, .see-all-exams-btn svg {
   margin-right: 0.2rem;
 }
 
@@ -485,6 +493,11 @@
   }
   .countdown-widget {
     grid-column: span 1; /* Make countdown span 1 column on tablets */
+  }
+  .countdown-actions { /* Adjust positioning for smaller screens if needed */
+    position: static; /* Remove absolute positioning */
+    margin-top: 1rem; /* Add some space */
+    justify-content: center; /* Center buttons */
   }
 }
 
@@ -628,9 +641,28 @@
   display: flex;
   gap: 0.8rem;
   width: 100%;
+  align-items: center; /* Vertically align label and input */
 }
 
-.form-group-inline input {
+.form-group-inline label {
+  flex-shrink: 0; /* Prevent label from shrinking */
+  width: 80px; /* Fixed width for labels */
+  text-align: right; /* Align label text to the right */
+  padding-right: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Red star for compulsory fields */
+.form-group-inline label.compulsory-field::after {
+  content: ' *';
+  color: #ff4d4d; /* Red color for the star */
+  margin-left: 2px;
+}
+
+.form-group-inline input,
+.form-group-inline select { /* Apply styles to select as well */
   flex: 1; /* Take equal width */
   padding: 0.8rem 1rem;
   border: 1px solid #ddd;
@@ -638,9 +670,11 @@
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 0; /* Allow inputs to shrink */
 }
 
-.form-group-inline input:focus {
+.form-group-inline input:focus,
+.form-group-inline select:focus {
   outline: none;
   border-color: #ff8c42; /* Orange focus */
   box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
@@ -744,6 +778,11 @@
   .form-group-inline {
     flex-direction: column;
     gap: 0.5rem;
+  }
+  .form-group-inline label {
+    width: 100%; /* Full width for labels on mobile */
+    text-align: left; /* Align label text to left on mobile */
+    padding-right: 0;
   }
   .remove-exam-btn {
     width: 100%; /* Full width on mobile */

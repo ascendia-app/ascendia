@@ -1,14 +1,33 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './PageStyles.css'; // Assuming common styles for pages
-import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle } from 'lucide-react'; // Import Lucide React icons
+import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table } from 'lucide-react'; // Import Lucide React icons
+
+// Helper function to format date and time for Date object construction
+const getDateTimeForExam = (exam) => {
+  let dateString = exam.date;
+  let timeString = exam.time;
+
+  // If time is not provided, infer a default based on session
+  if (!timeString) {
+    switch (exam.session) {
+      case 'AM': timeString = '09:00'; break;
+      case 'PM': timeString = '14:00'; break;
+      case 'EV': timeString = '19:00'; break;
+      default: timeString = '00:00'; // Default to midnight if no session/time
+    }
+  }
+  return new Date(`${dateString}T${timeString}`);
+};
+
 
 // Exam Editor Modal Component
 const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
   const [editedExams, setEditedExams] = useState(initialExams || []);
 
   useEffect(() => {
-    setEditedExams(initialExams || []);
+    // Deep copy initialExams to prevent direct mutation of prop
+    setEditedExams(JSON.parse(JSON.stringify(initialExams || [])));
   }, [initialExams, isOpen]); // Reset editedExams when modal opens or initialExams change
 
   if (!isOpen) return null;
@@ -20,7 +39,7 @@ const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
   };
 
   const handleAddExam = () => {
-    setEditedExams([...editedExams, { subject: '', component: '', date: '', time: '' }]);
+    setEditedExams([...editedExams, { subject: '', component: '', date: '', time: '', session: 'AM' }]); // Default session to AM
   };
 
   const handleRemoveExam = (index) => {
@@ -31,7 +50,7 @@ const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
   const handleSave = () => {
     // Filter out any completely empty exam entries before saving
     const cleanedExams = editedExams.filter(exam =>
-      exam.subject || exam.component || exam.date || exam.time
+      exam.subject || exam.component || exam.date || exam.time || exam.session
     );
     onSave(cleanedExams);
     onClose();
@@ -51,30 +70,54 @@ const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
           {editedExams.map((exam, index) => (
             <div key={index} className="exam-entry">
               <div className="form-group-inline">
+                <label className="compulsory-field">Subject:</label>
                 <input
                   type="text"
-                  placeholder="Subject (e.g., Physics)"
+                  placeholder="e.g., Physics"
                   value={exam.subject}
                   onChange={(e) => handleExamChange(index, 'subject', e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Component (e.g., Paper 2)"
-                  value={exam.component}
-                  onChange={(e) => handleExamChange(index, 'component', e.target.value)}
+                  required // Compulsory
                 />
               </div>
               <div className="form-group-inline">
+                <label className="compulsory-field">Component:</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Paper 2"
+                  value={exam.component}
+                  onChange={(e) => handleExamChange(index, 'component', e.target.value)}
+                  required // Compulsory
+                />
+              </div>
+              <div className="form-group-inline">
+                <label className="compulsory-field">Date:</label>
                 <input
                   type="date"
                   value={exam.date}
                   onChange={(e) => handleExamChange(index, 'date', e.target.value)}
+                  required // Compulsory
                 />
+              </div>
+              <div className="form-group-inline">
+                <label>Time:</label>
                 <input
                   type="time"
                   value={exam.time}
                   onChange={(e) => handleExamChange(index, 'time', e.target.value)}
+                  // Not required
                 />
+              </div>
+              <div className="form-group-inline">
+                <label className="compulsory-field">Session:</label>
+                <select
+                  value={exam.session}
+                  onChange={(e) => handleExamChange(index, 'session', e.target.value)}
+                  required // Compulsory
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                  <option value="EV">EV</option>
+                </select>
               </div>
               <button onClick={() => handleRemoveExam(index)} className="remove-exam-btn">
                 <Trash2 size={18} /> Remove
@@ -98,7 +141,6 @@ const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exams, setExams] = useState(() => {
-    // Load exams from localStorage on initial render
     try {
       const savedExams = localStorage.getItem('userExams');
       return savedExams ? JSON.parse(savedExams) : [];
@@ -130,15 +172,22 @@ function Dashboard() {
     let closestExam = null;
     let minDifference = Infinity;
 
-    exams.forEach(exam => {
-      if (exam.date && exam.time) {
-        const examDateTime = new Date(`${exam.date}T${exam.time}`).getTime();
-        const difference = examDateTime - now;
+    // Filter out exams that have already passed
+    const upcomingExams = exams.filter(exam => {
+      if (exam.date) {
+        const examDateTime = getDateTimeForExam(exam).getTime();
+        return examDateTime > now;
+      }
+      return false;
+    });
 
-        if (difference > 0 && difference < minDifference) {
-          minDifference = difference;
-          closestExam = exam;
-        }
+    upcomingExams.forEach(exam => {
+      const examDateTime = getDateTimeForExam(exam).getTime();
+      const difference = examDateTime - now;
+
+      if (difference < minDifference) {
+        minDifference = difference;
+        closestExam = exam;
       }
     });
     setNextExam(closestExam);
@@ -149,15 +198,15 @@ function Dashboard() {
     findNextExam(); // Initial find
 
     const countdownTimer = setInterval(() => {
-      if (nextExam && nextExam.date && nextExam.time) {
+      if (nextExam && nextExam.date) { // Only calculate if there's a next exam and date is present
         const now = new Date();
-        const examDateTime = new Date(`${nextExam.date}T${nextExam.time}`);
+        const examDateTime = getDateTimeForExam(nextExam);
         const difference = examDateTime.getTime() - now.getTime();
 
         if (difference <= 0) {
           setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
           setNextExam(null); // Mark as passed
-          findNextExam(); // Try to find the *next* next exam
+          findNextExam(); // Try to find the *next* next exam immediately
           return;
         }
 
@@ -168,22 +217,116 @@ function Dashboard() {
 
         setTimeRemaining({ days, hours, minutes, seconds });
       } else {
-        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 }); // Reset if no next exam
       }
     }, 1000);
 
     return () => clearInterval(countdownTimer);
-  }, [nextExam, findNextExam]); // Depend on nextExam and findNextExam for re-calculation
+  }, [nextExam, findNextExam]);
 
   const formatTime = (value) => String(value).padStart(2, '0');
 
   const handleSaveExams = (updatedExams) => {
     setExams(updatedExams);
-    // After saving, immediately find the new next exam
-    findNextExam();
+    findNextExam(); // Re-evaluate next exam after saving
   };
 
+  // Function to generate and download exams table as JPG
+  const handleSeeAllExams = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const padding = 20;
+    const rowHeight = 40;
+    const headerHeight = 50;
+    const fontSize = 16;
+    const headerFontSize = 18;
+    const tableWidth = 800; // Fixed width for the table image
+    const headers = ["Subject", "Component", "Date", "Time", "Session"];
+
+    // Calculate dynamic column widths based on content
+    const columnData = exams.map(exam => ([
+      exam.subject,
+      exam.component,
+      exam.date,
+      exam.time || (exam.session ? `${getDateTimeForExam(exam).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''), // Display inferred time for optional
+      exam.session
+    ]));
+
+    let colWidths = headers.map(header => ctx.measureText(header).width);
+    columnData.forEach(row => {
+      row.forEach((cell, i) => {
+        const textWidth = ctx.measureText(cell).width;
+        if (textWidth > colWidths[i]) {
+          colWidths[i] = textWidth;
+        }
+      });
+    });
+
+    // Add padding to column widths
+    colWidths = colWidths.map(width => width + padding * 2);
+
+    // If total width exceeds tableWidth, scale down or adjust
+    let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
+    if (totalColWidth < tableWidth) { // Distribute remaining space
+        const diff = tableWidth - totalColWidth;
+        const uniformAdd = diff / colWidths.length;
+        colWidths = colWidths.map(w => w + uniformAdd);
+        totalColWidth = tableWidth; // Recalculate or just set to tableWidth
+    }
+
+
+    const tableHeight = headerHeight + exams.length * rowHeight;
+    canvas.width = totalColWidth; // Use calculated total width
+    canvas.height = tableHeight + padding * 2; // Add some vertical padding
+
+    ctx.fillStyle = '#f9f9f9'; // Background color for the image
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let currentY = padding; // Start Y with padding
+
+    // Draw Header
+    ctx.fillStyle = '#ff4d88'; // Header background color (Pink)
+    ctx.fillRect(padding, currentY, totalColWidth - padding * 2, headerHeight);
+
+    ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
+    ctx.fillStyle = 'white'; // Header text color
+    ctx.textAlign = 'left';
+    let currentX = padding;
+    headers.forEach((header, i) => {
+        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3);
+        currentX += colWidths[i];
+    });
+    currentY += headerHeight;
+
+    // Draw Rows
+    ctx.font = `${fontSize}px 'Inter', sans-serif`;
+    columnData.forEach((row, rowIndex) => {
+        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Alternating row colors
+        ctx.fillRect(padding, currentY, totalColWidth - padding * 2, rowHeight);
+
+        ctx.fillStyle = '#333'; // Row text color
+        currentX = padding;
+        row.forEach((cell, colIndex) => {
+            ctx.fillText(cell, currentX + padding, currentY + rowHeight / 2 + fontSize / 3);
+            currentX += colWidths[colIndex];
+        });
+        currentY += rowHeight;
+    });
+
+    // Convert to image and download
+    const image = canvas.toDataURL('image/jpeg', 0.9); // 0.9 quality
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = 'all_exams_schedule.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   // Mock data (keep these for other sections)
+  // Updated 'Upcoming Exam' value to reflect nextExam state
   const quickStats = [
     { id: 1, label: "Upcoming Exam", value: nextExam ? `${nextExam.subject} ${nextExam.component}` : "N/A", icon: <CalendarClock size={24} /> },
     { id: 2, label: "Topics Mastered", value: "75%", icon: <GraduationCap size={24} /> },
@@ -244,16 +387,21 @@ function Dashboard() {
                   <span className="countdown-label">Secs</span>
                 </div>
               </div>
-              <p className="exam-details">{nextExam.subject} {nextExam.component} on {new Date(`${nextExam.date}T${nextExam.time}`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+              <p className="exam-details">{nextExam.subject} {nextExam.component} on {new Date(`${nextExam.date}T${nextExam.time}`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })} ({nextExam.session})</p>
             </div>
           ) : (
             <p className="no-upcoming-exams">No upcoming exams added. Click 'Edit Exams' to add one!</p>
           )}
           
           {/* Edit Exams Button */}
-          <button onClick={() => setIsEditModalOpen(true)} className="edit-exams-btn">
-            <Pencil size={16} /> Edit Exams
-          </button>
+          <div className="countdown-actions">
+            <button onClick={handleSeeAllExams} className="see-all-exams-btn">
+              <Table size={16} /> See All Exams
+            </button>
+            <button onClick={() => setIsEditModalOpen(true)} className="edit-exams-btn">
+              <Pencil size={16} /> Edit Exams
+            </button>
+          </div>
         </div>
 
         {/* Quick Stats Section */}
