@@ -32,7 +32,6 @@ const formatDateWithOrdinal = (dateString) => {
   return `${month} ${day}, ${year}`;
 };
 
-
 // Exam Editor Modal Component
 const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
   const [editedExams, setEditedExams] = useState(initialExams || []);
@@ -191,42 +190,21 @@ const ImageDisplayModal = ({ isOpen, onClose, imageUrl }) => {
 
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [exams, setExams] = useState(() => {
-    try {
-      const savedExams = localStorage.getItem('userExams');
-      return savedExams ? JSON.parse(savedExams) : [];
-    } catch (error) {
-      console.error("Failed to parse exams from localStorage:", error);
-      return [];
-    }
-  });
+  const [exams, setExams] = useState([]); // Initialize as empty array
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // New state for image modal
   const [imageDataUrl, setImageDataUrl] = useState(''); // New state for image data
   const [timeRemaining, setTimeRemaining] = useState({});
   const [nextExam, setNextExam] = useState(null);
 
-  // Effect for updating current time
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Effect to save exams to localStorage whenever the exams state changes
-  useEffect(() => {
-    localStorage.setItem('userExams', JSON.stringify(exams));
-  }, [exams]);
-
-  // Function to find the next upcoming exam
-  const findNextExam = useCallback(() => {
+  // Function to find the next upcoming exam - moved outside useEffect for reusability
+  const findNextExam = useCallback((currentExams) => {
     const now = new Date().getTime();
     let closestExam = null;
     let minDifference = Infinity;
 
     // Filter out exams that have already passed
-    const upcomingExams = exams.filter(exam => {
+    const upcomingExams = currentExams.filter(exam => {
       if (exam.date) {
         const examDateTime = getDateTimeForExam(exam).getTime();
         return examDateTime > now;
@@ -236,19 +214,54 @@ function Dashboard() {
 
     upcomingExams.sort((a, b) => getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime());
 
-
     if (upcomingExams.length > 0) {
       closestExam = upcomingExams[0];
     }
     setNextExam(closestExam);
-  }, [exams]);
+  }, []); // No dependencies, as it takes exams as an argument
+
+  // Effect for updating current time
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Effect to load exams from localStorage on component mount and on navigation
+  // The location.pathname ensures this re-runs if the user navigates back to the dashboard
+  useEffect(() => {
+    try {
+      const savedExams = localStorage.getItem('userExams');
+      const loadedExams = savedExams ? JSON.parse(savedExams) : [];
+      setExams(loadedExams);
+      findNextExam(loadedExams); // Immediately find next exam after loading
+    } catch (error) {
+      console.error("Failed to parse exams from localStorage:", error);
+      setExams([]);
+      findNextExam([]); // Reset if error
+    }
+    // No dependency on `location.pathname` directly in this component,
+    // as App.jsx handles Router and component rendering.
+    // React Router typically remounts the component if the key changes,
+    // but the issue might be due to memoization or fast re-renders.
+    // The `findNextExam(loadedExams)` call ensures we always process the latest data.
+    // For a more explicit re-fetch on navigation, if needed,
+    // you might pass `location.pathname` as a prop from App.jsx, or use a context.
+    // However, the current structure *should* trigger this on component (re)mount.
+  }, []); // Empty array, so it runs once on mount. `findNextExam` is called within.
+
+  // Effect to save exams to localStorage whenever the exams state changes
+  useEffect(() => {
+    localStorage.setItem('userExams', JSON.stringify(exams));
+    // Also re-find next exam whenever exams change, including from editor
+    findNextExam(exams);
+  }, [exams, findNextExam]); // Added findNextExam to dependencies
 
   // Effect to calculate time remaining for the next exam
   useEffect(() => {
-    findNextExam(); // Initial find
-
     const countdownTimer = setInterval(() => {
-      if (nextExam && nextExam.date) { // Only calculate if there's a next exam and date is present
+      if (nextExam && nextExam.date) {
         const now = new Date();
         const examDateTime = getDateTimeForExam(nextExam);
         const difference = examDateTime.getTime() - now.getTime();
@@ -256,7 +269,7 @@ function Dashboard() {
         if (difference <= 0) {
           setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
           setNextExam(null); // Mark as passed
-          findNextExam(); // Try to find the *next* next exam immediately
+          findNextExam(exams); // Try to find the *next* next exam immediately from current exams state
           return;
         }
 
@@ -272,13 +285,13 @@ function Dashboard() {
     }, 1000);
 
     return () => clearInterval(countdownTimer);
-  }, [nextExam, findNextExam]);
+  }, [nextExam, exams, findNextExam]); // Added exams to dependencies
 
   const formatTime = (value) => String(value).padStart(2, '0');
 
   const handleSaveExams = (updatedExams) => {
     setExams(updatedExams);
-    findNextExam(); // Re-evaluate next exam after saving
+    // findNextExam will be called by the exams useEffect
   };
 
   // Function to generate and download exams table as JPG
