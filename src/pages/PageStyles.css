@@ -360,7 +360,7 @@
 /* Align dashboard titles to the left */
 .dashboard-page .page-title,
 .dashboard-page .page-description {
-    text-align: left !important; /* Force left alignment */
+    text-align: left;
     width: 100%; /* Take full width to respect padding of grid container */
     max-width: 1200px; /* Match max-width of grid container */
     padding-left: 2rem; /* Indent slightly, matching grid container padding */
@@ -408,9 +408,7 @@
 /* Time Widget */
 .time-widget {
     background: linear-gradient(to right, #ff8c42, #ff4d88); /* Orange to Pink gradient */
-    color
-
-: white;
+    color: white; /* Text color for the widget */
     justify-content: center;
     gap: 1rem;
     min-height: 220px; /* Make it taller */
@@ -552,7 +550,7 @@
     justify-content: center;
     gap: 0.4rem;
     transition: all 0.3s ease;
-   backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
 }
 
 .countdown-actions .dashboard-action-btn:hover {
@@ -839,7 +837,7 @@
     color: #333;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid in;
+    border-bottom: 1px solid #eee;
 }
 
 .predefined-subject-item {
@@ -1183,7 +1181,7 @@
     font-style: italic;
 }
 
-/* Modal General Styles */
+/* General Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1198,17 +1196,19 @@
 }
 
 .modal-content {
-    background-color: #fff;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     padding: 2rem;
     width: 90%;
-    max-width: 700px;
+    max-width: 700px; /* Default max-width, override for specific modals */
     max-height: 80vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     animation: fadeIn 0.3s ease-out;
+    border: 1px solid #eee;
 }
 
 @keyframes fadeIn {
@@ -1228,15 +1228,16 @@
 .modal-header h3 {
     font-family: 'Poppins', sans-serif;
     font-size: 1.8rem;
-    color: #333;
+    color: #333; /* Default color, override for specific modals */
     margin: 0;
 }
 
 .modal-close-btn {
     background: none;
     border: none;
-    cursor: pointer;
+    font-size: 1.5rem;
     color: #999;
+    cursor: pointer;
     transition: color 0.2s;
     padding: 0.5rem;
 }
@@ -1328,6 +1329,110 @@
 
 .modal-content .submit-button {
     margin-top: 1.5rem;
+}
+
+/* Edit Exams Modal Specific Styles */
+.edit-exams-modal .modal-content {
+    max-width: 500px; /* Specific width for Edit Exams modal */
+}
+
+.edit-exams-modal .modal-header h3 {
+    color: #ff4d88; /* Vibrant color for Edit Exams header */
+}
+
+.exam-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.remove-btn {
+    background: linear-gradient(to right, #ff6b6b, #ff8c42);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.remove-btn:hover {
+    background: linear-gradient(to right, #ff8c42, #ff6b6b);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.add-btn {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.add-btn:hover {
+    background: linear-gradient(to right, #ff8c42, #ff4d88);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.footer-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.cancel-btn {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.cancel-btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.save-btn:hover {
+    background: linear-gradient(to right, #ff8c42, #ff4d88);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Notifications Dropdown */
@@ -1931,9 +2036,9 @@ html.dark, body.dark, .app.dark {
 
 /* Dark mode for modals */
 .app.dark .modal-content {
-    background-color: #3a3a3a;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    background: rgba(58, 58, 58, 0.95);
     border-color: #4a4a4a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 .app.dark .modal-header h3 {
@@ -2019,6 +2124,74 @@ html.dark, body.dark, .app.dark {
 
 .app.dark .see-all-notifications-link:hover {
     color: #ffb547;
+}
+
+/* Dark mode for Edit Exams modal */
+.app.dark .edit-exams-modal .modal-content {
+    background: rgba(58, 58, 58, 0.95);
+    border-color: #4a4a4a;
+}
+
+.app.dark .edit-exams-modal .modal-header h3 {
+    color: #ff6b6b;
+}
+
+.app.dark .edit-exams-modal .form-group label {
+    color: #f0f0f0;
+}
+
+.app.dark .edit-exams-modal .form-group input,
+.app.dark .edit-exams-modal .form-group select {
+    background-color: #4a4a4a;
+    border-color: #666;
+    color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.app.dark .edit-exams-modal .form-group input:focus,
+.app.dark .edit-exams-modal .form-group select:focus {
+    border-color: #ff6b6b;
+    background-color: #5a5a5a;
+    box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+}
+
+.app.dark .edit-exams-modal .form-group input::placeholder {
+    color: #c0c0c0;
+    opacity: 0.7;
+}
+
+.app.dark .edit-exams-modal .remove-btn {
+    background: linear-gradient(to right, #f28c8c, #ffb547);
+}
+
+.app.dark .edit-exams-modal .remove-btn:hover {
+    background: linear-gradient(to right, #ffb547, #f28c8c);
+}
+
+.app.dark .edit-exams-modal .add-btn {
+    background: linear-gradient(to right, #ff6b6b, #ffb547);
+}
+
+.app.dark .edit-exams-modal .add-btn:hover {
+    background: linear-gradient(to right, #ffb547, #ff6b6b);
+}
+
+.app.dark .edit-exams-modal .cancel-btn {
+    background-color: #4a4a4a;
+    color: #c0c0c0;
+}
+
+.app.dark .edit-exams-modal .cancel-btn:hover {
+    background-color: #5a5a5a;
+    color: #f0f0f0;
+}
+
+.app.dark .edit-exams-modal .save-btn {
+    background: linear-gradient(to right, #ff6b6b, #ffb547);
+}
+
+.app.dark .edit-exams-modal .save-btn:hover {
+    background: linear-gradient(to right, #ffb547, #ff6b6b);
 }
 
 /* Mobile Responsiveness */
@@ -2267,5 +2440,33 @@ html.dark, body.dark, .app.dark {
         max-width: 200px;
         padding: 0.5rem 0.8rem;
         font-size: 0.8rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    .modal-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .form-group input, .form-group select {
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .action-btn, .footer-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .form-actions, .modal-footer {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .footer-btn {
+        width: 100%;
     }
 }
