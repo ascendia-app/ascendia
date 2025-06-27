@@ -384,15 +384,15 @@
     grid-column: 1 / -1; /* Spans all columns */
 }
 
-/* Icons (General Dashboard Icons) - Solid pink, large */
-/* This applies to .widget-icon. Other icons are overridden below. */
+/* Icons (General Dashboard Icons) - Outlined & colored, large */
 .dashboard-page .widget-icon { /* For time and countdown main icons */
     font-size: 40px; /* Keep large for main widgets */
     color: #ff4d88; /* Solid pink color */
-    background: none; /* Ensure no background image/gradient */
-    background-clip: unset; /* Ensure no clipping */
-    fill: currentColor; /* Ensure SVG fills with currentColor */
-    display: inline-flex; /* Remain as inline-flex for centering SVG */
+    background: none;
+    background-clip: unset;
+    stroke: currentColor; /* Ensure SVG strokes with currentColor */
+    fill: none; /* Ensure SVG is outlined */
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
@@ -408,9 +408,10 @@
 
 .time-widget .widget-icon { /* Specific color override for time widget icon */
     color: white; /* Keep white for the time widget to stand out on dark gradient */
-    background: none; /* Remove gradient for this icon */
-    background-clip: unset; /* Standard property for compatibility */
-    fill: currentColor; /* Ensure SVG fills with currentColor */
+    background: none;
+    background-clip: unset;
+    stroke: currentColor; /* Ensure SVG strokes with currentColor */
+    fill: none; /* Ensure SVG is outlined */
 }
 
 .time-widget .time-display {
@@ -469,15 +470,15 @@
     align-items: center;
     justify-content: center;
     background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.7rem 0.8rem; /* Adjusted padding for a more compact look */
+    padding: 0.5rem 0.3rem; /* Adjusted padding for a more compact look */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 70px; /* Ensures segments have a consistent, slightly larger width to prevent wrapping */
+    min-width: 55px; /* Ensures segments have a consistent, smaller width to fit */
 }
 
 .countdown-widget .countdown-value {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.6rem; /* Slightly smaller font for values */
+    font-size: 1.4rem; /* Smaller font for values */
     font-weight: 700;
     color: #ff4d88; /* Pinkish orange */
     line-height: 1.2; /* Adjust line height for better spacing */
@@ -485,7 +486,7 @@
 }
 
 .countdown-widget .countdown-label {
-    font-size: 0.75rem; /* Slightly smaller font for labels */
+    font-size: 0.65rem; /* Smaller font for labels */
     color: #777;
     text-transform: uppercase;
 }
@@ -545,16 +546,12 @@
     color: #555; /* Grey icon */
     background: none;
     background-clip: unset;
-    fill: currentColor; /* Ensure SVG fills with currentColor */
-    width: 20px; /* Larger icons for these buttons */
-    height: 20px;
+    stroke: currentColor; /* Ensure SVG strokes with currentColor */
+    fill: none; /* Ensure SVG is outlined */
+    width: 28px; /* Increased size for quick action icons */
+    height: 28px; /* Increased size for quick action icons */
     transition: color 0.2s; /* Smooth color transition for icon */
 }
-
-.countdown-actions .dashboard-action-btn:hover svg {
-    color: white; /* White icon on hover */
-}
-
 
 /* General Dashboard Section Styling (for Quick Stats, Links, Activity) */
 .dashboard-section {
@@ -594,6 +591,8 @@
   font-size: 60px; /* Larger font size */
   color: #ff8c42; /* Orange color for icons */
   margin-bottom: 0.8rem;
+  stroke: currentColor; /* Ensure SVG strokes with currentColor */
+  fill: none; /* Ensure SVG is outlined */
 }
 
 .stat-label { /* REDUCED TEXT SIZE FOR QUICK STATS */
@@ -630,6 +629,8 @@
   font-size: 50px;
   color: #ffcc33; /* Yellow color for link icons */
   margin-bottom: 0.8rem;
+  stroke: currentColor; /* Ensure SVG strokes with currentColor */
+  fill: none; /* Ensure SVG is outlined */
 }
 
 .link-name { /* REDUCED TEXT SIZE FOR QUICK LINKS */
@@ -664,7 +665,8 @@
     color: #ff4d88; /* Solid pink for activity icons */
     background: none;
     background-clip: unset;
-    fill: currentColor; /* Ensure SVG fills with currentColor */
+    stroke: currentColor; /* Ensure SVG strokes with currentColor */
+    fill: none; /* Ensure SVG is outlined */
     flex-shrink: 0; /* Prevent icon from shrinking */
     margin-top: 2px; /* Small adjustment for alignment */
     font-size: 30px; /* Made Quick Action icons larger */
@@ -676,6 +678,8 @@
     height: 24px;
     margin-right: 1rem; /* Space between bell and user profile */
     transition: transform 0.2s ease;
+    stroke: currentColor; /* Ensure SVG strokes with currentColor */
+    fill: none; /* Ensure SVG is outlined */
 }
 
 .nav-bell-icon:hover {
@@ -686,6 +690,7 @@
     display: flex; /* Ensure the link behaves as a flex container for the icon */
     align-items: center;
     justify-content: center;
+    cursor: pointer; /* Indicate it's clickable */
     /* Removed padding, background, etc. to keep it simple */
 }
 
@@ -1204,311 +1209,883 @@
   font-family: 'Inter', sans-serif;
   color: #777;
   text-align: center;
-  padding: 2rem 0;
-  font-style: italic;
+  padding: 1rem;
 }
 
-.exam-entry {
-  background-color: #f9f9f9;
+/* Exam Card (General styling for items in exam list) */
+.exam-card {
+  background-color: #f8f8f8;
   border: 1px solid #eee;
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1rem 1.2rem;
   margin-bottom: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  position: relative; /* For remove button if positioned absolutely */
-}
-
-.form-group-inline {
-  display: flex;
-  gap: 0.8rem;
-  width: 100%;
-  align-items: center; /* Vertically align label and input */
-}
-
-.form-group-inline label {
-  flex-shrink: 0; /* Prevent label from shrinking */
-  width: 80px; /* Fixed width for labels */
-  text-align: right; /* Align label text to the right */
-  padding-right: 0.5rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  color: #555;
-}
-
-/* Red star for compulsory fields */
-.form-group-inline label.compulsory-field::after {
-  content: ' *';
-  color: #ff4d4d; /* Red color for the star */
-  margin-left: 2px;
-}
-
-.form-group-inline input,
-.form-group-inline select { /* Apply styles to select as well */
-  flex: 1; /* Take equal width */
-  padding: 0.8rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  min-width: 0; /* Allow inputs to shrink */
-}
-
-.form-group-inline input:focus,
-.form-group-inline select:focus {
-  outline: none;
-  border-color: #ff8c42; /* Orange focus */
-  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
-}
-
-.remove-exam-btn {
-  background-color: #ff4d4d; /* Red button */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s;
-  align-self: flex-end; /* Align to end of its container */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.remove-exam-btn:hover {
-  background-color: #e03333;
+.exam-details-text {
+  flex-grow: 1;
+  text-align: left;
 }
 
-.add-exam-btn {
-  background-color: #4CAF50; /* Green button */
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 0.8rem 1.5rem;
-  cursor: pointer;
+.exam-details-text h4 {
   font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s, transform 0.2s;
-  margin-top: 1.5rem;
-  width: fit-content;
-  align-self: center; /* Center the add button */
-}
-
-.add-exam-btn:hover {
-  background-color: #45a049;
-  transform: translateY(-2px);
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.modal-cancel-btn, .modal-save-btn {
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.modal-cancel-btn {
-  background-color: #ccc;
   color: #333;
-  border: none;
+  margin-bottom: 0.2rem;
 }
 
-.modal-cancel-btn:hover {
-  background-color: #bbb;
-  transform: translateY(-2px);
+.exam-details-text p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
 }
 
-.modal-save-btn {
-  background-color: #ff4d88; /* Pink save button */
-  color: white;
-  border: none;
-}
-
-.modal-save-btn:hover {
-  background-color: #e03333; /* Darker pink/red on hover */
-  transform: translateY(-2px);
-}
-
-/* New Image Modal Styles */
-.image-modal-content {
-  max-width: 90%; /* Max width for the image modal */
-  padding: 1.5rem; /* Slightly less padding */
-}
-
-.image-modal-body {
+.exam-actions {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  max-height: 60vh; /* Control image height */
-  overflow: auto; /* Scroll if image is too large */
-}
-
-.generated-image {
-  max-width: 100%;
-  height: auto;
-  display: block; /* Remove extra space below image */
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.modal-download-btn {
-  background-color: #4CAF50; /* Green for download button */
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 0.8rem 1.5rem;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 0.5rem;
-  transition: background-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
 }
 
-.modal-download-btn:hover {
-  background-color: #45a049;
-  transform: translateY(-2px);
+.exam-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+  color: #6a6a6a;
+}
+.exam-action-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.exam-action-btn.delete {
+  color: #ff4d4d;
+}
+.exam-action-btn.delete:hover {
+  background-color: rgba(255, 77, 77, 0.2);
 }
 
-/* Responsive adjustments for Modal */
-@media (max-width: 600px) {
-  .modal-content {
-    padding: 1.5rem;
-  }
-  .modal-header h3 {
-    font-size: 1.5rem;
-  }
-  .form-group-inline {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .form-group-inline label {
-    width: 100%; /* Full width for labels on mobile */
-    text-align: left; /* Align label text to left on mobile */
-    padding-right: 0;
-  }
-  .remove-exam-btn {
-    width: 100%; /* Full width on mobile */
-    align-self: center;
-  }
-  .modal-footer {
-    flex-direction: column;
-  }
-  .modal-download-btn {
-    width: 100%; /* Full width on mobile */
-  }
+/* Modal form adjustments */
+.modal-content .form-group {
+    margin-bottom: 1rem; /* Less space in modals */
+}
+.modal-content .submit-button {
+    margin-top: 1.5rem; /* Space before submit in modal */
 }
 
-/* Responsive adjustments for Dashboard */
-@media (max-width: 992px) { /* Adjust grid for medium screens */
-  .dashboard-grid-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
-    gap: 1.5rem;
-    padding: 0 1.5rem;
-  }
-  .grid-span-2 {
-    grid-column: span 2; /* Still spans 2 columns, but now it's full width */
-  }
-  .time-widget {
-    grid-column: auto; /* Allow time widget to be 1 column on tablets */
-  }
-  .countdown-widget {
-    grid-column: span 1; /* Make countdown span 1 column on tablets */
-  }
-  .countdown-actions { /* Adjust positioning for smaller screens if needed */
-    grid-column: span 2; /* Span full width on 2-column layout */
-    justify-content: center; /* Center buttons */
+/* Notifications Dropdown */
+.notifications-dropdown-container {
+    position: absolute;
+    top: 60px; /* Adjust based on header height */
+    right: 2rem; /* Align with nav-right padding */
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    width: 350px; /* Fixed width for the dropdown */
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1001; /* Above other elements like modals */
+    padding: 1rem;
+    border: 1px solid #eee;
+    animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.notifications-dropdown-container h4 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f9f9f9;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item .icon {
+    flex-shrink: 0;
+    color: #ff8c42; /* Orange for notification icons */
+    fill: none;
+    stroke: currentColor;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px; /* Align with text */
+}
+
+.notification-item .message {
+    flex-grow: 1;
+    line-height: 1.4;
+}
+
+.notification-item .timestamp {
+    font-size: 0.75rem;
+    color: #999;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.no-notifications-message {
+    padding: 1rem;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.see-all-notifications-link {
+    display: block;
+    text-align: center;
     margin-top: 1rem;
-    padding-right: 1.5rem;
-  }
-  .dashboard-action-btn {
-    width: auto; /* Allow buttons to size content */
-    flex-grow: 1; /* Grow equally */
-  }
+    padding-top: 0.8rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+    color: #ff4d88; /* Pink link color */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
 }
 
-@media (max-width: 768px) { /* Adjust dashboard sections for small screens */
-  .dashboard-page {
-    padding: 1rem; /* Adjust overall padding for mobile */
-  }
+.see-all-notifications-link:hover {
+    color: #ff8c42;
+    text-decoration: underline;
+}
 
-  .dashboard-page .page-title,
-  .dashboard-page .page-description {
-    padding-left: 1rem; /* Reduce indent */
-    text-align: center; /* Center titles on small screens */
-  }
+/* --- DARK MODE STYLES (FROM App.css) --- */
+html.dark, body.dark, .app.dark {
+    background-color: #2c2c2c; /* Darker background */
+    color: #e0e0e0; /* Lighter text */
+}
 
-  .dashboard-grid-container {
-    grid-template-columns: 1fr; /* Stack all cards vertically on mobile */
-    gap: 1.5rem;
-    padding: 0 1rem;
-  }
+.app.dark .header {
+    background: linear-gradient(to right, #3a3a3a, #1a1a1a); /* Darker gradient for header */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
 
-  .grid-span-2, .grid-span-full, .grid-tall, .grid-item { /* Apply to all grid items on mobile */
-    grid-column: auto !important; /* Reset grid spans for mobile */
-    grid-row: auto !important; /* Reset grid spans for mobile */
-  }
+.app.dark .logo {
+    color: #f0f0f0;
+}
 
-  .section-heading {
-    text-align: center; /* Center section headings on small screens */
-    font-size: 1.5rem;
-    padding-left: 0; /* Remove indent */
-  }
+.app.dark .nav-links a {
+    color: #c0c0c0;
+}
 
-  .stats-grid, .links-grid {
-    grid-template-columns: 1fr; /* Stack cards/links vertically on small screens */
-    gap: 1.5rem; /* Adjust gap */
-  }
+.app.dark .nav-links a:hover {
+    color: #fff;
+}
 
-  .stat-card, .dashboard-link-card, .activity-list {
-    padding: 1.5rem; /* Adjust card padding */
-  }
+.app.dark .login-btn {
+    color: #f0f0f0;
+    border-color: #f0f0f0;
+}
 
-  .countdown-widget .countdown-content {
-    flex-wrap: wrap; /* Re-enable wrapping on small screens */
-  }
+.app.dark .login-btn:hover {
+    background-color: rgba(240, 240, 240, 0.1);
+}
 
-  .countdown-widget .countdown-segment {
-    min-width: 50px; /* Smaller segments on mobile */
-    padding: 0.6rem 0.3rem;
-  }
-  .countdown-value {
-    font-size: 1.8rem;
-  }
-  .countdown-label {
-    font-size: 0.7rem;
-  }
-  .countdown-actions { /* Ensure buttons stack on very small screens */
-    flex-direction: column;
-    align-items: center;
-    padding-right: 1rem;
-  }
-  .dashboard-action-btn {
-    width: 100%; /* Full width for buttons on very small screens */
-    padding: 0.8rem;
-  }
+.app.dark .start-btn {
+    background: linear-gradient(to right, #5a5a5a, #3a3a3a);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.app.dark .start-btn:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.app.dark .bell-icon-link .nav-bell-icon {
+    color: #e0e0e0; /* Bell icon white in dark mode */
+}
+
+.app.dark .user-profile-widget .user-info-trigger {
+    color: #e0e0e0;
+}
+
+.app.dark .avatar-circle {
+    background-color: #555;
+    color: #eee;
+}
+
+.app.dark .dropdown-arrow {
+    color: #c0c0c0;
+}
+
+.app.dark .dropdown-menu {
+    background-color: #3a3a3a;
+    border-color: #555;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.app.dark .dropdown-item {
+    color: #c0c0c0;
+}
+
+.app.dark .dropdown-item:hover {
+    background-color: #4a4a4a;
+    color: #fff;
+}
+
+.app.dark .dropdown-item .icon svg {
+    color: #c0c0c0; /* Icons in dropdown menu */
+}
+.app.dark .dropdown-item:hover .icon svg {
+    color: #fff; /* Icons in dropdown menu on hover */
+}
+
+
+.app.dark .logout-btn {
+    color: #ff6b6b; /* Red for logout in dark mode */
+}
+
+.app.dark .logout-btn:hover {
+    background-color: rgba(255, 107, 107, 0.2);
+}
+
+.app.dark .toggle .circle {
+    transform: translateX(20px); /* Move circle for dark mode */
+    background-color: #f0f0f0; /* White circle in dark mode */
+}
+
+/* Dark mode dashboard styles */
+.app.dark .dashboard-page {
+    background-color: #2c2c2c;
+}
+
+.app.dark .dashboard-page .page-title,
+.app.dark .dashboard-page .page-description,
+.app.dark .dashboard-section .section-heading {
+    color: #f0f0f0; /* Lighter text for titles/headings */
+}
+
+.app.dark .dashboard-card {
+    background-color: #3a3a3a; /* Darker card background */
+    border-color: #4a4a4a;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.app.dark .dashboard-card:hover {
+    box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+}
+
+.app.dark .time-widget {
+    background: linear-gradient(to right, #4a4a4a, #2a2a2a); /* Darker gradient for time widget */
+}
+
+.app.dark .countdown-widget {
+    background-color: #3a3a3a; /* Darker countdown widget background */
+    color: #e0e0e0;
+    border-color: #4a4a4a;
+}
+
+.app.dark .countdown-widget .widget-title {
+    color: #f0f0f0;
+}
+
+.app.dark .countdown-widget .countdown-segment {
+    background-color: #4a4a4a; /* Darker segment background */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.app.dark .countdown-widget .countdown-value {
+    color: #ff6b6b; /* Adjust pink for dark mode */
+}
+
+.app.dark .countdown-widget .countdown-label {
+    color: #c0c0c0;
+}
+
+.app.dark .countdown-widget .exam-details {
+    color: #c0c0c0;
+}
+
+.app.dark .countdown-actions .dashboard-action-btn {
+    background-color: #3a3a3a;
+    color: #c0c0c0;
+    border-color: #ff6b6b; /* Darker border for actions */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.app.dark .countdown-actions .dashboard-action-btn:hover {
+    background-color: #ff6b6b;
+    color: #3a3a3a;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.app.dark .countdown-actions .dashboard-action-btn svg {
+    color: #c0c0c0; /* Icons in dark mode */
+}
+.app.dark .countdown-actions .dashboard-action-btn:hover svg {
+    color: #3a3a3a; /* Icons hover in dark mode */
+}
+
+
+.app.dark .quick-stats-section .stat-card {
+    background-color: #4a4a4a; /* Darker stat card */
+}
+
+.app.dark .stat-label,
+.app.dark .link-name,
+.app.dark .activity-item p,
+.app.dark .no-activity {
+    color: #c0c0c0; /* Lighter text for these elements */
+}
+
+.app.dark .stat-value {
+    color: #ff6b6b; /* Dark mode stat value color */
+}
+
+.app.dark .activity-item {
+    border-color: #4a4a4a; /* Darker border for activity items */
+}
+
+.app.dark .activity-icon {
+    color: #ff6b6b; /* Dark mode activity icon color */
+}
+
+/* Dark mode for auth forms and related components */
+.app.dark .auth-form {
+    background-color: #3a3a3a;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    border-color: #4a4a4a;
+}
+
+.app.dark .form-group label {
+    color: #f0f0f0;
+}
+
+.app.dark .form-group input, .app.dark .form-group select {
+    background-color: #4a4a4a;
+    border-color: #666;
+    color: #f0f0f0;
+}
+
+.app.dark .form-group input:focus, .app.dark .form-group select:focus {
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.4);
+}
+
+.app.dark .username-status.checking { color: #82b1ff; }
+.app.dark .username-status.available { color: #80c793; }
+.app.dark .username-status.taken { color: #f28c8c; }
+
+.app.dark .submit-button.primary-gradient {
+    background: linear-gradient(to right, #ff6b6b, #ffb547); /* Darker gradient for buttons */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+.app.dark .submit-button.primary-gradient:hover:not(:disabled) {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
+.app.dark .form-message {
+    background-color: #5a3a3a;
+    color: #f28c8c;
+    border-color: #7a4a4a;
+}
+
+.app.dark .form-message.success {
+    background-color: #3a5a3a;
+    color: #80c793;
+    border-color: #4a7a4a;
+}
+
+.app.dark .auth-footer-links {
+    color: #c0c0c0;
+}
+
+.app.dark .auth-footer-links .inline-link {
+    color: #ff6b6b;
+}
+
+.app.dark .auth-footer-links .inline-link:hover {
+    color: #ffb547;
+}
+
+.app.dark .download-section {
+    border-top-color: #4a4a4a;
+}
+
+.app.dark .section-title {
+    color: #f0f0f0;
+}
+
+.app.dark .gs-button.download-windows {
+    background-color: #1a74bb;
+}
+.app.dark .gs-button.download-windows:hover {
+    background-color: #125e98;
+}
+
+.app.dark .gs-button.download-macos {
+    background-color: #7a7a7a;
+}
+.app.dark .gs-button.download-macos:hover {
+    background-color: #6a6a6a;
+}
+
+.app.dark .download-link-detailed {
+    background-color: #4a4a4a;
+    border-color: #666;
+    color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.app.dark .download-link-detailed:hover {
+    background-color: #5a5a5a;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.app.dark .download-link-detailed .icon {
+    color: #a270f5;
+}
+
+.app.dark .back-to-home-button {
+    background-color: #4a4a4a;
+    color: #c0c0c0;
+}
+
+.app.dark .back-to-home-button:hover {
+    background-color: #5a5a5a;
+    color: #f0f0f0;
+}
+
+/* Dark mode for syllabus */
+.app.dark .syllabus-page {
+    background-color: #2c2c2c;
+}
+
+.app.dark .syllabus-subjects-panel,
+.app.dark .syllabus-content-panel .dashboard-card { /* Applies to overall card structure */
+    background-color: #3a3a3a;
+    border-color: #4a4a4a;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+.app.dark .panel-heading {
+    color: #f0f0f0;
+    border-bottom-color: #ffb547;
+}
+.app.dark .select-level-label {
+    color: #c0c0c0;
+}
+.app.dark .level-dropdown {
+    background-color: #4a4a4a;
+    border-color: #666;
+    color: #f0f0f0;
+}
+.app.dark .dropdown-arrow-icon {
+    color: #999;
+}
+.app.dark .predefined-subject-list {
+    background-color: #4a4a4a;
+    border-color: #666;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+.app.dark .predefined-subject-list h4 {
+    color: #f0f0f0;
+    border-bottom-color: #5a5a5a;
+}
+.app.dark .predefined-subject-item {
+    background-color: #5a5a5a;
+    border-color: #777;
+    color: #e0e0e0;
+}
+.app.dark .predefined-subject-item:hover {
+    background-color: #6a6a6a;
+    border-color: #999;
+}
+.app.dark .predefined-subject-item.selected {
+    background-color: #4CAF50; /* Green remains in dark mode */
+    border-color: #4CAF50;
+    color: white;
+    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.4);
+}
+.app.dark .add-selected-subjects-btn {
+    background-color: #673ab7; /* Darker purple */
+}
+.app.dark .add-selected-subjects-btn:hover:not(:disabled) {
+    background-color: #5e2e9c;
+}
+
+.app.dark .divider {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+}
+
+.app.dark .subject-item {
+    background-color: #4a4a4a;
+    border-color: #666;
+    color: #e0e0e0;
+}
+.app.dark .subject-item:hover {
+    background-color: #5a5a5a;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.app.dark .subject-item.selected {
+    background-color: #ff6b6b; /* Darker pink for selected */
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+}
+
+.app.dark .delete-subject-btn {
+    color: #f28c8c; /* Darker red */
+}
+.app.dark .delete-subject-btn:hover {
+    background-color: rgba(242, 140, 140, 0.2);
+}
+
+.app.dark .syllabus-header-with-chart .panel-heading {
+    color: #f0f0f0;
+}
+.app.dark .progress-chart-container h4 {
+    color: #f0f0f0;
+}
+.app.dark .no-progress-data {
+    color: #c0c0c0;
+}
+.app.dark .mastered-summary {
+    color: #ff6b6b; /* Dark mode pink */
+}
+
+.app.dark .add-topic-input {
+    background-color: #4a4a4a;
+    border-color: #666;
+    color: #f0f0f0;
+}
+.app.dark .add-topic-btn {
+    background-color: #ffb547; /* Darker orange */
+}
+.app.dark .add-topic-btn:hover {
+    background-color: #e09f3f;
+}
+
+.app.dark .syllabus-item-card {
+    background-color: #4a4a4a;
+    border-color: #666;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+.app.dark .item-text {
+    color: #f0f0f0;
+}
+.app.dark .status-dropdown {
+    background-color: #5a5a5a;
+    border-color: #777;
+    color: #e0e0e0;
+}
+.app.dark .status-dropdown:focus {
+    border-color: #ffb547;
+    box-shadow: 0 0 0 3px rgba(255, 181, 71, 0.4);
+}
+.app.dark .status-dropdown.status-not-started {
+    color: #f28c8c;
+    border-color: #f28c8c;
+}
+.app.dark .status-dropdown.status-in-progress {
+    color: #ffdd99;
+    border-color: #ffdd99;
+}
+.app.dark .status-dropdown.status-mastered {
+    color: #80c793;
+    border-color: #80c793;
+}
+
+.app.dark .notes-btn {
+    color: #c0c0c0;
+}
+.app.dark .notes-btn:hover {
+    background-color: #6a6a6a;
+    color: #f0f0f0;
+}
+.app.dark .delete-topic-btn {
+    color: #f28c8c;
+}
+.app.dark .delete-topic-btn:hover {
+    background-color: rgba(242, 140, 140, 0.2);
+}
+.app.dark .no-items-message {
+    color: #c0c0c0;
+}
+
+/* Dark mode for modals */
+.app.dark .modal-content {
+    background-color: #3a3a3a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border-color: #4a4a4a;
+}
+.app.dark .modal-header h3 {
+    color: #f0f0f0;
+    border-bottom-color: #5a5a5a;
+}
+.app.dark .modal-close-btn {
+    color: #c0c0c0;
+}
+.app.dark .modal-close-btn:hover {
+    color: #f28c8c;
+}
+.app.dark .no-exams-message {
+    color: #c0c0c0;
+}
+.app.dark .exam-card {
+    background-color: #4a4a4a;
+    border-color: #666;
+}
+.app.dark .exam-details-text h4 {
+    color: #f0f0f0;
+}
+.app.dark .exam-details-text p {
+    color: #c0c0c0;
+}
+.app.dark .exam-action-btn {
+    color: #c0c0c0;
+}
+.app.dark .exam-action-btn:hover {
+    background-color: #6a6a6a;
+    color: #f0f0f0;
+}
+.app.dark .exam-action-btn.delete {
+    color: #f28c8c;
+}
+.app.dark .exam-action-btn.delete:hover {
+    background-color: rgba(242, 140, 140, 0.2);
+}
+
+/* Dark mode for notifications dropdown */
+.app.dark .notifications-dropdown-container {
+    background-color: #3a3a3a;
+    border-color: #4a4a4a;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.app.dark .notifications-dropdown-container h4 {
+    color: #f0f0f0;
+    border-bottom-color: #5a5a5a;
+}
+
+.app.dark .notification-item {
+    color: #e0e0e0;
+    border-bottom-color: #4a4a4a;
+}
+
+.app.dark .notification-item .icon {
+    color: #ffb547; /* Dark mode orange for notification icons */
+}
+
+.app.dark .notification-item .timestamp {
+    color: #c0c0c0;
+}
+
+.app.dark .no-notifications-message {
+    color: #c0c0c0;
+}
+
+.app.dark .see-all-notifications-link {
+    color: #ff6b6b; /* Dark mode pink link */
+    border-top-color: #4a4a4a;
+}
+
+.app.dark .see-all-notifications-link:hover {
+    color: #ffb547; /* Dark mode orange hover */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+    .dashboard-grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+        padding: 0 2rem;
+    }
+
+    .grid-span-2 {
+        grid-column: span 2; /* Span full width for some elements on smaller screens */
+    }
+
+    .time-widget, .countdown-widget {
+        grid-column: span 1; /* Ensure they each take one column */
+    }
+
+    .dashboard-page .page-title,
+    .dashboard-page .page-description {
+        padding-left: 2rem; /* Maintain padding */
+    }
+
+    .syllabus-grid-container {
+        grid-template-columns: 1fr; /* Single column layout for syllabus */
+        padding: 0 1.5rem;
+    }
+
+    .syllabus-subjects-panel {
+        position: static; /* Remove sticky on mobile */
+        height: auto;
+        align-self: auto;
+        margin-bottom: 2rem;
+    }
+
+    .syllabus-header-with-chart {
+        grid-template-columns: 1fr; /* Stack header and chart */
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 0.8rem 1rem;
+    }
+
+    .nav-left {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        display: none; /* Hide main nav links on very small screens */
+    }
+
+    .logo {
+        font-size: 1.8rem;
+    }
+
+    .nav-right {
+        gap: 0.5rem;
+    }
+
+    .nav-buttons {
+        gap: 0.5rem;
+    }
+
+    .login-btn, .start-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .user-profile-widget .user-info-trigger .welcome-message {
+        display: none; /* Hide welcome message on small screens */
+    }
+
+    .dashboard-grid-container {
+        grid-template-columns: 1fr; /* Single column on small screens */
+        padding: 0 1rem; /* Reduce padding */
+        gap: 1.5rem;
+    }
+
+    .dashboard-page .page-title,
+    .dashboard-page .page-description {
+        padding-left: 1rem; /* Adjust for smaller screen padding */
+    }
+
+    .time-widget, .countdown-widget, .grid-span-2, .grid-span-full {
+        grid-column: auto !important; /* Ensure all grid items stack on mobile */
+    }
+
+    .countdown-widget .countdown-content {
+        flex-wrap: wrap; /* Re-enable wrapping on small screens for countdown segments */
+        justify-content: space-around; /* Distribute segments */
+        gap: 0.5rem; /* Smaller gap */
+    }
+
+    .countdown-widget .countdown-segment {
+        min-width: 60px; /* Adjust min-width for mobile segments */
+        padding: 0.6rem 0.3rem; /* Adjust padding */
+    }
+
+    .countdown-widget .countdown-value {
+        font-size: 1.2rem; /* Smaller font on mobile */
+    }
+
+    .countdown-actions {
+        position: static; /* Remove absolute positioning */
+        margin-top: 1rem; /* Add margin after content */
+        justify-content: center; /* Center buttons */
+        width: 100%;
+        padding: 0 1rem; /* Add horizontal padding */
+        box-sizing: border-box;
+    }
+    .countdown-actions .dashboard-action-btn {
+        flex-grow: 1; /* Allow buttons to grow and fill space */
+        max-width: 150px; /* Limit their max width */
+    }
+
+
+    .stats-grid, .links-grid {
+        grid-template-columns: 1fr; /* Stack stats and links on mobile */
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+    }
+    .page-description {
+        font-size: 1rem;
+    }
+    .dashboard-section .section-heading {
+        font-size: 1.5rem;
+    }
+
+    .syllabus-grid-container {
+        padding: 0 1rem;
+    }
+    .syllabus-subjects-panel {
+        padding: 1rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+    }
+    .modal-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .notifications-dropdown-container {
+        right: 1rem; /* Adjust positioning for smaller screens */
+        width: calc(100% - 2rem); /* Full width minus padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-left {
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .countdown-widget .countdown-segment {
+        min-width: 50px; /* Even smaller min-width for very small screens */
+    }
+
+    .countdown-actions {
+        flex-direction: column; /* Stack quick action buttons on very small screens */
+        align-items: center;
+    }
+    .countdown-actions .dashboard-action-btn {
+        width: 100%;
+        max-width: 200px; /* Ensure they don't get too wide */
+    }
 }

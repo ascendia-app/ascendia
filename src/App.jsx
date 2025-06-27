@@ -5,7 +5,7 @@ import { useAuth } from './contexts/AuthContext';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
-import { Bell } from 'lucide-react'; // Import Bell icon
+import { Bell, AlertCircle, Calendar, Award } from 'lucide-react'; // Import Bell icon and others for dummy notifications
 
 // Import pages
 import Home from './pages/Home';
@@ -29,8 +29,11 @@ function App() {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
   });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for user profile dropdown
+  const dropdownRef = useRef(null); // Ref for user profile dropdown
+
+  const [isNotificationsDropdownOpen, setIsNotificationsDropdownOpen] = useState(false); // State for notifications dropdown
+  const notificationsDropdownRef = useRef(null); // Ref for notifications dropdown
 
   const navigate = useNavigate();
 
@@ -94,18 +97,29 @@ function App() {
     }
   }, [currentUser, loading, db]);
 
-  // Effect to handle clicks outside the dropdown
+  // Effect to handle clicks outside dropdowns
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
+    function handleClickOutsideElements(event) {
+        const isClickOnUserProfileWidget = dropdownRef.current && dropdownRef.current.contains(event.target);
+        const isClickOnNotificationsDropdown = notificationsDropdownRef.current && notificationsDropdownRef.current.contains(event.target);
+        const isClickOnBellIconTrigger = event.target.closest('.bell-icon-link');
+        const isClickOnUserProfileTrigger = event.target.closest('.user-info-trigger');
+
+        // Close user dropdown if click is outside it AND not on its trigger
+        if (!isClickOnUserProfileWidget && !isClickOnUserProfileTrigger) {
+            setIsDropdownOpen(false);
+        }
+
+        // Close notifications dropdown if click is outside it AND not on its trigger
+        if (!isClickOnNotificationsDropdown && !isClickOnBellIconTrigger) {
+            setIsNotificationsDropdownOpen(false);
+        }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutsideElements);
     return () => {
-      document.removeEventListener("mousedown", handleClick);
+        document.removeEventListener("mousedown", handleClickOutsideElements);
     };
-  }, [dropdownRef]);
+}, [dropdownRef, notificationsDropdownRef]); // Depend on refs
 
   const toggleTheme = () => {
     setDarkMode(prevMode => !prevMode);
@@ -113,7 +127,14 @@ function App() {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(prev => !prev);
+    setIsNotificationsDropdownOpen(false); // Close notifications dropdown if opening user dropdown
   };
+
+  const toggleNotificationsDropdown = () => {
+    setIsNotificationsDropdownOpen(prev => !prev);
+    setIsDropdownOpen(false); // Close user dropdown if opening notifications dropdown
+  };
+
 
   const handleLogout = async () => {
     try {
@@ -142,8 +163,8 @@ function App() {
             {loading || isUsernameLoading ? (
               <span className="welcome-message loading-pulse">Loading...</span>
             ) : currentUser ? (
-              // NEW: Explicit div wrapper for authenticated user elements
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              // Explicit div wrapper for authenticated user elements
+              <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}> {/* Added position: 'relative' for dropdown context */}
                 <div className="user-profile-widget" ref={dropdownRef}>
                   <div className="user-info-trigger" onClick={toggleDropdown}>
                     <div className="avatar-circle">
@@ -189,10 +210,38 @@ function App() {
                   </div>
                   )}</div>
                 {/* NEW: Bell icon for notifications, visible when logged in */}
-                <Link to="/notifications" className="bell-icon-link" aria-label="Notifications">
+                <div className="bell-icon-link" onClick={toggleNotificationsDropdown} aria-label="Notifications" role="button" tabIndex="0">
                     <Bell size={24} className="nav-bell-icon" />
-                </Link>
-              </div>
+                </div>
+                {isNotificationsDropdownOpen && (
+                    <div className="notifications-dropdown-container" ref={notificationsDropdownRef}>
+                        <h4>Notifications</h4>
+                        {/* Dummy Notifications - Replace with real data later */}
+                        <div className="notification-item">
+                            <AlertCircle className="icon" />
+                            <p className="message">Your **Syllabus for Calculus I** has been updated with new topics!</p>
+                            <span className="timestamp">5 min ago</span>
+                        </div>
+                        <div className="notification-item">
+                            <Calendar className="icon" />
+                            <p className="message">Reminder: **Chemistry Midterm** is in 3 days.</p>
+                            <span className="timestamp">1 hour ago</span>
+                        </div>
+                        <div className="notification-item">
+                            <Award className="icon" />
+                            <p className="message">You have **mastered 5 new topics** this week. Keep up the great work!</p>
+                            <span className="timestamp">Yesterday</span>
+                        </div>
+                        {/* You can add a condition here to show "No new notifications" if there are none */}
+                        {/* {notifications.length === 0 && (
+                            <div className="no-notifications-message">No new notifications.</div>
+                        )} */}
+                        <Link to="/notifications" className="see-all-notifications-link" onClick={() => setIsNotificationsDropdownOpen(false)}>
+                            See all notifications
+                        </Link>
+                    </div>
+                )}
+              </div> 
             ) : (
               <>
                 <Link to="/login" className="login-btn">Login</Link>
@@ -207,7 +256,7 @@ function App() {
       </header>
 
         {/* Main content area where different routes will render their components */}
-        <div className="main-content-area">
+        <div className="main-content-area">{
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -221,7 +270,7 @@ function App() {
             <Route path="/user-settings" element={<UserSettings />} />
             <Route path="/notifications" element={<Notifications />} />
           </Routes>
-        </div>
+}</div>
       </div>
   );
 }
