@@ -279,15 +279,14 @@ function Dashboard() {
     const fontSize = 16;
     const headerFontSize = 18;
 
-    // Define headers for the table
-    const headers = ["Subject", "Component", "Date", "Time", "Session"];
+    // Define headers for the table (excluding "Time")
+    const headers = ["Subject", "Component", "Date", "Session"];
 
-    // Prepare data for rendering, including inferred time
+    // Prepare data for rendering, ensuring 'Time' is excluded
     const columnData = exams.map(exam => ([
       exam.subject || '-',
       exam.component || '-',
       exam.date || '-',
-      exam.time ? new Date(`2000-01-01T${exam.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : (exam.session ? `${getDateTimeForExam(exam).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}` : '-'),
       exam.session || '-'
     ]));
 
