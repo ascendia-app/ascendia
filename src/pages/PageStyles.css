@@ -352,7 +352,7 @@
     width: 100%;
     max-width: 1200px;
     margin-top: 2rem;
-    padding: 0 1rem; /* Added padding to ensure content isn't flush with edges */
+    padding: 0 4rem; /* Increased padding on left/right for better centering */
 }
 
 .grid-item {
@@ -369,6 +369,23 @@
     grid-column: 1 / -1; /* Spans all columns */
 }
 
+/* Icons (General Dashboard Icons) */
+/* This applies to .widget-icon, .stat-icon, .link-icon */
+.dashboard-page .widget-icon,
+.dashboard-page .stat-icon,
+.dashboard-page .link-icon {
+    font-size: 40px; /* Larger icons */
+    /* Apply gradient directly to SVG content */
+    background: linear-gradient(to right, #ff4d88, #ff8c42); /* Pink to Orange gradient */
+    -webkit-background-clip: text; /* Clip background to text shape */
+    background-clip: text; /* Standard property for compatibility */
+    -webkit-text-fill-color: transparent; /* Make text fill transparent so gradient shows */
+    color: transparent; /* Fallback for browsers not supporting -webkit-text-fill-color */
+    display: inline-flex; /* To apply gradient on SVG, ensure it's treated like text */
+    align-items: center;
+    justify-content: center;
+}
+
 /* Time Widget */
 .time-widget {
     background: linear-gradient(to right, #ff8c42, #ff4d88); /* Orange to Pink gradient */
@@ -378,8 +395,12 @@
     min-height: 220px; /* Make it taller */
 }
 
-.time-widget .widget-icon {
-    color: rgba(255, 255, 255, 0.8);
+.time-widget .widget-icon { /* Specific color override for time widget icon */
+    color: white; /* Keep white for the time widget to stand out on dark gradient */
+    background: none; /* Remove gradient for this icon */
+    -webkit-background-clip: unset;
+    background-clip: unset; /* Standard property for compatibility */
+    -webkit-text-fill-color: unset;
 }
 
 .time-widget .time-display {
@@ -408,6 +429,7 @@
     justify-content: center;
     align-items: center;
     min-height: 220px; /* Match height of time widget */
+    position: relative; /* Needed for positioning child elements absolutely */
 }
 
 .countdown-widget .widget-title {
@@ -426,29 +448,12 @@
     width: 100%;
 }
 
-.countdown-widget .countdown-timer {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-}
-
-.countdown-widget .countdown-segment {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f0f0f0;
-    padding: 0.7rem 0.5rem;
-    border-radius: 8px;
-    min-width: 60px; /* Ensure segments have minimum width */
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-}
-
+/* Exam countdown value color change */
 .countdown-widget .countdown-value {
     font-family: 'Poppins', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
-    color: #6200EE; /* Purple */
+    color: #ff4d88; /* Changed from blue to pinkish */
     line-height: 1;
 }
 
@@ -474,41 +479,47 @@
     padding: 1rem;
 }
 
-/* Countdown Action Buttons (Edit & See All) */
+/* Countdown Action Buttons (Edit & See All) - Positioned at bottom right */
 .countdown-actions {
+    position: absolute; /* Position relative to .countdown-widget */
+    bottom: 1rem;
+    right: 1rem;
     display: flex;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1rem 0; /* Add padding for separation */
-    grid-column: 1 / -1; /* Span full width by default */
-    background-color: white; /* Match card background */
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    gap: 0.5rem; /* Reduced gap between buttons */
+    padding: 0; /* No internal padding for this container */
+    background-color: transparent; /* Make background transparent */
+    box-shadow: none; /* Remove any shadow */
     align-items: center;
+    z-index: 10; /* Ensure they are above other elements if needed */
 }
 
-.dashboard-action-btn {
-    display: flex; /* Use flex for icon and text alignment */
-    align-items: center;
-    gap: 0.5rem; /* Space between icon and text */
-    background-color: #ff4d88;
-    color: white;
-    padding: 0.7rem 1.2rem;
-    border-radius: 8px;
-    text-decoration: none; /* For Link components */
-    font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    border: none; /* Ensure no default button border */
-    cursor: pointer;
+/* Specific styling for the buttons in countdown-actions */
+.countdown-actions .dashboard-action-btn {
+    background-color: rgba(255, 255, 255, 0.2); /* Translucent white background */
+    color: white; /* Text color */
+    padding: 0.5rem 1rem; /* Smaller padding */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Subtle white border */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Small subtle shadow */
+    font-size: 0.85rem; /* Smaller font size */
+    width: auto; /* Let content dictate width */
 }
 
-.dashboard-action-btn:hover {
-    background-color: #e03b70;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+.countdown-actions .dashboard-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.35); /* More opaque on hover */
+    transform: translateY(-1px); /* Subtle lift */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Slightly larger shadow on hover */
 }
+
+.countdown-actions .dashboard-action-btn svg { /* Icon in these buttons */
+    color: white; /* Keep icons white on translucent background */
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset; /* Standard property for compatibility */
+    -webkit-text-fill-color: unset;
+    width: 14px; /* Smaller icons for these buttons */
+    height: 14px;
+}
+
 
 /* General Dashboard Section Styling (for Quick Stats, Links, Activity) */
 .dashboard-section {
@@ -538,24 +549,6 @@
     min-height: 150px;
 }
 
-.stat-icon {
-    margin-bottom: 0.5rem;
-    color: #6200EE; /* Purple for icons */
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: #777;
-    margin-bottom: 0.2rem;
-}
-
-.stat-value {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #ff4d88; /* Pink */
-}
-
 /* Quick Links Section */
 .links-grid {
     display: grid;
@@ -569,11 +562,6 @@
     color: inherit; /* Inherit text color */
     padding: 1.2rem;
     min-height: 120px;
-}
-
-.dashboard-link-card .link-icon {
-    margin-bottom: 0.5rem;
-    color: #6200EE;
 }
 
 .dashboard-link-card .link-name {
@@ -606,7 +594,7 @@
 }
 
 .activity-icon {
-    color: #ff8c42; /* Orange for notification icon */
+    /* Will inherit the general icon gradient */
     flex-shrink: 0; /* Prevent icon from shrinking */
     margin-top: 2px; /* Small adjustment for alignment */
 }
@@ -1330,14 +1318,19 @@
       min-height: 180px; /* Smaller height on mobile */
   }
   .countdown-actions {
-    flex-direction: column; /* Stack buttons */
-    gap: 0.8rem;
-    padding: 1rem;
+    flex-direction: row; /* Keep buttons side by side if possible */
+    position: static; /* Remove absolute positioning */
+    bottom: auto;
+    right: auto;
+    width: 100%; /* Take full width */
+    justify-content: center; /* Center buttons */
+    padding: 1rem 0; /* Add some padding */
   }
   .dashboard-action-btn {
-    width: 100%; /* Full width for stacked buttons */
-    justify-content: center;
+    width: auto; /* Allow buttons to size by content */
+    flex-grow: 1; /* Distribute space evenly */
   }
+
   .dashboard-section .section-heading {
     font-size: 1.5rem;
   }
