@@ -39,55 +39,51 @@ html, body, #root {
   top: 0;
   z-index: 100;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: background 0.5s ease-in-out; /* Smooth transition for theme change */
-}
-
-/* Header Light Theme Gradient */
-.header {
   background: linear-gradient(to right, #ff4d88, #ff8c42, #ffcc33); /* Brighter gradient */
+  transition: background 0.5s ease-in-out; /* Smooth transition for theme change */
 }
 
 /* Logo - Cooler Font */
 .logo {
-  font-family: 'Montserrat', sans-serif; /* Applied new cooler font */
-  font-size: 2.2rem; /* Slightly larger */
-  font-weight: 800; /* Bolder */
-  color: white; /* Ensures logo color is white */
-  text-decoration: none; /* Ensure no underline for Link component */
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: white;
+  text-decoration: none;
 }
 
-/* Navigation Links - Left (this rule now specifically targets logo's link if it were a link, but logo has its own style) */
+/* Navigation Links - Left */
 .nav-left {
   display: flex;
-  gap: 2rem; /* Increased gap for better spacing */
+  gap: 2rem;
   align-items: center;
 }
 
 /* Specific styling for navigation links (About, Features, Contact) */
 .nav-links {
-  display: flex; /* Added display: flex to .nav-links */
-  gap: 1.5rem; /* Added gap to separate links */
+  display: flex;
+  gap: 1.5rem;
 }
 
 .nav-links a {
   text-decoration: none;
   color: white;
-  font-weight: 600; /* Slightly bolder font weight */
+  font-weight: 600;
   transition: opacity 0.2s, color 0.2s;
-  font-family: 'Poppins', sans-serif; /* Applied Poppins font */
+  font-family: 'Poppins', sans-serif;
 }
 
 .nav-links a:hover {
   opacity: 0.8;
-  color: #f0f0f0; /* Slight color change on hover */
+  color: #f0f0f0;
 }
 
 /* Navigation Links - Right */
 .nav-right {
   display: flex;
-  gap: 1.5rem; /* Adjusted gap */
+  gap: 1.5rem;
   align-items: center;
-  position: relative; /* Needed for dropdown positioning */
+  position: relative; /* Crucial for dropdown positioning */
 }
 
 .nav-buttons {
@@ -95,12 +91,11 @@ html, body, #root {
   gap: 1rem;
 }
 
-
 /* Buttons & Links in Header (for logged out state) */
 .login-btn,
 .start-btn {
-  padding: 0.6rem 1.2rem; /* Slightly larger padding */
-  border-radius: 8px; /* More rounded corners */
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s, border 0.3s;
@@ -125,28 +120,28 @@ html, body, #root {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* User Profile Widget (for logged in state) */
+/* User Profile Widget (for logged in state) - NO BOX, straight on nav */
 .user-profile-widget {
   position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
-  gap: 0.75rem; /* Space between avatar/text/arrow */
-  padding: 0.5rem 0.8rem; /* Padding for the clickable area */
+  padding: 0.5rem 0; /* Minimal padding for spacing, no background or border */
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1); /* Subtle background for active area */
+  /* Removed background-color, border, box-shadow */
   transition: background-color 0.2s;
+  margin-right: 0.5rem; /* Space before toggle */
 }
 
 .user-profile-widget:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
 }
 
 .user-info-trigger {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: white; /* Ensure text is white */
+  color: white;
   font-weight: 600;
 }
 
@@ -154,15 +149,16 @@ html, body, #root {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3); /* Lighter background for avatar */
+  background-color: rgba(255, 255, 255, 0.4); /* Slightly more opaque background */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
   font-weight: 700;
-  color: white; /* Text color inside avatar */
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  flex-shrink: 0; /* Prevent it from shrinking */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.6); /* More defined border */
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for depth */
 }
 
 .welcome-message {
@@ -170,36 +166,38 @@ html, body, #root {
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
-  white-space: nowrap; /* Prevent username from wrapping */
+  white-space: nowrap;
 }
 
 .dropdown-arrow {
   display: inline-block;
   margin-left: 0.25rem;
   transition: transform 0.2s ease-in-out;
-  color: white; /* Ensure arrow is white */
+  color: white;
+  font-size: 0.7em; /* Make arrow smaller */
 }
 
 .dropdown-arrow.open {
   transform: rotate(180deg);
 }
 
-/* Dropdown Menu */
+/* Dropdown Menu - Cleaner Look */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 10px); /* Position below the trigger with some space */
-  right: 0; /* Align to the right of the widget */
-  background-color: #fff; /* White background for dropdown */
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: #fff;
+  border-radius: 10px; /* Slightly more rounded */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25); /* Stronger, softer shadow */
   min-width: 180px;
-  overflow: hidden; /* Ensures rounded corners */
-  z-index: 101; /* Above header */
+  overflow: hidden;
+  z-index: 101;
   display: flex;
   flex-direction: column;
-  opacity: 0; /* Start hidden for animation */
-  transform: translateY(-10px); /* Start slightly up for animation */
+  opacity: 0;
+  transform: translateY(-10px);
   animation: fadeInDown 0.2s ease-out forwards;
+  border: 1px solid #e0e0e0; /* Subtle border for definition */
 }
 
 @keyframes fadeInDown {
@@ -216,46 +214,46 @@ html, body, #root {
 .dropdown-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Space between icon and text */
-  padding: 0.8rem 1rem;
-  color: #333; /* Dark text color for items */
+  gap: 0.75rem;
+  padding: 0.9rem 1.2rem; /* Increased padding for more space */
+  color: #333;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
   font-family: 'Inter', sans-serif;
-  border-bottom: 1px solid #eee; /* Separator */
+  border-bottom: 1px solid #f0f0f0; /* Lighter, subtle separator */
 }
 
 .dropdown-item:last-child {
-  border-bottom: none; /* No border for the last item */
+  border-bottom: none;
 }
 
 .dropdown-item:hover {
-  background-color: #f0f0f0; /* Light gray on hover */
-  color: #ff4d88; /* Highlight color on hover */
+  background-color: #f7f7f7; /* Very light gray on hover */
+  color: #ff6699; /* A slightly softer pink for hover */
 }
 
 .dropdown-item .icon svg {
-  width: 20px; /* Icon size */
-  height: 20px;
-  color: #666; /* Default icon color */
+  width: 18px; /* Slightly smaller icons */
+  height: 18px;
+  color: #888; /* Softer default icon color */
   transition: color 0.2s;
 }
 
 .dropdown-item:hover .icon svg {
-  color: #ff4d88; /* Icon color on hover */
+  color: #ff6699; /* Icon color on hover matches text */
 }
 
 /* Logout Button Specific Styling within Dropdown */
 .logout-btn {
   background: none;
   border: none;
-  width: 100%; /* Make button take full width of dropdown item */
-  text-align: left; /* Align text within button */
-  padding: 0; /* Reset button padding as it's handled by .dropdown-item */
-  font: inherit; /* Inherit font styles */
-  cursor: pointer; /* Ensure cursor is pointer */
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
 /* Apply dropdown-item styles directly to logout-btn for consistency */
@@ -263,30 +261,29 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.8rem 1rem;
+  padding: 0.9rem 1.2rem;
   color: #333;
   font-weight: 500;
   text-decoration: none;
   transition: background-color 0.2s, color 0.2s;
   font-family: 'Inter', sans-serif;
-  border-bottom: 1px solid #eee;
+  border-bottom: none; /* Ensure no border on logout if it's last */
 }
 
 .logout-btn.dropdown-item:hover {
-  background-color: #f0f0f0;
-  color: #ff4d88;
+  background-color: #f7f7f7;
+  color: #ff6699;
 }
 
-/* Ensure icons within logout button also follow dropdown-item icon styles */
 .logout-btn.dropdown-item .icon svg {
-  width: 20px;
-  height: 20px;
-  color: #666;
+  width: 18px;
+  height: 18px;
+  color: #888;
   transition: color 0.2s;
 }
 
 .logout-btn.dropdown-item:hover .icon svg {
-  color: #ff4d88;
+  color: #ff6699;
 }
 
 

@@ -19,22 +19,22 @@ import UserSettings from './pages/UserSettings';
 
 
 function App() {
-  const { currentUser, loading } = useAuth(); // Get currentUser and loading state from AuthContext
-  const [displayedUsername, setDisplayedUsername] = useState(''); // State to store the fetched username
+  const { currentUser, loading } = useAuth();
+  const [displayedUsername, setDisplayedUsername] = useState('');
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
   });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
-  const dropdownRef = useRef(null); // Ref for dropdown to detect outside clicks
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const navigate = useNavigate();
 
-  // DEBUG: Log current user and loading state
+  // DEBUG: Log current user and loading state (keep these, they are helpful!)
   useEffect(() => {
     console.log("AuthContext: currentUser =", currentUser);
     console.log("AuthContext: loading =", loading);
-    console.log("App.jsx: displayedUsername =", displayedUsername); // Also log username state
+    console.log("App.jsx: displayedUsername =", displayedUsername);
   }, [currentUser, loading, displayedUsername]);
 
 
@@ -55,26 +55,28 @@ function App() {
     localStorage.setItem('dark-mode', darkMode);
   }, [darkMode]);
 
-  // Effect to fetch username when currentUser changes (i.e., login/logout)
+  // Effect to fetch username when currentUser changes
   useEffect(() => {
     const fetchUsername = async () => {
       if (currentUser) {
-        // Fallback directly to email prefix initially to ensure something shows quickly
+        // Immediate fallback to email prefix for quick display while fetching
         setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
+
         try {
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
-          if (userDocSnap.exists()) {
+          if (userDocSnap.exists() && userDocSnap.data().username) { // Check if username field exists
             setDisplayedUsername(userDocSnap.data().username);
-            console.log("Fetched username from Firestore:", userDocSnap.data().username); // DEBUG
+            console.log("Fetched username from Firestore:", userDocSnap.data().username);
           } else {
-            console.warn("No user profile found in Firestore for UID:", currentUser.uid, ". Falling back to email prefix."); // DEBUG
-            // If user doc doesn't exist, already set fallback to email prefix
+            console.warn("No username found in Firestore for UID:", currentUser.uid, ". Falling back to email prefix.");
+            // Already set fallback to email prefix above
           }
         } catch (error) {
-          console.error("Error fetching username from Firestore:", error); // DEBUG
-          setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User'); // Fallback on error
+          console.error("Error fetching username from Firestore:", error);
+          // If there's an error, stick with the email prefix fallback
+          setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
         }
       } else {
         setDisplayedUsername(''); // Clear username if no user is logged in
@@ -82,10 +84,10 @@ function App() {
     };
 
     if (!loading) { // Only fetch username once auth state is determined
-      console.log("Auth state determined, attempting to fetch username..."); // DEBUG
+      console.log("Auth state determined, attempting to fetch username...");
       fetchUsername();
     }
-  }, [currentUser, loading, db]); // Rerun when currentUser, loading, or db instance changes
+  }, [currentUser, loading, db]);
 
   // Effect to handle clicks outside the dropdown
   useEffect(() => {
@@ -94,11 +96,9 @@ function App() {
         setIsDropdownOpen(false);
       }
     }
-    // Bind the event listener
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // Unbind the event listener on cleanup
-      document.removeEventListener("mousedown", handleClickOutside); // Corrected typo here (handleClickcOutside -> handleClickOutside)
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -113,18 +113,17 @@ function App() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/login'); // Redirect to login page after logout
-      setIsDropdownOpen(false); // Close dropdown on logout
-      setDisplayedUsername(''); // Clear displayed username immediately
-      console.log("User logged out successfully."); // DEBUG
+      navigate('/login');
+      setIsDropdownOpen(false);
+      setDisplayedUsername('');
+      console.log("User logged out successfully.");
     } catch (error) {
-      console.error("Error logging out:", error); // DEBUG
+      console.error("Error logging out:", error);
     }
   };
 
   return (
     <div className={`app ${darkMode ? 'dark' : ''}`}>
-      {/* Header / Navigation Bar - Renders on all pages */}
       <header className="header">
         <div className="nav-left">
           <Link to="/" className="logo">Ascendia</Link>
@@ -134,21 +133,18 @@ function App() {
             <a href="#contact">Contact</a>
           </div>
         </div>
-        <div className="nav-right"> {/* Corrected: Removed  */}
+        <div className="nav-right">
           <div className="nav-buttons">
-            {/* Conditional rendering based on authentication status */}
             {loading ? (
-              <span className="welcome-message">Loading...</span> // Show loading state
+              <span className="welcome-message">Loading...</span>
             ) : currentUser ? (
               <div className="user-profile-widget" ref={dropdownRef}>
                 <div className="user-info-trigger" onClick={toggleDropdown}>
                   <div className="avatar-circle">
-                    {/* Display first letter of username, or '?' if unavailable */}
                     {displayedUsername ? displayedUsername.charAt(0).toUpperCase() : (currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?')}
                   </div>
-                  {/* Ensure displayedUsername is not empty, otherwise fallback to email prefix */}
                   <span className="welcome-message">Hello, {displayedUsername || (currentUser.email ? currentUser.email.split('@')[0] : 'User')}!</span>
-                  <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>&#9660;</span> {/* Unicode arrow */}
+                  <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>&#9660;</span>
                 </div>
                 {isDropdownOpen && (
                   <div className="dropdown-menu">
@@ -168,54 +164,53 @@ function App() {
                       </span>
                       Log Out
                     </button>
-                    {/* Suggested additional items */}
                     <Link to="/dashboard" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                       <span className="icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard">
-                              <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
-                          </svg>
-                      </span>
-                      Dashboard
-                    </Link>
-                    <Link to="/help" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <span className="icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-help-circle">
-                              <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
-                          </svg>
-                      </span>
-                      Help
-                    </Link>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <>
-                <Link to="/login" className="login-btn">Login</Link>
-                <Link to="/getting-started" className="start-btn">Get Started</Link>
-              </>
-            )}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard">
+                                <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+                            </svg>
+                        </span>
+                        Dashboard
+                      </Link>
+                      <Link to="/help" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <span className="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-help-circle">
+                                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+                            </svg>
+                        </span>
+                        Help
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link to="/login" className="login-btn">Login</Link>
+                  <Link to="/getting-started" className="start-btn">Get Started</Link>
+                </>
+              )}
+            </div>
+            <button className="toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
+              <div className="circle"></div>
+            </button>
           </div>
-          <button className="toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
-            <div className="circle"></div>
-          </button>
-        </div>
-      </header>
+        </header>
 
-      {/* Main content area where different routes will render their components */}
-      <div className="main-content-area">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/syllabus" element={<Syllabus />} />
-          <Route path="/papers" element={<Papers />} />
-          <Route path="/tracker" element={<Tracker />} />
-          <Route path="/countdown" element={<Countdown />} />
-          <Route path="/planner" element={<Planner />} />
-          <Route path="/getting-started" element={<GettingStarted />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/user-settings" element={<UserSettings />} />
-        </Routes>
+        {/* Main content area where different routes will render their components */}
+        <div className="main-content-area">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/syllabus" element={<Syllabus />} />
+            <Route path="/papers" element={<Papers />} />
+            <Route path="/tracker" element={<Tracker />} />
+            <Route path="/countdown" element={<Countdown />} />
+            <Route path="/planner" element={<Planner />} />
+            <Route path="/getting-started" element={<GettingStarted />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/user-settings" element={<UserSettings />} />
+          </Routes>
+        </div>
       </div>
-    </div>
   );
 }
 
