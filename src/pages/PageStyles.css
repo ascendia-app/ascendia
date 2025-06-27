@@ -43,7 +43,7 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     text-align: center;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Kept as column for card structure */
     justify-content: space-between;
     align-items: center;
     min-height: 180px; /* Adjust min-height for better card appearance */
@@ -318,7 +318,6 @@
     color: #6200EE; /* Consistent icon color */
 }
 
-
 /* Back to Home Button (General use) */
 .back-to-home-button {
     display: inline-block;
@@ -358,7 +357,6 @@
     margin-left: auto; /* Re-center the title container */
     margin-right: auto; /* Re-center the title container */
 }
-
 
 .dashboard-grid-container { /* Main grid for dashboard layout */
     display: grid;
@@ -431,7 +429,7 @@
     line-height: 1;
 }
 
-/* Countdown Widget */
+/* Countdown Widget - Updated to enforce horizontal layout */
 .countdown-widget {
     background-color: white; /* Explicitly white for contrast */
     color: #333;
@@ -443,6 +441,7 @@
     /* Removed padding-bottom and position: relative as action buttons are separate grid items */
 }
 
+/* Ensure countdown content is horizontal by default */
 .countdown-widget .widget-title {
     font-family: 'Poppins', sans-serif;
     font-size: 1.5rem;
@@ -452,30 +451,45 @@
     margin-bottom: 1rem;
 }
 
+/* Enhanced specificity and !important to override any parent flex or grid constraints */
 .countdown-widget .countdown-content {
-    display: flex !important; /* Force flex */
-    flex-direction: row !important; /* Force horizontal */
-    justify-content: center !important; /* Center the segments horizontally */
-    gap: 1rem !important; /* Consistent gap between segments */
-    width: 100% !important; /* Ensure it takes full available width */
+    display: flex !important; /* Force flex behavior */
+    flex-direction: row !important; /* Force horizontal layout */
+    justify-content: center !important; /* Center segments */
+    align-items: center !important; /* Align items vertically within row */
+    gap: 1rem !important; /* Space between segments */
+    width: 100% !important; /* Full width to respect parent */
     flex-wrap: nowrap !important; /* Prevent wrapping */
     margin-bottom: 0.5rem; /* Space below segments */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Ensure the timer wrapper respects the row layout */
+.countdown-widget .countdown-timer {
+    display: flex !important; /* Force flex on the timer wrapper */
+    flex-direction: row !important; /* Align segments horizontally */
+    justify-content: center !important; /* Center within the timer */
+    align-items: center !important; /* Align items vertically */
+    gap: 1rem !important; /* Consistent spacing */
+    width: 100%; /* Full width of content */
+    flex-wrap: nowrap !important; /* Prevent wrapping */
 }
 
 .countdown-widget .countdown-segment {
-    display: flex;
-    flex-direction: column; /* Keep value and label stacked vertically within each segment */
-    align-items: center;
-    justify-content: center;
+    display: flex !important; /* Ensure each segment is a flex container */
+    flex-direction: column !important; /* Keep value and label stacked within segment */
+    align-items: center !important; /* Center content horizontally */
+    justify-content: center !important; /* Center content vertically */
     background-color: #f0f0f0;
     padding: 0.8rem 0.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 60px; /* Minimum width to ensure readability */
-    flex-grow: 0; /* Prevent segments from growing unevenly */
-    flex-shrink: 0; /* Prevent segments from shrinking too much */
-    max-width: 25%; /* Limit to ensure 4 segments fit */
+    min-width: 60px; /* Minimum width for readability */
+    flex-grow: 0; /* Prevent uneven growth */
+    flex-shrink: 0; /* Prevent shrinking */
+    max-width: 25%; /* Limit to fit 4 segments */
 }
+
 .countdown-widget .countdown-value {
     font-family: 'Montserrat', sans-serif; /* Reverted font family */
     font-size: 2rem; /* Reverted font size */
@@ -693,7 +707,6 @@
     /* Removed padding, background, etc. to keep it simple */
 }
 
-
 .activity-item p {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
@@ -707,9 +720,7 @@
   padding: 1rem 0;
 }
 
-
 /* --- SYLLABUS SPECIFIC STYLES --- */
-
 .syllabus-page {
   max-width: 100%;
   align-items: flex-start;
@@ -799,7 +810,6 @@
   pointer-events: none; /* Ensures clicks go through to the select element */
 }
 
-
 /* Predefined Subject List (for selection) */
 .predefined-subject-list {
   background-color: #f8f8f8;
@@ -881,7 +891,6 @@
   margin: 1.5rem 0;
 }
 
-
 /* Your Added Subjects List Styling */
 .subject-list {
   flex-grow: 1;
@@ -898,7 +907,7 @@
   padding: 0.8rem 1rem;
   margin-bottom: 0.5rem;
   background-color: #f0f0f0;
-  border-radius: 8鳴;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
@@ -934,7 +943,6 @@
 .delete-subject-btn:hover {
   background-color: rgba(255, 77, 77, 0.2);
 }
-
 
 /* Syllabus Content Panel (Right Column) */
 .syllabus-content-panel {
@@ -1454,7 +1462,6 @@ html.dark, body.dark, .app.dark {
     color: #fff; /* Icons in dropdown menu on hover */
 }
 
-
 .app.dark .logout-btn {
     color: #ff6b6b; /* Red for logout in dark mode */
 }
@@ -1545,7 +1552,6 @@ html.dark, body.dark, .app.dark {
 .app.dark .countdown-actions .dashboard-action-btn:hover svg {
     color: #3a3a3a; /* Icons hover in dark mode */
 }
-
 
 .app.dark .quick-stats-section .stat-card {
     background-color: #4a4a4a; /* Darker stat card */
@@ -2059,7 +2065,6 @@ html.dark, body.dark, .app.dark {
         flex-grow: 1; /* Allow buttons to grow and fill space */
         max-width: 150px; /* Limit their max width */
     }
-
 
     .stats-grid, .links-grid {
         grid-template-columns: 1fr; /* Stack stats and links on mobile */
