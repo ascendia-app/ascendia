@@ -457,7 +457,7 @@
     display: flex; /* Changed to flex for side-by-side */
     flex-direction: row; /* Arranges items side-by-side */
     justify-content: center; /* Centers the segments horizontally */
-    gap: 0.4rem; /* Further reduced gap between each segment for tighter fit */
+    gap: 0.3rem; /* Further reduced gap between each segment for tighter fit */
     width: 100%;
     flex-wrap: nowrap; /* Prevent wrapping on larger screens, force side-by-side */
     margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
@@ -470,16 +470,18 @@
     align-items: center;
     justify-content: center;
     background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.3rem 0.1rem; /* Further adjusted padding for a more compact look */
+    padding: 0.2rem 0.05rem; /* Further adjusted padding for a more compact look */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 50px; /* Ensures segments have a consistent, even smaller width to fit */
+    min-width: 48px; /* Ensures segments have a consistent, even smaller width to fit */
+    flex-basis: 0; /* Important for flex-grow to work evenly */
+    flex-grow: 1; /* Allow segments to grow and take available space */
     max-width: 60px; /* Prevent segments from becoming too wide on very large screens */
 }
 
 .countdown-widget .countdown-value {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.2rem; /* Even smaller font for values */
+    font-size: 1.1rem; /* Even smaller font for values */
     font-weight: 700;
     color: #ff4d88; /* Pinkish orange */
     line-height: 1.2; /* Adjust line height for better spacing */
@@ -487,7 +489,7 @@
 }
 
 .countdown-widget .countdown-label {
-    font-size: 0.55rem; /* Even smaller font for labels */
+    font-size: 0.5rem; /* Even smaller font for labels */
     color: #777;
     text-transform: uppercase;
 }
@@ -1590,7 +1592,7 @@ html.dark, body.dark, .app.dark {
 
 .app.dark .username-status.checking { color: #82b1ff; }
 .app.dark .username-status.available { color: #80c793; }
-.app.dark .username-status.taken { color: #f28c8c; }
+.app.status-available.taken { color: #f28c8c; }
 
 .app.dark .submit-button.primary-gradient {
     background: linear-gradient(to right, #ff6b6b, #ffb547); /* Darker gradient for buttons */
