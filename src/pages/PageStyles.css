@@ -157,11 +157,11 @@
 
 /* Dashboard Specific Styles */
 .dashboard-page {
-  max-width: 1200px; /* Constrain max width for better readability */
-  width: 100%; /* Ensure it uses available width up to max */
+  max-width: 100%; /* Ensure it spans full width */
   align-items: flex-start; /* Align content to the left within the page */
   padding-top: 3rem; /* More space from header */
   padding-bottom: 3rem;
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .dashboard-page .page-title,
@@ -173,33 +173,17 @@
   box-sizing: border-box; /* Include padding in width */
 }
 
-.dashboard-section {
-  width: 100%;
-  margin-bottom: 3rem; /* Space between sections */
-  padding: 0 2rem; /* Horizontal padding for sections */
+.dashboard-grid-container {
+  display: grid;
+  /* Define 3 columns for desktop, with flexible sizing */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem; /* Consistent spacing between grid items */
+  width: 100%; /* Occupy full width of its parent */
+  padding: 0 2rem; /* Padding from left/right edges of the page */
   box-sizing: border-box;
 }
 
-.section-heading {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 1.5rem;
-  text-align: left; /* Align section headings to the left */
-  border-bottom: 2px solid #ffcc33; /* Subtle underline */
-  padding-bottom: 0.5rem;
-}
-
-/* Quick Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid for stats */
-  gap: 2rem;
-  width: 100%;
-}
-
-.stat-card {
+.dashboard-card {
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0,0,0,0.08); /* Modern, soft shadow */
@@ -212,15 +196,151 @@
   border: 1px solid #eee; /* Light border */
 }
 
-.stat-card:hover {
+.dashboard-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* Grid Spanning Classes for varied card sizes */
+.grid-span-full {
+  grid-column: 1 / -1; /* Spans all available columns */
+}
+
+.grid-span-2 {
+  grid-column: span 2; /* Spans two columns */
+}
+
+.grid-tall {
+  grid-row: span 2; /* Spans two rows */
+}
+
+/* Specific Styles for new Time Widget */
+.time-widget {
+  grid-column: span 1; /* By default, takes 1 column */
+  background: linear-gradient(to right, #ffcc33, #ff8c42); /* Yellow to orange gradient */
+  color: white;
+  justify-content: center;
+  align-items: flex-start; /* Align icon and text to start */
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.time-widget .widget-icon {
+  color: white; /* White icon on gradient background */
+  margin-bottom: 1rem;
+}
+
+.time-display .current-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 0.2rem;
+}
+
+.time-display .current-time {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Specific Styles for new Countdown Widget */
+.countdown-widget {
+  /* Default is grid-span-2 from JSX */
+  background-color: #fff;
+  color: #333;
+  padding: 1.5rem;
+  text-align: center;
+  justify-content: space-between; /* Space out content vertically */
+}
+
+.countdown-widget .widget-icon {
+  color: #ff4d88; /* Pink icon */
+  margin-bottom: 0.8rem;
+}
+
+.countdown-widget .widget-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.countdown-timer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.countdown-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f0f0; /* Light background for segments */
+  padding: 0.8rem 0.5rem;
+  border-radius: 8px;
+  min-width: 60px; /* Ensure segments have minimum width */
+}
+
+.countdown-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ff4d88; /* Pink */
+  line-height: 1;
+}
+
+.countdown-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+.countdown-finished {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e03333; /* Red for finished countdown */
+}
+
+.exam-details {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #777;
+}
+
+
+/* Section Headings within Dashboard Grid */
+.dashboard-section .section-heading {
+  margin-left: 0; /* Remove padding-left from overall page title */
+  padding-left: 0; /* Remove padding from overall page title */
+  text-align: left; /* Keep section headings left aligned */
+}
+
+/* Quick Stats Grid */
+.quick-stats-section {
+  grid-column: 1 / -1; /* Ensure this section spans full width */
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid for stats */
+  gap: 2rem;
+  width: 100%;
+}
+
+.stat-card {
+  /* Inherits dashboard-card styles */
+  background-color: #f7f7f7; /* Slightly different background for stat cards */
+  padding: 1.5rem; /* Slightly less padding */
 }
 
 .stat-icon {
   color: #ff8c42; /* Orange color for icons */
   margin-bottom: 0.8rem;
-  /* Lucide icon size is controlled by size prop, but general styling can be here */
 }
 
 .stat-label {
@@ -238,6 +358,9 @@
 }
 
 /* Quick Links Grid */
+.quick-links-section {
+  grid-column: 1 / -1; /* Ensure this section spans full width */
+}
 .links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Grid for links */
@@ -246,30 +369,13 @@
 }
 
 .dashboard-link-card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  text-decoration: none;
-  color: #333;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
-  border: 1px solid #eee;
-}
-
-.dashboard-link-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-  background-color: #fcfcfc; /* Very subtle background change on hover */
+  /* Inherits dashboard-card styles */
+  padding: 1.2rem; /* Slightly less padding */
 }
 
 .link-icon {
   color: #ffcc33; /* Yellow color for link icons */
   margin-bottom: 0.8rem;
-  /* Lucide icon size is controlled by size prop, but general styling can be here */
 }
 
 .link-name {
@@ -279,13 +385,13 @@
 }
 
 /* Recent Activity Section */
+.recent-activity-section {
+  grid-column: 1 / -1; /* Ensure this section spans full width */
+}
 .activity-list {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  /* Inherits dashboard-card styles */
   padding: 1.5rem 2rem;
-  text-align: left; /* Align text to left within the list */
-  border: 1px solid #eee;
+  text-align: left;
 }
 
 .activity-item {
@@ -302,14 +408,14 @@
 
 .activity-icon {
   color: #4CAF50; /* Green for activity notifications */
-  flex-shrink: 0; /* Prevent icon from shrinking */
+  flex-shrink: 0;
 }
 
 .activity-item p {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   color: #444;
-  margin: 0; /* Remove default paragraph margin */
+  margin: 0;
 }
 
 .no-activity {
@@ -319,7 +425,18 @@
 }
 
 /* Responsive adjustments for Dashboard */
-@media (max-width: 768px) {
+@media (max-width: 992px) { /* Adjust grid for medium screens */
+  .dashboard-grid-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+  .grid-span-2 {
+    grid-column: span 2; /* Still spans 2 columns, but now it's full width */
+  }
+}
+
+@media (max-width: 768px) { /* Adjust dashboard sections for small screens */
   .dashboard-page {
     padding: 1rem; /* Adjust overall padding for mobile */
   }
@@ -328,6 +445,17 @@
   .dashboard-page .page-description {
     padding-left: 1rem; /* Reduce indent */
     text-align: center; /* Center titles on small screens */
+  }
+
+  .dashboard-grid-container {
+    grid-template-columns: 1fr; /* Stack all cards vertically on mobile */
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .grid-span-2, .grid-span-full, .grid-tall {
+    grid-column: auto !important; /* Reset grid spans for mobile */
+    grid-row: auto !important; /* Reset grid spans for mobile */
   }
 
   .section-heading {
@@ -343,5 +471,16 @@
 
   .stat-card, .dashboard-link-card, .activity-list {
     padding: 1.5rem; /* Adjust card padding */
+  }
+
+  .countdown-timer .countdown-segment {
+    min-width: 50px; /* Smaller segments on mobile */
+    padding: 0.6rem 0.3rem;
+  }
+  .countdown-value {
+    font-size: 1.8rem;
+  }
+  .countdown-label {
+    font-size: 0.7rem;
   }
 }
