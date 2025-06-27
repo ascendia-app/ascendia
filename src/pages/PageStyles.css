@@ -473,10 +473,10 @@
     padding: 0.2rem 0.05rem; /* Further adjusted padding for a more compact look */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 48px; /* Ensures segments have a consistent, even smaller width to fit */
+    min-width: 0; /* Allow the item to shrink as much as needed */
     flex-basis: 0; /* Important for flex-grow to work evenly */
     flex-grow: 1; /* Allow segments to grow and take available space */
-    max-width: 60px; /* Prevent segments from becoming too wide on very large screens */
+    /* Removed max-width to give more flexibility */
 }
 
 .countdown-widget .countdown-value {
@@ -1592,7 +1592,7 @@ html.dark, body.dark, .app.dark {
 
 .app.dark .username-status.checking { color: #82b1ff; }
 .app.dark .username-status.available { color: #80c793; }
-.app.status-available.taken { color: #f28c8c; }
+.app.dark .username-status.taken { color: #f28c8c; }
 
 .app.dark .submit-button.primary-gradient {
     background: linear-gradient(to right, #ff6b6b, #ffb547); /* Darker gradient for buttons */
