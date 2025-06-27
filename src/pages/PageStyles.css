@@ -340,7 +340,7 @@
 
 /* --- DASHBOARD SPECIFIC STYLES --- */
 .dashboard-page {
-    align-items: flex-start;
+    align-items: center; /* Center content horizontally within the page */
     padding-top: 3rem;
     padding-bottom: 3rem;
 }
@@ -351,8 +351,8 @@
     gap: 2rem;
     width: 100%;
     max-width: 1200px;
-    margin-top: 2rem;
-    padding: 0 4rem; /* Increased padding on left/right for better centering */
+    margin: 2rem auto; /* Horizontally centers the grid container */
+    padding: 0 2rem; /* Balanced padding on left/right for internal spacing */
 }
 
 .grid-item {
@@ -369,17 +369,17 @@
     grid-column: 1 / -1; /* Spans all columns */
 }
 
-/* Icons (General Dashboard Icons) */
+/* Icons (General Dashboard Icons) - Solid pink, large */
 /* This applies to .widget-icon, .stat-icon, .link-icon */
 .dashboard-page .widget-icon,
 .dashboard-page .stat-icon,
 .dashboard-page .link-icon {
-    font-size: 40px; /* Larger icons */
-    /* Apply gradient directly to SVG content */
-    background: linear-gradient(to right, #ff4d88, #ff8c42); /* Pink to Orange gradient */
-    background-clip: text; /* Standard property for compatibility */
-    color: transparent; /* Fallback for browsers not supporting -webkit-text-fill-color */
-    display: inline-flex; /* To apply gradient on SVG, ensure it's treated like text */
+    font-size: 40px; /* Large icons */
+    color: #ff4d88; /* Solid pink color */
+    background: none; /* Ensure no background image/gradient */
+    background-clip: unset; /* Ensure no clipping */
+    /* Removed -webkit-text-fill-color, -webkit-background-clip */
+    display: inline-flex; /* Remain as inline-flex for centering SVG */
     align-items: center;
     justify-content: center;
 }
@@ -397,6 +397,7 @@
     color: white; /* Keep white for the time widget to stand out on dark gradient */
     background: none; /* Remove gradient for this icon */
     background-clip: unset; /* Standard property for compatibility */
+    /* Removed -webkit-text-fill-color, -webkit-background-clip */
 }
 
 .time-widget .time-display {
@@ -421,11 +422,11 @@
     background-color: white; /* Explicitly white for contrast */
     color: #333;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Main container for title, segments, and buttons */
     justify-content: center;
     align-items: center;
     min-height: 220px; /* Match height of time widget */
-    position: relative; /* Needed for positioning child elements absolutely */
+    position: relative; /* Needed for positioning child elements, if any */
 }
 
 .countdown-widget .widget-title {
@@ -437,11 +438,26 @@
 }
 
 .countdown-widget .countdown-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    display: flex; /* Changed to flex for side-by-side */
+    flex-direction: row; /* Arranges items side-by-side */
+    justify-content: center; /* Centers the segments horizontally */
+    gap: 1rem; /* Space between each segment */
     width: 100%;
+    flex-wrap: wrap; /* Allow segments to wrap on smaller screens */
+    margin-bottom: 1rem; /* Space between countdown segments and buttons */
+}
+
+/* Individual countdown segment styling (Days, Hours, Minutes, Seconds) */
+.countdown-widget .countdown-segment {
+    display: flex;
+    flex-direction: column; /* Value on top, label below */
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0; /* Light background for segments */
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    min-width: 80px; /* Ensures segments have a consistent width */
 }
 
 /* Exam countdown value color change */
@@ -449,8 +465,9 @@
     font-family: 'Poppins', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
-    color: #ff4d88; /* Changed from blue to pinkish */
-    line-height: 1;
+    color: #ff4d88; /* Pinkish orange */
+    line-height: 1.2; /* Adjust line height for better spacing */
+    margin-bottom: 0.2rem; /* Small space between value and label */
 }
 
 .countdown-widget .countdown-label {
@@ -475,41 +492,53 @@
     padding: 1rem;
 }
 
-/* Countdown Action Buttons (Edit & See All) - Positioned at bottom right */
+/* Countdown Action Buttons (Edit & See All) - Positioned below the countdown box */
 .countdown-actions {
-    position: absolute; /* Position relative to .countdown-widget */
-    bottom: 1rem;
-    right: 1rem;
     display: flex;
-    gap: 0.5rem; /* Reduced gap between buttons */
-    padding: 0; /* No internal padding for this container */
-    background-color: transparent; /* Make background transparent */
-    box-shadow: none; /* Remove any shadow */
-    align-items: center;
-    z-index: 10; /* Ensure they are above other elements if needed */
+    gap: 0.8rem; /* Space between buttons */
+    margin-top: 1rem; /* Space below the countdown segments */
+    justify-content: center; /* Center buttons below countdown */
+    width: 100%; /* Ensure it spans the width of its parent */
+    /* Removed absolute positioning, background, and box-shadow from this container */
 }
 
 /* Specific styling for the buttons in countdown-actions */
 .countdown-actions .dashboard-action-btn {
-    background-color: rgba(255, 255, 255, 0.2); /* Translucent white background */
-    color: white; /* Text color */
-    padding: 0.5rem 1rem; /* Smaller padding */
-    border: 1px solid rgba(255, 255, 255, 0.4); /* Subtle white border */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Small subtle shadow */
-    font-size: 0.85rem; /* Smaller font size */
-    width: auto; /* Let content dictate width */
+    background-color: white; /* Solid white background */
+    color: #ff4d88; /* Pink text */
+    padding: 0.6rem 1.1rem; /* Adjusted padding for "small" look */
+    border: 1px solid #ff4d88; /* Pink border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+    font-size: 0.9rem; /* Small font size */
+    font-weight: 600; /* Make text bolder */
+    text-decoration: none; /* Ensure no underline if it's a Link */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem; /* Space between icon and text */
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 
 .countdown-actions .dashboard-action-btn:hover {
-    background-color: rgba(255, 255, 255, 0.35); /* More opaque on hover */
-    transform: translateY(-1px); /* Subtle lift */
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Slightly larger shadow on hover */
+    background-color: #ff4d88; /* Pink background on hover */
+    color: white; /* White text on hover */
+    transform: translateY(-2px); /* Slight lift */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Stronger shadow on hover */
 }
 
 .countdown-actions .dashboard-action-btn svg { /* Icon in these buttons */
-    color: white; /* Keep icons white on translucent background */
+    color: #ff4d88; /* Pink icon */
     background: none;
-    background-clip: unset; /* Standard property for compatibility */
+    background-clip: unset;
+    /* Removed -webkit-text-fill-color, -webkit-background-clip */
+    width: 16px; /* Slightly larger icons for better visibility */
+    height: 16px;
+    transition: color 0.2s; /* Smooth color transition for icon */
+}
+
+.countdown-actions .dashboard-action-btn:hover svg {
+    color: white; /* White icon on hover */
 }
 
 
@@ -586,9 +615,13 @@
 }
 
 .activity-icon {
-    /* Will inherit the general icon gradient */
+    color: #ff4d88; /* Solid pink for activity icons */
+    background: none;
+    background-clip: unset;
+    /* Removed -webkit-text-fill-color, -webkit-background-clip */
     flex-shrink: 0; /* Prevent icon from shrinking */
     margin-top: 2px; /* Small adjustment for alignment */
+    font-size: 24px; /* Default size for activity icons, adjust as needed */
 }
 
 .activity-item p {
@@ -677,7 +710,6 @@
   font-size: 1rem;
   background-color: white;
   appearance: none; /* Remove default arrow */
-  -webkit-appearance: none; /* For Safari */
   -moz-appearance: none; /* For Firefox */
   background-image: none; /* Remove default arrow if any, handled by icon now */
   cursor: pointer;
