@@ -1,554 +1,1489 @@
-// src/pages/Dashboard.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import './PageStyles.css'; // Assuming common styles for pages
-import { Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download } from 'lucide-react'; // Import Lucide React icons
-
-// Helper function to format date and time for Date object construction
-const getDateTimeForExam = (exam) => {
-  let dateString = exam.date;
-  let timeString = exam.time;
-
-  // If time is not provided, infer a default based on session
-  if (!timeString) {
-    switch (exam.session) {
-      case 'AM': timeString = '09:00'; break;
-      case 'PM': timeString = '14:00'; break;
-      case 'EV': timeString = '19:00'; break;
-      default: timeString = '00:00'; // Default to midnight if no session/time
-    }
-  }
-  return new Date(`${dateString}T${timeString}`);
-};
-
-// Helper function to format date as "Month Day, Year" (e.g., "July 15, 2025")
-const formatDateWithOrdinal = (dateString) => {
-  if (!dateString) return '-';
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.toLocaleDateString('en-US', { month: 'long' });
-  const year = date.getFullYear();
-
-  // Changed to "Month Day, Year" format
-  return `${month} ${day}, ${year}`;
-};
-
-// Exam Editor Modal Component
-const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
-  const [editedExams, setEditedExams] = useState(initialExams || []);
-
-  useEffect(() => {
-    // Deep copy initialExams to prevent direct mutation of prop
-    setEditedExams(JSON.parse(JSON.stringify(initialExams || [])));
-  }, [initialExams, isOpen]); // Reset editedExams when modal opens or initialExams change
-
-  if (!isOpen) return null;
-
-  const handleExamChange = (index, field, value) => {
-    const updatedExams = [...editedExams];
-    updatedExams[index] = { ...updatedExams[index], [field]: value };
-    setEditedExams(updatedExams);
-  };
-
-  const handleAddExam = () => {
-    setEditedExams([...editedExams, { subject: '', component: '', date: '', time: '', session: 'AM' }]); // Default session to AM
-  };
-
-  const handleRemoveExam = (index) => {
-    const updatedExams = editedExams.filter((_, i) => i !== index);
-    setEditedExams(updatedExams);
-  };
-
-  const handleSave = () => {
-    // Filter out any completely empty exam entries before saving
-    const cleanedExams = editedExams.filter(exam =>
-      exam.subject || exam.component || exam.date || exam.time || exam.session
-    );
-    onSave(cleanedExams);
-    onClose();
-  };
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h3>Edit Exams</h3>
-          <button onClick={onClose} className="modal-close-btn">
-            <XCircle size={24} />
-          </button>
-        </div>
-        <div className="modal-body">
-          {editedExams.length === 0 && <p className="no-exams-message">No exams added yet. Click 'Add Exam' to get started!</p>}
-          {editedExams.map((exam, index) => (
-            <div key={index} className="exam-entry">
-              <div className="form-group-inline">
-                <label className="compulsory-field">Subject:</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Physics"
-                  value={exam.subject}
-                  onChange={(e) => handleExamChange(index, 'subject', e.target.value)}
-                  required // Compulsory
-                />
-              </div>
-              <div className="form-group-inline">
-                <label className="compulsory-field">Component:</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Paper 2"
-                  value={exam.component}
-                  onChange={(e) => handleExamChange(index, 'component', e.target.value)}
-                  required // Compulsory
-                />
-              </div>
-              <div className="form-group-inline">
-                <label className="compulsory-field">Date:</label>
-                <input
-                  type="date"
-                  value={exam.date}
-                  onChange={(e) => handleExamChange(index, 'date', e.target.value)}
-                  required // Compulsory
-                />
-              </div>
-              <div className="form-group-inline">
-                <label>Time:</label>
-                <input
-                  type="time"
-                  value={exam.time}
-                  onChange={(e) => handleExamChange(index, 'time', e.target.value)}
-                  // Not required
-                />
-              </div>
-              <div className="form-group-inline">
-                <label className="compulsory-field">Session:</label>
-                <select
-                  value={exam.session}
-                  onChange={(e) => handleExamChange(index, 'session', e.target.value)}
-                  required // Compulsory
-                >
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                  <option value="EV">EV</option>
-                </select>
-              </div>
-              <button onClick={() => handleRemoveExam(index)} className="remove-exam-btn">
-                <Trash2 size={18} /> Remove
-              </button>
-            </div>
-          ))}
-          <button onClick={() => handleAddExam()} className="add-exam-btn">
-            <PlusCircle size={20} /> Add Exam
-          </button>
-        </div>
-        <div className="modal-footer">
-          <button onClick={onClose} className="modal-cancel-btn">Cancel</button>
-          <button onClick={handleSave} className="modal-save-btn">Save Exams</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Image Display Modal Component
-const ImageDisplayModal = ({ isOpen, onClose, imageUrl }) => {
-  if (!isOpen) return null;
-
-  const handleDownloadImage = () => {
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = 'all_exams_schedule.jpg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content image-modal-content">
-        <div className="modal-header">
-          <h3>Your Exam Schedule</h3>
-          <button onClick={onClose} className="modal-close-btn">
-            <XCircle size={24} />
-          </button>
-        </div>
-        <div className="modal-body image-modal-body">
-          {imageUrl ? (
-            <img src={imageUrl} alt="Exam Schedule" className="generated-image" />
-          ) : (
-            <p>No image to display.</p>
-          )}
-        </div>
-        <div className="modal-footer">
-          <button onClick={handleDownloadImage} className="modal-download-btn">
-            <Download size={20} /> Download Image
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-function Dashboard() {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [exams, setExams] = useState([]); // Initialize as empty array
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // New state for image modal
-  const [imageDataUrl, setImageDataUrl] = useState(''); // New state for image data
-  const [timeRemaining, setTimeRemaining] = useState({});
-  const [nextExam, setNextExam] = useState(null);
-
-  // Function to find the next upcoming exam - moved outside useEffect for reusability
-  const findNextExam = useCallback((currentExams) => {
-    const now = new Date().getTime();
-    let closestExam = null;
-    let minDifference = Infinity;
-
-    // Filter out exams that have already passed
-    const upcomingExams = currentExams.filter(exam => {
-      if (exam.date) {
-        const examDateTime = getDateTimeForExam(exam).getTime();
-        return examDateTime > now;
-      }
-      return false;
-    });
-
-    upcomingExams.sort((a, b) => getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime());
-
-    if (upcomingExams.length > 0) {
-      closestExam = upcomingExams[0];
-    }
-    setNextExam(closestExam);
-  }, []); // No dependencies, as it takes exams as an argument
-
-  // Effect for updating current time
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Effect to load exams from localStorage on component mount and on navigation
-  useEffect(() => {
-    try {
-      const savedExams = localStorage.getItem('userExams');
-      const loadedExams = savedExams ? JSON.parse(savedExams) : [];
-      setExams(loadedExams);
-      findNextExam(loadedExams); // Immediately find next exam after loading
-    } catch (error) {
-      console.error("Failed to parse exams from localStorage:", error);
-      setExams([]);
-      findNextExam([]); // Reset if error
-    }
-  }, []); // Empty array, so it runs once on mount. `findNextExam` is called within.
-
-  // Effect to save exams to localStorage whenever the exams state changes
-  useEffect(() => {
-    localStorage.setItem('userExams', JSON.stringify(exams));
-    // Also re-find next exam whenever exams change, including from editor
-    findNextExam(exams);
-  }, [exams, findNextExam]); // Added findNextExam to dependencies
-
-  // Effect to calculate time remaining for the next exam
-  useEffect(() => {
-    const countdownTimer = setInterval(() => {
-      if (nextExam && nextExam.date) {
-        const now = new Date();
-        const examDateTime = getDateTimeForExam(nextExam);
-        const difference = examDateTime.getTime() - now.getTime();
-
-        if (difference <= 0) {
-          setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-          setNextExam(null); // Mark as passed
-          findNextExam(exams); // Try to find the *next* next exam immediately from current exams state
-          return;
-        }
-
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        setTimeRemaining({ days, hours, minutes, seconds });
-      } else {
-        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 }); // Reset if no next exam
-      }
-    }, 1000);
-
-    return () => clearInterval(countdownTimer);
-  }, [nextExam, exams, findNextExam]); // Added exams to dependencies
-
-  const formatTime = (value) => String(value).padStart(2, '0');
-
-  const handleSaveExams = (updatedExams) => {
-    setExams(updatedExams);
-    // findNextExam will be called by the exams useEffect
-  };
-
-  // Function to generate and download exams table as JPG
-  const handleSeeAllExams = () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    const padding = 20;
-    const rowHeight = 40;
-    const headerHeight = 50;
-    const fontSize = 16;
-    const headerFontSize = 18;
-
-    // Define headers for the table (excluding "Time", including "Session")
-    const headers = ["Subject", "Component", "Date", "Session"];
-
-    // Sort exams by date before rendering
-    const sortedExams = [...exams].sort((a, b) => {
-      const dateA = getDateTimeForExam(a).getTime();
-      const dateB = getDateTimeForExam(b).getTime();
-      return dateA - dateB;
-    });
-
-    // Prepare data for rendering
-    const columnData = sortedExams.map(exam => ([
-      exam.subject || '-',
-      exam.component || '-',
-      formatDateWithOrdinal(exam.date), // Use the new formatting function here
-      exam.session || '-' // Include session here
-    ]));
-
-    // Temporarily set font for measurement
-    ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    let colWidths = headers.map(header => ctx.measureText(header).width + padding * 2); // Initial width from headers + padding
-
-    ctx.font = `${fontSize}px 'Inter', sans-serif`;
-    columnData.forEach(row => {
-      row.forEach((cell, i) => {
-        if (cell) { // Ensure cell is not null/undefined for measurement
-          const textWidth = ctx.measureText(cell).width;
-          // Update column width only if the cell content is wider than current width
-          if (textWidth + padding * 2 > colWidths[i]) {
-            colWidths[i] = textWidth + padding * 2;
-          }
-        }
-      });
-    });
-
-    // Ensure 'Session' column is wide enough for "EV" if it wasn't already (due to minimal data)
-    const sessionColumnIndex = headers.indexOf("Session");
-    if (sessionColumnIndex !== -1) {
-      const widestSessionText = Math.max(
-        ctx.measureText("AM").width,
-        ctx.measureText("PM").width,
-        ctx.measureText("EV").width
-      );
-      if (widestSessionText + padding * 2 > colWidths[sessionColumnIndex]) {
-        colWidths[sessionColumnIndex] = widestSessionText + padding * 2;
-      }
-    }
-
-
-    // Calculate total width of columns
-    let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
-
-    // Ensure table has a reasonable minimum width (e.g., 600px)
-    const minTableWidth = 600;
-    if (totalColWidth < minTableWidth) {
-        // If the calculated total width is less than minTableWidth, expand columns proportionally
-        const diff = minTableWidth - totalColWidth;
-        const uniformAdd = diff / colWidths.length;
-        colWidths = colWidths.map(w => w + uniformAdd);
-        totalColWidth = minTableWidth; // Set total width to minTableWidth
-    }
-
-
-    const tableHeight = headerHeight + exams.length * rowHeight;
-    canvas.width = totalColWidth;
-    canvas.height = tableHeight + padding; // Removed top padding, keeping only bottom padding
-
-    ctx.fillStyle = '#f9f9f9'; // Background color for the image
-    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill entire canvas from top-left
-
-    let currentY = 0; // Start Y at 0, no initial top padding
-
-    // Draw Header
-    ctx.fillStyle = '#ff4d88'; // Header background color (Pink)
-    ctx.fillRect(0, currentY, canvas.width, headerHeight); // Header rectangle starts at Y=0
-
-    ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    ctx.fillStyle = 'white'; // Header text color
-    ctx.textAlign = 'left';
-    let currentX = 0;
-    headers.forEach((header, i) => {
-        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3); // Text positioned relative to Y=0
-        currentX += colWidths[i];
-    });
-    currentY += headerHeight; // currentY is now `headerHeight`
-
-    // Draw Rows
-    ctx.font = `${fontSize}px 'Inter', sans-serif`;
-    columnData.forEach((row, rowIndex) => {
-        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Alternating row colors
-        ctx.fillRect(0, currentY, canvas.width, rowHeight); // Use full canvas width for row background
-
-        ctx.fillStyle = '#333'; // Row text color
-        currentX = 0;
-        row.forEach((cell, colIndex) => {
-            ctx.fillText(cell, currentX + padding, currentY + rowHeight / 2 + fontSize / 3);
-            currentX += colWidths[colIndex];
-        });
-        currentY += rowHeight;
-    });
-
-    // Convert to image and display in modal
-    const image = canvas.toDataURL('image/jpeg', 0.9); // 0.9 quality
-    setImageDataUrl(image);
-    setIsImageModalOpen(true); // Open the modal
-  };
-
-
-  // Mock data (keep these for other sections)
-  // Updated 'Upcoming Exam' value to reflect nextExam state
-  const quickStats = [
-    { id: 1, label: "Upcoming Exam", value: nextExam ? `${nextExam.subject} ${nextExam.component}` : "N/A", icon: <CalendarClock size={24} /> },
-    { id: 2, label: "Topics Mastered", value: "75%", icon: <GraduationCap size={24} /> },
-    { id: 3, label: "Current Grade", value: "A*", icon: <Trophy size={24} /> },
-  ];
-
-  const quickLinks = [
-    { id: 1, name: "Syllabus Checklist", to: "/syllabus", icon: <ListChecks size={20} /> },
-    { id: 2, name: "Past Paper Vault", to: "/papers", icon: <Book size={20} /> },
-    { id: 3, name: "Grade Tracker", to: "/tracker", icon: <Gauge size={20} /> },
-    { id: 4, name: "Study Planner", to: "/planner", icon: <Target size={20} /> },
-  ];
-
-  const recentActivity = [
-    "Completed 'Kinematics' in Physics.",
-    "Attempted May/June 2023 Paper 1.",
-    "Reviewed Chemistry topic 'Stoichiometry'.",
-    "Updated 'Forces and Motion' notes.",
-    "Set reminder for 'Maths Quiz' next week."
-  ];
-
-  return (
-    <div className="page-container dashboard-page">
-      <h2 className="page-title">Welcome to Your Dashboard!</h2>
-      <p className="page-description">Your personalized hub for Cambridge exam success.</p>
-
-      <div className="dashboard-grid-container">
-        {/* Time Widget */}
-        <div className="time-widget dashboard-card grid-item">
-          <Clock size={32} className="widget-icon" />
-          <div className="time-display">
-            <p className="current-date">{currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <p className="current-time">{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</p>
-          </div>
-        </div>
-
-        {/* Exam Countdown Widget */}
-        <div className="countdown-widget dashboard-card grid-item grid-span-2">
-          <CalendarClock size={32} className="widget-icon" />
-          <h3 className="widget-title">Next Exam In:</h3>
-          {nextExam ? (
-            <div className="countdown-content">
-              <div className="countdown-timer">
-                <div className="countdown-segment">
-                  <span className="countdown-value">{timeRemaining.days}</span>
-                  <span className="countdown-label">Days</span>
-                </div>
-                <div className="countdown-segment">
-                  <span className="countdown-value">{formatTime(timeRemaining.hours)}</span>
-                  <span className="countdown-label">Hours</span>
-                </div>
-                <div className="countdown-segment">
-                  <span className="countdown-value">{formatTime(timeRemaining.minutes)}</span>
-                  <span className="countdown-label">Mins</span>
-                </div>
-                <div className="countdown-segment">
-                  <span className="countdown-value">{formatTime(timeRemaining.seconds)}</span>
-                  <span className="countdown-label">Secs</span>
-                </div>
-              </div>
-              <p className="exam-details">
-                {nextExam.subject} {nextExam.component} on {new Date(`${nextExam.date}T${nextExam.time || '00:00'}`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} ({nextExam.session})
-                {nextExam.time && ` at ${new Date(`${nextExam.date}T${nextExam.time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`}
-              </p>
-            </div>
-          ) : (
-            <p className="no-upcoming-exams">No upcoming exams added. Click 'Edit Exams' to add one!</p>
-          )}
-        </div>
-
-        {/* Action Buttons for Countdown - Now a separate grid item */}
-        <div className="countdown-actions grid-item grid-column-2-3"> {/* New class for grid column */}
-            <button onClick={handleSeeAllExams} className="see-all-exams-btn dashboard-action-btn">
-              <Table size={16} /> See All Exams
-            </button>
-            <button onClick={() => setIsEditModalOpen(true)} className="edit-exams-btn dashboard-action-btn">
-              <Pencil size={16} /> Edit Exams
-            </button>
-          </div>
-
-        {/* Quick Stats Section */}
-        <section className="dashboard-section quick-stats-section grid-item grid-span-full">
-          <h3 className="section-heading">Your Progress At A Glance</h3>
-          <div className="stats-grid">
-            {quickStats.map(stat => (
-              <div key={stat.id} className="stat-card dashboard-card">
-                <div className="stat-icon">{stat.icon}</div>
-                <p className="stat-label">{stat.label}</p>
-                <p className="stat-value">{stat.value}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Quick Links Section */}
-        <section className="dashboard-section quick-links-section grid-item grid-span-full">
-          <h3 className="section-heading">Quick Actions</h3>
-          <div className="links-grid">
-            {quickLinks.map(link => (
-              <Link key={link.id} to={link.to} className="dashboard-link-card dashboard-card">
-                <div className="link-icon">{link.icon}</div>
-                <span className="link-name">{link.name}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Recent Activity/Notifications Section */}
-        <section className="dashboard-section recent-activity-section grid-item grid-span-full">
-          <h3 className="section-heading">Recent Activity & Notifications</h3>
-          <div className="activity-list dashboard-card"> {/* Applying dashboard-card style */}
-            {recentActivity.length > 0 ? (
-              recentActivity.map((activity, index) => (
-                <div key={index} className="activity-item">
-                  <span className="activity-icon"><Bell size={16} /></span>
-                  <p>{activity}</p>
-                </div>
-              ))
-            ) : (
-              <p className="no-activity">No recent activity yet. Start planning your studies!</p>
-            )}
-          </div>
-        </section>
-
-      </div> {/* End dashboard-grid-container */}
-
-      {/* Exam Editor Modal */}
-      <ExamEditorModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleSaveExams}
-        initialExams={exams}
-      />
-
-      {/* Image Display Modal */}
-      <ImageDisplayModal
-        isOpen={isImageModalOpen}
-        onClose={() => setIsImageModalOpen(false)}
-        imageUrl={imageDataUrl}
-      />
-    </div>
-  );
+/* Basic styling for common page elements */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Adjust based on header height */
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9f9f9; /* Light background for content pages */
+    color: #333;
+    font-family: 'Inter', sans-serif; /* Consistent font */
 }
 
-export default Dashboard;
+.page-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ff4d88; /* A vibrant color from your gradient */
+    margin-bottom: 1.5rem;
+}
+
+.page-description {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.page-description-small {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 1rem;
+}
+
+/* Dashboard & Syllabus Common Card Style */
+.dashboard-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 180px; /* Adjust min-height for better card appearance */
+    border: 1px solid #eee;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.12);
+}
+
+/* Authentication Forms (Register/Login) */
+.auth-form {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 2rem;
+    text-align: left; /* Align form labels/inputs to left */
+    border: 1px solid #eee;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group input, .form-group select { /* Added select for form-group styling */
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+/* Inline form groups for modals */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+.form-group-inline label {
+    flex-shrink: 0;
+    width: 80px; /* Fixed width for labels */
+    text-align: right;
+    margin-bottom: 0; /* Override default margin */
+}
+.form-group-inline input, .form-group-inline select {
+    flex-grow: 1; /* Allow input/select to take available space */
+    min-width: 150px; /* Ensure they don't get too small */
+}
+
+/* Compulsory field indicator */
+.compulsory-field::after {
+    content: '*';
+    color: #dc3545; /* Red asterisk */
+    margin-left: 4px;
+    font-weight: normal;
+    vertical-align: super;
+    font-size: 0.8em;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.submit-button.primary-gradient {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+}
+
+.submit-button.primary-gradient:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.form-message {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    background-color: #f8d7da; /* Light red for errors */
+    color: #721c24; /* Dark red for error text */
+    border: 1px solid #f5c6cb;
+}
+
+.form-message.success {
+    background-color: #d4edda; /* Light green for success */
+    color: #155724; /* Dark green for success text */
+    border-color: #c3e6cb;
+}
+
+/* Username availability status messages */
+.username-status {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding-left: 0.2rem;
+    font-style: italic;
+}
+
+.username-status.checking {
+    color: #007bff; /* Blue for checking */
+}
+
+.username-status.available {
+    color: #28a745; /* Green for available */
+}
+
+.username-status.taken {
+    color: #dc3545; /* Red for taken */
+}
+
+.auth-footer-links {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #666;
+    text-align: center; /* Ensure links are centered */
+}
+
+.auth-footer-links p {
+    margin-bottom: 0.5rem; /* Space between paragraphs in footer links */
+}
+
+.auth-footer-links .inline-link {
+    color: #ff4d88; /* Link color */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.auth-footer-links .inline-link:hover {
+    color: #ff8c42;
+    text-decoration: underline;
+}
+
+/* Download Section - Used in GettingStarted and Download pages */
+.download-section {
+    width: 100%;
+    max-width: 450px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons {
+    display: flex;
+    flex-direction: column; /* Stack download buttons */
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Styles for direct download <a> tags used in GettingStarted */
+.gs-button.download-windows,
+.gs-button.download-macos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    cursor: pointer;
+    color: white;
+    gap: 0.75rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.gs-button.download-windows {
+    background-color: #0078D4; /* Windows blue */
+}
+
+.gs-button.download-windows:hover {
+    transform: translateY(-3px);
+    background-color: #005bb5;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.gs-button.download-macos {
+    background-color: #A2AAAD; /* Apple grey */
+}
+
+.gs-button.download-macos:hover {
+    transform: translateY(-3px);
+    background-color: #8e969a;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.gs-button .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Styles for detailed download links on the /download page */
+.download-links-detailed {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.download-link-detailed {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.download-link-detailed:hover {
+    background-color: #e6e6e6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.download-link-detailed .icon {
+    color: #6200EE; /* Consistent icon color */
+}
+
+
+/* Back to Home Button (General use) */
+.back-to-home-button {
+    display: inline-block;
+    margin-top: 3rem;
+    padding: 0.7rem 1.2rem;
+    background-color: #f0f0f0;
+    color: #666;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.back-to-home-button:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+/* --- DASHBOARD SPECIFIC STYLES --- */
+.dashboard-page {
+    /* Changed to flex-start to align content to the left */
+    align-items: flex-start;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    box-sizing: border-box;
+}
+
+/* Align dashboard titles to the left */
+.dashboard-page .page-title,
+.dashboard-page .page-description {
+    text-align: left !important; /* Force left alignment */
+    width: 100%; /* Take full width to respect padding of grid container */
+    max-width: 1200px; /* Match max-width of grid container */
+    padding-left: 2rem; /* Indent slightly, matching grid container padding */
+    box-sizing: border-box;
+    margin-left: auto; /* Re-center the title container */
+    margin-right: auto; /* Re-center the title container */
+}
+
+
+.dashboard-grid-container { /* Main grid for dashboard layout */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns by default */
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto; /* Horizontally centers the grid container */
+    padding: 0 3rem; /* Increased padding on left/right for better visual balance */
+}
+
+.grid-item {
+    /* Basic style for all direct children of dashboard-grid-container */
+    min-height: 150px; /* Ensure a baseline height */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.grid-span-2 {
+    grid-column: span 2;
+}
+
+.grid-span-full {
+    grid-column: 1 / -1; /* Spans all columns */
+}
+
+/* Icons (General Dashboard Icons) - Solid pink, large */
+/* This applies to .widget-icon, .stat-icon, .link-icon */
+.dashboard-page .widget-icon,
+.dashboard-page .stat-icon,
+.dashboard-page .link-icon {
+    font-size: 40px; /* Large icons */
+    color: #ff4d88; /* Solid pink color */
+    background: none; /* Ensure no background image/gradient */
+    background-clip: unset; /* Ensure no clipping */
+    fill: currentColor; /* Ensure SVG fills with currentColor */
+    display: inline-flex; /* Remain as inline-flex for centering SVG */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Time Widget */
+.time-widget {
+    background: linear-gradient(to right, #ff8c42, #ff4d88); /* Orange to Pink gradient */
+    color: white;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 220px; /* Make it taller */
+}
+
+.time-widget .widget-icon { /* Specific color override for time widget icon */
+    color: white; /* Keep white for the time widget to stand out on dark gradient */
+    background: none; /* Remove gradient for this icon */
+    background-clip: unset; /* Standard property for compatibility */
+    fill: currentColor; /* Ensure SVG fills with currentColor */
+}
+
+.time-widget .time-display {
+    text-align: center;
+}
+
+.time-widget .current-date {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.time-widget .current-time {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Countdown Widget */
+.countdown-widget {
+    background-color: white; /* Explicitly white for contrast */
+    color: #333;
+    display: flex;
+    flex-direction: column; /* Main container for title, segments, and buttons */
+    justify-content: space-between; /* Distribute space vertically */
+    align-items: center;
+    min-height: 220px; /* Match height of time widget */
+    position: relative; /* Needed for positioning action buttons */
+    padding-bottom: 4rem; /* Make space for absolutely positioned buttons */
+}
+
+.countdown-widget .widget-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 0.5rem; /* Adjust top margin for better spacing */
+    margin-bottom: 1rem;
+}
+
+.countdown-widget .countdown-content {
+    display: flex; /* Changed to flex for side-by-side */
+    flex-direction: row; /* Arranges items side-by-side */
+    justify-content: center; /* Centers the segments horizontally */
+    gap: 0.8rem; /* Space between each segment, slightly reduced */
+    width: 100%;
+    flex-wrap: nowrap; /* Prevent wrapping on larger screens, force side-by-side */
+    margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
+}
+
+/* Individual countdown segment styling (Days, Hours, Minutes, Seconds) */
+.countdown-widget .countdown-segment {
+    display: flex;
+    flex-direction: column; /* Value on top, label below */
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0; /* Light background for segments */
+    padding: 0.8rem 0.9rem; /* Adjusted padding for a more compact look */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    min-width: 65px; /* Ensures segments have a consistent, slightly smaller width */
+}
+
+/* Exam countdown value color change */
+.countdown-widget .countdown-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem; /* Slightly smaller font for values */
+    font-weight: 700;
+    color: #ff4d88; /* Pinkish orange */
+    line-height: 1.2; /* Adjust line height for better spacing */
+    margin-bottom: 0.2rem; /* Small space between value and label */
+}
+
+.countdown-widget .countdown-label {
+    font-size: 0.75rem; /* Slightly smaller font for labels */
+    color: #777;
+    text-transform: uppercase;
+}
+
+.countdown-widget .exam-details {
+    font-size: 0.95rem;
+    color: #555;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    max-width: 90%; /* Prevent text from being too wide */
+}
+
+.countdown-widget .no-upcoming-exams {
+    font-size: 1rem;
+    color: #777;
+    font-style: italic;
+    padding: 1rem;
+}
+
+/* Countdown Action Buttons (Edit & See All) - Positioned at bottom right */
+.countdown-actions {
+    position: absolute; /* Position relative to .countdown-widget */
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem; /* Reduced gap between buttons */
+    /* Removed padding, background-color, box-shadow from container */
+    z-index: 10; /* Ensure they are above other elements if needed */
+}
+
+/* Specific styling for the buttons in countdown-actions */
+.countdown-actions .dashboard-action-btn {
+    background-color: white; /* Solid white background */
+    color: #ff4d88; /* Pink text */
+    padding: 0.4rem 0.8rem; /* Smaller padding for a compact look */
+    border: 1px solid #ff4d88; /* Pink border */
+    border-radius: 6px; /* Slightly smaller border radius */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
+    font-size: 0.75rem; /* Smaller font size */
+    font-weight: 600; /* Make text bolder */
+    text-decoration: none; /* Ensure no underline if it's a Link */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem; /* Space between icon and text */
+    transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.countdown-actions .dashboard-action-btn:hover {
+    background-color: #ff4d88; /* Pink background on hover */
+    color: white; /* White text on hover */
+    transform: translateY(-1px); /* Subtle lift */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Stronger shadow on hover */
+}
+
+.countdown-actions .dashboard-action-btn svg { /* Icon in these buttons */
+    color: #ff4d88; /* Pink icon */
+    background: none;
+    background-clip: unset;
+    fill: currentColor; /* Ensure SVG fills with currentColor */
+    width: 14px; /* Smaller icons for these buttons */
+    height: 14px;
+    transition: color 0.2s; /* Smooth color transition for icon */
+}
+
+.countdown-actions .dashboard-action-btn:hover svg {
+    color: white; /* White icon on hover */
+}
+
+
+/* General Dashboard Section Styling (for Quick Stats, Links, Activity) */
+.dashboard-section {
+    margin-top: 2rem; /* Space between sections */
+    width: 100%;
+}
+
+.dashboard-section .section-heading {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #ffcc33;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* Quick Stats Section */
+.quick-stats-section {
+  grid-column: 1 / -1; /* Ensure this section spans full width */
+  margin-top: 2rem; /* Add some space after top widgets and buttons */
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+  /* Inherits dashboard-card styles */
+  background-color: #f7f7f7; /* Slightly different background for stat cards */
+  padding: 1.5rem; /* Slightly less padding */
+}
+
+.stat-icon {
+  color: #ff8c42; /* Orange color for icons */
+  margin-bottom: 0.8rem;
+}
+
+.stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ff4d88; /* Pink color for values */
+}
+
+/* Quick Links Grid */
+.quick-links-section {
+  grid-column: 1 / -1; /* Ensure this section spans full width */
+}
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Grid for links */
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.dashboard-link-card {
+  /* Inherits dashboard-card styles */
+  padding: 1.2rem; /* Slightly less padding */
+}
+
+.link-icon {
+  color: #ffcc33; /* Yellow color for link icons */
+  margin-bottom: 0.8rem;
+}
+
+.link-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Recent Activity Section */
+.recent-activity-section {
+  grid-column: 1 / -1; /* Ensure this section spans full width */
+}
+.activity-list {
+  /* Inherits dashboard-card styles */
+  padding: 1.5rem 2rem;
+  text-align: left;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #f0f0f0; /* Separator between items */
+}
+
+.activity-item:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.activity-icon {
+    color: #ff4d88; /* Solid pink for activity icons */
+    background: none;
+    background-clip: unset;
+    fill: currentColor; /* Ensure SVG fills with currentColor */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    margin-top: 2px; /* Small adjustment for alignment */
+    font-size: 30px; /* Made Quick Action icons larger */
+}
+
+.activity-item p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #444;
+  margin: 0;
+}
+
+.no-activity {
+  font-style: italic;
+  color: #777;
+  padding: 1rem 0;
+}
+
+
+/* --- SYLLABUS SPECIFIC STYLES --- */
+
+.syllabus-page {
+  max-width: 100%;
+  align-items: flex-start;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  box-sizing: border-box;
+}
+
+.syllabus-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: 2rem;
+  width: 100%;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+/* Syllabus Subjects Panel (Left Column) */
+.syllabus-subjects-panel {
+  padding: 1.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+}
+
+.panel-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #ffcc33;
+  padding-bottom: 0.5rem;
+}
+
+/* Level Select Section */
+.level-select-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.select-level-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Custom Select Dropdown Styling for Arrow */
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Ensure it takes full width */
+}
+
+.level-dropdown {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  background-color: white;
+  appearance: none; /* Remove default arrow */
+  -moz-appearance: none; /* For Firefox */
+  background-image: none; /* Remove default arrow if any, handled by icon now */
+  cursor: pointer;
+  width: 100%; /* Take full width of its wrapper */
+}
+.level-dropdown:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.dropdown-arrow-icon {
+  position: absolute;
+  right: 15px; /* Adjusted to be more to the right, from 10px or 25px */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none; /* Ensures clicks go through to the select element */
+}
+
+
+/* Predefined Subject List (for selection) */
+.predefined-subject-list {
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  max-height: 300px; /* Make it scrollable */
+  overflow-y: auto;
+  border: 1px solid #eee;
+  margin-bottom: 0.5rem; /* Small margin to separate from the button */
+}
+
+.predefined-subject-list h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.predefined-subject-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.4rem;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.predefined-subject-item:hover {
+  background-color: #f5f5f5;
+  border-color: #bbb;
+}
+
+.predefined-subject-item.selected {
+  background-color: #e0ffe0; /* Light green when selected */
+  border-color: #4CAF50; /* Green border */
+  box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+/* Add Selected Subjects Button */
+.add-selected-subjects-btn {
+  background-color: #6200EE; /* Purple */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem; /* Added margin to separate it from the list */
+}
+.add-selected-subjects-btn:hover:not(:disabled) {
+  background-color: #3700B3;
+  transform: translateY(-1px);
+}
+.add-selected-subjects-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+  margin: 1.5rem 0;
+}
+
+
+/* Your Added Subjects List Styling */
+.subject-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 5px; /* For scrollbar */
+  max-height: 400px; /* Limit height to prevent subjects from pushing other content too far down */
+  margin-bottom: 1rem; /* Space before divider */
+}
+
+.subject-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.subject-item:hover {
+  background-color: #e6e6e6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.subject-item.selected {
+  background-color: #ff4d88;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(255, 77, 136, 0.2);
+}
+
+.subject-item.selected .delete-subject-btn {
+  color: white; /* Ensure trash icon is visible on selected pink background */
+}
+
+.delete-subject-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d; /* Red for delete icon */
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+.delete-subject-btn:hover {
+  background-color: rgba(255, 77, 77, 0.2);
+}
+
+
+/* Syllabus Content Panel (Right Column) */
+.syllabus-content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.no-subject-selected-message {
+  padding: 3rem;
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  font-style: italic;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.syllabus-header-with-chart {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.syllabus-header-with-chart .panel-heading {
+  margin-bottom: 0;
+}
+
+/* Progress Chart */
+.progress-chart-container {
+  padding: 1rem;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progress-chart-container h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.no-progress-data {
+  font-style: italic;
+  color: #777;
+  text-align: center;
+  padding: 1rem;
+}
+
+.mastered-summary {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ff4d88;
+  margin-top: 0.5rem;
+}
+
+/* Recharts specific styles (optional, but good for fine-tuning) */
+.recharts-wrapper {
+  overflow: visible !important;
+}
+.recharts-legend-wrapper {
+  margin-top: -10px !important;
+}
+
+/* Syllabus Items List */
+.add-topic-section {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.add-topic-input {
+  flex-grow: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+.add-topic-btn {
+  background-color: #ff8c42; /* Orange */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.add-topic-btn:hover {
+  background-color: #e07b3b;
+  transform: translateY(-1px);
+}
+
+.syllabus-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.syllabus-item-card {
+  padding: 1.2rem 1.5rem;
+  align-items: flex-start;
+  text-align: left;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.item-main-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.item-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  flex-grow: 1;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.status-dropdown {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  background-color: white;
+}
+.status-dropdown:focus {
+  outline: none;
+  border-color: #ff8c42;
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+/* Status specific colors for dropdown */
+.status-dropdown.status-not-started {
+  color: #ff4d4d;
+  border-color: #ff4d4d;
+}
+.status-dropdown.status-in-progress {
+  color: #ffcc33;
+  border-color: #ffcc33;
+}
+.status-dropdown.status-mastered {
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.notes-btn, .delete-topic-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+.notes-btn {
+  color: #6a6a6a;
+}
+.notes-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.delete-topic-btn {
+  color: #ff4d4d;
+}
+.delete-topic-btn:hover {
+  background-color: rgba(255, 77, 77, 0.2);
+}
+
+.no-items-message {
+  padding: 2rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+/* Modal General Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Above everything else */
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 15px; /* More rounded */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  width: 90%;
+  max-width: 700px; /* Max width for modal */
+  max-height: 80vh; /* Max height to prevent overflow */
+  overflow-y: auto; /* Scroll inside modal if content is long */
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+  padding: 0.5rem;
+}
+
+.modal-close-btn:hover {
+  color: #ff4d4d; /* Red on hover */
+}
+
+.modal-body {
+  flex-grow: 1; /* Allow body to grow and fill space */
+  margin-bottom: 1.5rem;
+}
+
+.no-exams-message {
+  font-family: 'Inter', sans-serif;
+  color: #777;
+  text-align: center;
+  padding: 2rem 0;
+  font-style: italic;
+}
+
+.exam-entry {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  position: relative; /* For remove button if positioned absolutely */
+}
+
+.form-group-inline {
+  display: flex;
+  gap: 0.8rem;
+  width: 100%;
+  align-items: center; /* Vertically align label and input */
+}
+
+.form-group-inline label {
+  flex-shrink: 0; /* Prevent label from shrinking */
+  width: 80px; /* Fixed width for labels */
+  text-align: right; /* Align label text to the right */
+  padding-right: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Red star for compulsory fields */
+.form-group-inline label.compulsory-field::after {
+  content: ' *';
+  color: #ff4d4d; /* Red color for the star */
+  margin-left: 2px;
+}
+
+.form-group-inline input,
+.form-group-inline select { /* Apply styles to select as well */
+  flex: 1; /* Take equal width */
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 0; /* Allow inputs to shrink */
+}
+
+.form-group-inline input:focus,
+.form-group-inline select:focus {
+  outline: none;
+  border-color: #ff8c42; /* Orange focus */
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.remove-exam-btn {
+  background-color: #ff4d4d; /* Red button */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  align-self: flex-end; /* Align to end of its container */
+}
+
+.remove-exam-btn:hover {
+  background-color: #e03333;
+}
+
+.add-exam-btn {
+  background-color: #4CAF50; /* Green button */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-top: 1.5rem;
+  width: fit-content;
+  align-self: center; /* Center the add button */
+}
+
+.add-exam-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.modal-cancel-btn, .modal-save-btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.modal-cancel-btn {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #bbb;
+  transform: translateY(-2px);
+}
+
+.modal-save-btn {
+  background-color: #ff4d88; /* Pink save button */
+  color: white;
+  border: none;
+}
+
+.modal-save-btn:hover {
+  background-color: #e03333; /* Darker pink/red on hover */
+  transform: translateY(-2px);
+}
+
+/* New Image Modal Styles */
+.image-modal-content {
+  max-width: 90%; /* Max width for the image modal */
+  padding: 1.5rem; /* Slightly less padding */
+}
+
+.image-modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 60vh; /* Control image height */
+  overflow: auto; /* Scroll if image is too large */
+}
+
+.generated-image {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Remove extra space below image */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.modal-download-btn {
+  background-color: #4CAF50; /* Green for download button */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.modal-download-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments for Modal */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 1.5rem;
+  }
+  .modal-header h3 {
+    font-size: 1.5rem;
+  }
+  .form-group-inline {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-group-inline label {
+    width: 100%; /* Full width for labels on mobile */
+    text-align: left; /* Align label text to left on mobile */
+    padding-right: 0;
+  }
+  .remove-exam-btn {
+    width: 100%; /* Full width on mobile */
+    align-self: center;
+  }
+  .modal-footer {
+    flex-direction: column;
+  }
+  .modal-download-btn {
+    width: 100%; /* Full width on mobile */
+  }
+}
+
+/* Responsive adjustments for Dashboard */
+@media (max-width: 992px) { /* Adjust grid for medium screens */
+  .dashboard-grid-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    gap: 1.5rem;
+    padding: 0 1.5rem; /* Adjusted padding for tablets */
+  }
+  .grid-span-2 {
+    grid-column: span 2; /* Still spans 2 columns, but now it's full width */
+  }
+  .time-widget {
+    grid-column: auto; /* Allow time widget to be 1 column on tablets */
+  }
+  .countdown-widget {
+    grid-column: span 1; /* Make countdown span 1 column on tablets */
+  }
+  .countdown-actions { /* Adjust positioning for smaller screens if needed */
+    grid-column: span 2; /* Span full width on 2-column layout */
+    justify-content: center; /* Center buttons */
+    margin-top: 1rem;
+    padding-right: 1.5rem; /* Match new grid padding */
+  }
+  .dashboard-action-btn {
+    width: auto; /* Allow buttons to size content */
+    flex-grow: 1; /* Grow equally */
+  }
+}
+
+@media (max-width: 768px) { /* Adjust dashboard sections for small screens */
+  .dashboard-page {
+    padding: 1rem; /* Adjust overall padding for mobile */
+  }
+
+  .dashboard-page .page-title,
+  .dashboard-page .page-description {
+    padding-left: 1rem; /* Reduce indent */
+    text-align: center; /* Center titles on small screens */
+  }
+
+  .dashboard-grid-container {
+    grid-template-columns: 1fr; /* Stack all cards vertically on mobile */
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .grid-span-2, .grid-span-full, .grid-tall, .grid-item { /* Apply to all grid items on mobile */
+    grid-column: auto !important; /* Reset grid spans for mobile */
+    grid-row: auto !important; /* Reset grid spans for mobile */
+  }
+
+  .section-heading {
+    text-align: center; /* Center section headings on small screens */
+    font-size: 1.5rem;
+    padding-left: 0; /* Remove indent */
+  }
+
+  .stats-grid, .links-grid {
+    grid-template-columns: 1fr; /* Stack cards/links vertically on small screens */
+    gap: 1.5rem; /* Adjust gap */
+  }
+
+  .stat-card, .dashboard-link-card, .activity-list {
+    padding: 1.5rem; /* Adjust card padding */
+  }
+
+  .countdown-timer .countdown-segment {
+    min-width: 50px; /* Smaller segments on mobile */
+    padding: 0.6rem 0.3rem;
+  }
+  .countdown-value {
+    font-size: 1.8rem;
+  }
+  .countdown-label {
+    font-size: 0.7rem;
+  }
+  .countdown-actions { /* Ensure buttons stack on very small screens */
+    flex-direction: column;
+    align-items: center;
+    padding-right: 1rem; /* Adjust padding for mobile */
+  }
+  .dashboard-action-btn {
+    width: 100%; /* Full width on mobile */
+    padding: 0.8rem;
+  }
+}
