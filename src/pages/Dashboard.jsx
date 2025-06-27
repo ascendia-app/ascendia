@@ -221,15 +221,12 @@ function Dashboard() {
       return false;
     });
 
-    upcomingExams.forEach(exam => {
-      const examDateTime = getDateTimeForExam(exam).getTime();
-      const difference = examDateTime - now;
+    upcomingExams.sort((a, b) => getDateTimeForExam(a).getTime() - getDateTimeForExam(b).getTime());
 
-      if (difference < minDifference) {
-        minDifference = difference;
-        closestExam = exam;
-      }
-    });
+
+    if (upcomingExams.length > 0) {
+      closestExam = upcomingExams[0];
+    }
     setNextExam(closestExam);
   }, [exams]);
 
@@ -281,7 +278,6 @@ function Dashboard() {
     const headerHeight = 50;
     const fontSize = 16;
     const headerFontSize = 18;
-    const initialTableWidth = 800; // Starting width for the table image
 
     // Define headers for the table
     const headers = ["Subject", "Component", "Date", "Time", "Session"];
@@ -317,17 +313,14 @@ function Dashboard() {
     // Calculate total width of columns. Ensure minimum width for readability if no content
     let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
 
-    // Ensure table has a reasonable minimum width and adjust if calculated width is too small
+    // Ensure table has a reasonable minimum width (e.g., 600px)
     const minTableWidth = 600;
     if (totalColWidth < minTableWidth) {
-        const diff = minTableWidth - totalColWidth;
-        const uniformAdd = diff / colWidths.length;
-        colWidths = colWidths.map(w => w + uniformAdd);
         totalColWidth = minTableWidth;
-    } else if (totalColWidth > initialTableWidth) { // Scale down if too wide, or just let it be wider
-        // For simplicity, if content makes it wider, allow it to be wider
-    } else {
-        // If it's less than initialTableWidth but more than minTableWidth, just use calculated
+        // Redistribute space if columns are too narrow
+        const diff = totalColWidth - colWidths.reduce((sum, w) => sum + w - padding * 2, 0);
+        const extraPerCol = diff / colWidths.length;
+        colWidths = colWidths.map(w => w + extraPerCol);
     }
 
 
@@ -446,17 +439,17 @@ function Dashboard() {
           ) : (
             <p className="no-upcoming-exams">No upcoming exams added. Click 'Edit Exams' to add one!</p>
           )}
-          
-          {/* Action Buttons */}
-          <div className="countdown-actions">
-            <button onClick={handleSeeAllExams} className="see-all-exams-btn">
+        </div>
+
+        {/* Action Buttons for Countdown - Now a separate grid item */}
+        <div className="countdown-actions grid-item grid-column-2-3"> {/* New class for grid column */}
+            <button onClick={handleSeeAllExams} className="see-all-exams-btn dashboard-action-btn">
               <Table size={16} /> See All Exams
             </button>
-            <button onClick={() => setIsEditModalOpen(true)} className="edit-exams-btn">
+            <button onClick={() => setIsEditModalOpen(true)} className="edit-exams-btn dashboard-action-btn">
               <Pencil size={16} /> Edit Exams
             </button>
           </div>
-        </div>
 
         {/* Quick Stats Section */}
         <section className="dashboard-section quick-stats-section grid-item grid-span-full">

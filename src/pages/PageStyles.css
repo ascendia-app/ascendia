@@ -255,7 +255,7 @@
   padding: 1.5rem;
   text-align: center;
   justify-content: space-between; /* Space out content vertically */
-  position: relative; /* For edit button positioning */
+  position: relative; /* For buttons that were previously inside, now outside */
 }
 
 .countdown-widget .widget-icon {
@@ -329,44 +329,46 @@
   margin-top: 0.5rem;
 }
 
-/* Actions below countdown */
+/* Actions below countdown - now a separate grid item */
 .countdown-actions {
+  grid-column: 2 / 4; /* Align under countdown widget */
   display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  justify-content: flex-end; /* Align to the bottom right */
-  align-items: flex-end; /* Align buttons to the right edge of their container */
-  gap: 0.5rem; /* Space between buttons */
+  flex-direction: row; /* Side by side */
+  justify-content: flex-end; /* Align to bottom right */
+  gap: 0.8rem; /* Space between buttons */
   width: 100%;
-  position: absolute; /* Position relative to countdown-widget */
-  bottom: 1rem;
-  right: 1rem;
-  padding-right: 1rem; /* Add padding to prevent buttons sticking to edge */
+  margin-top: 1rem; /* Space from the widget above */
+  padding-right: 2rem; /* Matches grid container padding */
+  box-sizing: border-box; /* Include padding in width */
 }
 
-/* Edit Exams Button */
-.edit-exams-btn, .see-all-exams-btn {
-  background: none;
+/* Buttons inside countdown-actions */
+.dashboard-action-btn { /* New common class for these buttons */
+  background-color: white; /* White background */
+  color: #ff4d88; /* Pink text */
   border: none;
-  color: #ff4d88; /* Pink color for the icon and text */
+  border-radius: 10px; /* Rounded corners */
+  padding: 0.7rem 1.2rem; /* Comfortable padding */
   cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 0.5rem 0.8rem;
-  border-radius: 8px;
-  transition: background-color 0.2s, color 0.2s;
+  gap: 0.4rem;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow like cards */
 }
 
-.edit-exams-btn:hover, .see-all-exams-btn:hover {
-  background-color: #ffebeb; /* Very light pink background on hover */
+.dashboard-action-btn:hover {
+  background-color: #f7f7f7; /* Very light grey on hover */
   color: #e03333; /* Slightly darker pink/red on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Slightly larger shadow on hover */
 }
 
-.edit-exams-btn svg, .see-all-exams-btn svg {
-  margin-right: 0.2rem;
+.dashboard-action-btn svg {
+  flex-shrink: 0; /* Prevent icon from shrinking */
 }
 
 
@@ -380,7 +382,7 @@
 /* Quick Stats Grid */
 .quick-stats-section {
   grid-column: 1 / -1; /* Ensure this section spans full width */
-  margin-top: 2rem; /* Add some space after top widgets */
+  margin-top: 2rem; /* Add some space after top widgets and buttons */
 }
 .stats-grid {
   display: grid;
@@ -498,14 +500,12 @@
     grid-column: span 1; /* Make countdown span 1 column on tablets */
   }
   .countdown-actions { /* Adjust positioning for smaller screens if needed */
-    position: static; /* Remove absolute positioning */
-    margin-top: 1rem; /* Add some space */
+    grid-column: span 2; /* Span full width on 2-column layout */
     justify-content: center; /* Center buttons */
-    align-items: center; /* Center vertically on mobile */
-    flex-direction: row; /* Go back to row for smaller screens if desired */
-    flex-wrap: wrap; /* Allow wrapping */
+    margin-top: 1rem;
+    padding-right: 1.5rem; /* Match new grid padding */
   }
-  .edit-exams-btn, .see-all-exams-btn {
+  .dashboard-action-btn {
     width: auto; /* Allow buttons to size content */
     flex-grow: 1; /* Grow equally */
   }
@@ -561,8 +561,9 @@
   .countdown-actions { /* Ensure buttons stack on very small screens */
     flex-direction: column;
     align-items: center;
+    padding-right: 1rem; /* Adjust padding for mobile */
   }
-  .edit-exams-btn, .see-all-exams-btn {
+  .dashboard-action-btn {
     width: 100%; /* Full width for buttons on very small screens */
     padding: 0.8rem;
   }
