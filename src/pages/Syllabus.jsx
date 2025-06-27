@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore'; // Added setDoc
-import { db, appId } from '../firebaseConfig';
-import { useAuth } from '../contexts/AuthContext';
+import { db, appId } from '../firebaseConfig'; // Import db and appId
+import { useAuth } from '../contexts/AuthContext'; // Import useAuth hook
 import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle, ChevronDown, CheckSquare, Square } from 'lucide-react'; // Added new icons
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import './PageStyles.css';
@@ -80,8 +80,8 @@ const NotesModal = ({ isOpen, onClose, initialNotes, onSaveNotes }) => {
 
 
 function Syllabus() {
-  const { currentUser, loading } = useAuth();
-  const [userId, setUserId] = useState(null);
+  const { currentUser, loading } = useAuth(); // Use the auth context
+  const [userId, setUserId] = useState(null); // Local state for userId
   const [subjects, setSubjects] = useState([]); // Subjects added by the user (from Firestore)
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedSubjectName, setSelectedSubjectName] = useState('');
@@ -102,7 +102,7 @@ function Syllabus() {
 
   // Set userId from AuthContext
   useEffect(() => {
-    if (!loading) {
+    if (!loading) { // Only set userId once auth state is known
       if (currentUser) {
         setUserId(currentUser.uid);
         console.log("Syllabus.jsx: User ID set:", currentUser.uid);
@@ -125,7 +125,7 @@ function Syllabus() {
 
   // Fetch Subjects for the User (from Firestore)
   useEffect(() => {
-    if (loading || !userId || !db) {
+    if (loading || !userId || !db) { // Wait for auth loading to complete and userId to be available
       console.log("Syllabus.jsx: Skipping subject fetch - loading:", loading, "userId:", userId);
       setSubjects([]);
       return;
