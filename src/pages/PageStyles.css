@@ -2023,7 +2023,9 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        flex-wrap: nowrap !important; /* IMPORTANT: Force no wrapping on smaller screens */
+        display: flex; /* Ensure flex is applied */
+        flex-direction: row; /* Ensure horizontal layout */
+        flex-wrap: nowrap !important; /* Force no wrapping */
         justify-content: center; /* Center segments */
         gap: 0.5rem; /* Reverted to slightly larger gap */
     }
@@ -2110,21 +2112,30 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        gap: 0.2rem; /* Small gap between segments */
-        /* flex-wrap: nowrap !important; already defined globally and strong */
+        /* Re-emphasize flex properties for the smallest screen */
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap !important; /* This is the key to preventing wrapping */
+        justify-content: space-around; /* Distribute space evenly */
+        align-items: stretch; /* Make items stretch to fill height */
+        gap: 0.5rem; /* Maintain a small gap */
     }
 
     .countdown-widget .countdown-segment {
-        /* Adjusted padding and min-width to ensure readability while staying horizontal */
-        padding: 0.4rem 0.1rem; /* Slightly more padding for readability */
-        min-width: calc((100% - 3 * 0.2rem) / 4); /* Ensure segments are equally sized and fill space */
-        max-width: calc((100% - 3 * 0.2rem) / 4); /* Match min-width for consistency */
+        /* Calculate width to ensure they fit side-by-side without wrapping */
+        flex: 1 1 auto; /* Allow growth, allow shrinking, base on content */
+        min-width: 20%; /* Ensure a minimum width, adjust as needed */
+        max-width: 25%; /* Limit maximum width to keep them in one row */
+        padding: 0.4rem 0.1rem; /* Ensure some padding for readability */
+        box-sizing: border-box; /* Include padding in width calculation */
     }
     .countdown-widget .countdown-value {
-        font-size: 1.1rem; /* Increased font size for readability */
+        font-size: 1.1rem; /* Keep value readable */
+        line-height: 1.2; /* Adjust line height for better spacing */
     }
     .countdown-widget .countdown-label {
-        font-size: 0.5rem; /* Increased font size for readability */
+        font-size: 0.5rem; /* Keep label readable */
+        line-height: 1.2;
     }
 
     .countdown-actions {
