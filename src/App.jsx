@@ -55,28 +55,27 @@ function App() {
     localStorage.setItem('dark-mode', darkMode);
   }, [darkMode]);
 
-  // Effect to fetch username when currentUser changes
+  // Effect to fetch username when currentUser changes (i.e., login/logout)
   useEffect(() => {
     const fetchUsername = async () => {
       if (currentUser) {
-        // Immediate fallback to email prefix for quick display while fetching
+        // Immediately set a temporary display (email prefix) while fetching
         setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
 
         try {
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
-          if (userDocSnap.exists() && userDocSnap.data().username) { // Check if username field exists
+          if (userDocSnap.exists() && userDocSnap.data() && userDocSnap.data().username) { // Check if username field exists
             setDisplayedUsername(userDocSnap.data().username);
             console.log("Fetched username from Firestore:", userDocSnap.data().username);
           } else {
-            console.warn("No username found in Firestore for UID:", currentUser.uid, ". Falling back to email prefix.");
-            // Already set fallback to email prefix above
+            console.warn("No 'username' field found in Firestore for UID:", currentUser.uid, " or document does not exist. Displaying email prefix.");
+            // If doc doesn't exist or username field is missing, fallback already set.
           }
         } catch (error) {
           console.error("Error fetching username from Firestore:", error);
-          // If there's an error, stick with the email prefix fallback
-          setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
+          // If there's an error during fetch, keep the email prefix fallback.
         }
       } else {
         setDisplayedUsername(''); // Clear username if no user is logged in
@@ -87,7 +86,7 @@ function App() {
       console.log("Auth state determined, attempting to fetch username...");
       fetchUsername();
     }
-  }, [currentUser, loading, db]);
+  }, [currentUser, loading, db]); // Rerun when currentUser, loading, or db instance changes
 
   // Effect to handle clicks outside the dropdown
   useEffect(() => {
