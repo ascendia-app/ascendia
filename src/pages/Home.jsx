@@ -1,7 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext is in ../contexts
 
 function Home() {
+  const { currentUser, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Effect to redirect if user is logged in and auth state is resolved
+  useEffect(() => {
+    if (!loading && currentUser) {
+      console.log("User logged in, redirecting to Dashboard...");
+      navigate('/dashboard'); // Redirect to dashboard
+    }
+  }, [currentUser, loading, navigate]); // Depend on currentUser and loading state
+
+  // If still loading or user is logged in (and will be redirected soon),
+  // you might render a small loading spinner or nothing at all for a moment.
+  if (loading || currentUser) {
+    return (
+      <div className="page-container" style={{ minHeight: 'calc(100vh - 80px)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <p className="welcome-message loading-pulse" style={{ color: '#ff4d88' }}>Loading...</p>
+      </div>
+    );
+  }
+
+  // Otherwise, render the standard homepage content for logged-out users
   return (
     <>
       {/* Hero Section - Large Ascendia Name and Description */}
@@ -11,7 +34,7 @@ function Home() {
           Your Ultimate Cambridge Companion<br />
           All-in-one toolkit for IGCSE & A-Level success
         </p>
-        {/* 'Start Your Journey Now' button links to the Getting Started page */}
+        {/* 'Start Your Journey Now' button - only visible if not logged in */}
         <Link to="/getting-started" className="cta">Start Your Journey Now</Link>
       </section>
 

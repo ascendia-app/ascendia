@@ -7,7 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
 
 // Import pages
-import Home from './pages/Home';
+import Home from './pages/Home'; // Updated: Import the new Home component
 import Syllabus from './pages/Syllabus';
 import Papers from './pages/Papers';
 import Tracker from './pages/Tracker';
@@ -16,12 +16,13 @@ import Planner from './pages/Planner';
 import GettingStarted from './pages/GettingStarted';
 import Login from './pages/Login';
 import UserSettings from './pages/UserSettings';
+import Dashboard from './pages/Dashboard'; // NEW: Import Dashboard component (you need to create this file)
 
 
 function App() {
-  const { currentUser, loading } = useAuth(); // AuthContext's loading state (for initial Firebase Auth readiness)
+  const { currentUser, loading } = useAuth();
   const [displayedUsername, setDisplayedUsername] = useState('');
-  const [isUsernameLoading, setIsUsernameLoading] = useState(false); // State for username fetch loading
+  const [isUsernameLoading, setIsUsernameLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
@@ -31,7 +32,7 @@ function App() {
 
   const navigate = useNavigate();
 
-  // DEBUG: Log current user and loading state (keep these, they are helpful!)
+  // DEBUG: Log current user and loading state
   useEffect(() => {
     console.log("AuthContext: currentUser =", currentUser);
     console.log("AuthContext: loading =", loading);
@@ -56,12 +57,11 @@ function App() {
     localStorage.setItem('dark-mode', darkMode);
   }, [darkMode]);
 
-  // Effect to fetch username when currentUser changes (i.e., login/logout)
+  // Effect to fetch username when currentUser changes
   useEffect(() => {
     const fetchUsername = async () => {
       if (currentUser) {
-        setIsUsernameLoading(true); // Start loading
-        // Set a temporary display (email prefix) immediately while fetching
+        setIsUsernameLoading(true);
         setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
 
         try {
@@ -77,15 +77,15 @@ function App() {
         } catch (error) {
           console.error("Error fetching username from Firestore:", error);
         } finally {
-          setIsUsernameLoading(false); // End loading regardless of success/failure
+          setIsUsernameLoading(false);
         }
       } else {
-        setDisplayedUsername(''); // Clear username if no user is logged in
-        setIsUsernameLoading(false); // No user, so not loading username
+        setDisplayedUsername('');
+        setIsUsernameLoading(false);
       }
     };
 
-    if (!loading) { // Only fetch username once overall auth state is determined
+    if (!loading) {
       console.log("Auth state determined, attempting to fetch username...");
       fetchUsername();
     }
@@ -137,7 +137,6 @@ function App() {
         </div>
         <div className="nav-right">
           <div className="nav-buttons">
-            {/* Conditional rendering based on authentication and username loading status */}
             {loading || isUsernameLoading ? (
               <span className="welcome-message loading-pulse">Loading...</span>
             ) : currentUser ? (
@@ -151,7 +150,6 @@ function App() {
                 </div>
                 {isDropdownOpen && (
                   <div className="dropdown-menu">
-                    {/* Dashboard on top */}
                     <Link to="/dashboard" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                       <span className="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard">
@@ -160,7 +158,6 @@ function App() {
                         </span>
                         Dashboard
                       </Link>
-                    {/* User Settings */}
                     <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                       <span className="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
@@ -169,7 +166,6 @@ function App() {
                       </span>
                       User Settings
                     </Link>
-                    {/* Help */}
                     <Link to="/help" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                       <span className="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-help-circle">
@@ -178,8 +174,7 @@ function App() {
                         </span>
                         Help
                       </Link>
-                    {/* Log Out button in red */}
-                    <button onClick={handleLogout} className="dropdown-item logout-btn"> {/* Added logout-btn class */}
+                    <button onClick={handleLogout} className="dropdown-item logout-btn">
                       <span className="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out">
                           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="17 16 22 12 17 8"/><line x1="22" x2="11" y1="12" y2="12"/>
@@ -206,7 +201,8 @@ function App() {
         {/* Main content area where different routes will render their components */}
         <div className="main-content-area">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home />} /> {/* Use the new Home component */}
+            <Route path="/dashboard" element={<Dashboard />} /> {/* NEW: Route for Dashboard */}
             <Route path="/syllabus" element={<Syllabus />} />
             <Route path="/papers" element={<Papers />} />
             <Route path="/tracker" element={<Tracker />} />
