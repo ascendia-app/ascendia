@@ -20,6 +20,26 @@ const getDateTimeForExam = (exam) => {
   return new Date(`${dateString}T${timeString}`);
 };
 
+// Helper function to format date with ordinal suffix (e.g., "1st", "2nd", "3rd", "4th")
+const formatDateWithOrdinal = (dateString) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-US', { month: 'long' });
+  const year = date.getFullYear();
+
+  let suffix = 'th';
+  if (day === 1 || day === 21 || day === 31) {
+    suffix = 'st';
+  } else if (day === 2 || day === 22) {
+    suffix = 'nd';
+  } else if (day === 3 || day === 23) {
+    suffix = 'rd';
+  }
+  return `${day}${suffix} ${month}, ${year}`;
+};
+
+
 // Exam Editor Modal Component
 const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
   const [editedExams, setEditedExams] = useState(initialExams || []);
@@ -282,11 +302,18 @@ function Dashboard() {
     // Define headers for the table (excluding "Time", including "Session")
     const headers = ["Subject", "Component", "Date", "Session"];
 
+    // Sort exams by date before rendering
+    const sortedExams = [...exams].sort((a, b) => {
+      const dateA = getDateTimeForExam(a).getTime();
+      const dateB = getDateTimeForExam(b).getTime();
+      return dateA - dateB;
+    });
+
     // Prepare data for rendering
-    const columnData = exams.map(exam => ([
+    const columnData = sortedExams.map(exam => ([
       exam.subject || '-',
       exam.component || '-',
-      exam.date || '-',
+      formatDateWithOrdinal(exam.date), // Use the new formatting function here
       exam.session || '-' // Include session here
     ]));
 
