@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore';
+import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore'; // Added setDoc
 import { db, appId } from '../firebaseConfig';
 import { useAuth } from '../contexts/AuthContext';
-import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle, ChevronDown, CheckSquare, Square } from 'lucide-react';
+import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle, ChevronDown, CheckSquare, Square } from 'lucide-react'; // Added new icons
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import './PageStyles.css';
 
@@ -92,7 +92,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, itemName }) =>
           </button>
         </div>
         <div className="modal-body">
-          <p>{message} **{itemName}**?</p>
+          <p>{message} {itemName}?</p> {/* Removed asterisks and quotes from itemName */}
         </div>
         <div className="modal-footer">
           <button onClick={onClose} className="modal-cancel-btn">Cancel</button>
@@ -287,11 +287,9 @@ function Syllabus() {
       await Promise.all(addPromises);
       setSubjectsToAdd([]); // Clear selections after adding
       // Use a non-alert message for user feedback
-      // alert('Selected subjects added!');
       console.log('Selected subjects added successfully!');
     } catch (e) {
       console.error("Syllabus.jsx: Error adding selected subjects: ", e);
-      // alert('Error adding subjects. Please try again.');
       console.error('Error adding subjects. Please try again.');
     }
   };
@@ -345,7 +343,7 @@ function Syllabus() {
   // Function to open delete topic confirmation modal
   const confirmDeleteTopic = (itemId, topicName) => {
     setConfirmMessage('Are you sure you want to delete this topic:');
-    setConfirmItemName(`"${topicName}"`);
+    setConfirmItemName(topicName); // Removed quotes and asterisks
     setConfirmAction(() => async () => {
       if (!userId || !selectedSubjectId || !itemId) return;
       try {
@@ -365,7 +363,7 @@ function Syllabus() {
   // Function to open delete subject confirmation modal
   const confirmDeleteSubject = (subjectIdToDelete, subjectName) => {
     setConfirmMessage('Are you sure you want to delete this subject (and all its topics):');
-    setConfirmItemName(`"${subjectName} (${subjectIdToDelete})"`);
+    setConfirmItemName(`${subjectName} (${subjectIdToDelete})`); // Removed quotes and asterisks
     setConfirmAction(() => async () => {
       if (!userId || !subjectIdToDelete) return;
       try {
@@ -476,14 +474,15 @@ function Syllabus() {
             ) : (
               <p className="no-items-message">No subjects defined for this level yet.</p>
             )}
-            <button
-              onClick={handleAddSelectedSubjects}
-              className="add-selected-subjects-btn"
-              disabled={subjectsToAdd.length === 0}
-            >
-              <PlusCircle size={18} /> Add Selected Subjects ({subjectsToAdd.length})
-            </button>
           </div>
+          {/* Moved Add Selected Subjects Button outside predefined-subject-list */}
+          <button
+            onClick={handleAddSelectedSubjects}
+            className="add-selected-subjects-btn"
+            disabled={subjectsToAdd.length === 0}
+          >
+            <PlusCircle size={18} /> Add Selected Subjects ({subjectsToAdd.length})
+          </button>
         </div>
 
         {/* Right Column: Syllabus Topics & Progress */}
@@ -556,9 +555,6 @@ function Syllabus() {
                             <option value="In Progress">In Progress</option>
                             <option value="Mastered">Mastered</option>
                           </select>
-                          <button onClick={() => handleOpenNotes(item.id, item.notes)} className="notes-btn" title="Add/View Notes">
-                            <NotepadText size={18} />
-                          </button>
                           <button onClick={() => confirmDeleteTopic(item.id, item.text)} className="delete-topic-btn" title="Delete Topic">
                             <Trash2 size={18} />
                           </button>
