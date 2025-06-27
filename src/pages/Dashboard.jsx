@@ -292,34 +292,46 @@ function Dashboard() {
 
     // Temporarily set font for measurement
     ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    let colWidths = headers.map(header => ctx.measureText(header).width);
+    let colWidths = headers.map(header => ctx.measureText(header).width + padding * 2); // Initial width from headers + padding
 
     ctx.font = `${fontSize}px 'Inter', sans-serif`;
     columnData.forEach(row => {
       row.forEach((cell, i) => {
         if (cell) { // Ensure cell is not null/undefined for measurement
           const textWidth = ctx.measureText(cell).width;
-          if (textWidth > colWidths[i]) {
-            colWidths[i] = textWidth;
+          // Update column width only if the cell content is wider than current width
+          if (textWidth + padding * 2 > colWidths[i]) {
+            colWidths[i] = textWidth + padding * 2;
           }
         }
       });
     });
 
-    // Add padding to column widths
-    colWidths = colWidths.map(width => width + padding * 2);
+    // Ensure 'Session' column is wide enough for "EV" if it wasn't already (due to minimal data)
+    const sessionColumnIndex = headers.indexOf("Session");
+    if (sessionColumnIndex !== -1) {
+      const widestSessionText = Math.max(
+        ctx.measureText("AM").width,
+        ctx.measureText("PM").width,
+        ctx.measureText("EV").width
+      );
+      if (widestSessionText + padding * 2 > colWidths[sessionColumnIndex]) {
+        colWidths[sessionColumnIndex] = widestSessionText + padding * 2;
+      }
+    }
 
-    // Calculate total width of columns. Ensure minimum width for readability if no content
+
+    // Calculate total width of columns
     let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
 
     // Ensure table has a reasonable minimum width (e.g., 600px)
     const minTableWidth = 600;
     if (totalColWidth < minTableWidth) {
-        totalColWidth = minTableWidth;
-        // Redistribute space if columns are too narrow
-        const diff = totalColWidth - colWidths.reduce((sum, w) => sum + w - padding * 2, 0);
-        const extraPerCol = diff / colWidths.length;
-        colWidths = colWidths.map(w => w + extraPerCol);
+        // If the calculated total width is less than minTableWidth, expand columns proportionally
+        const diff = minTableWidth - totalColWidth;
+        const uniformAdd = diff / colWidths.length;
+        colWidths = colWidths.map(w => w + uniformAdd);
+        totalColWidth = minTableWidth; // Set total width to minTableWidth
     }
 
 
