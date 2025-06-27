@@ -169,6 +169,19 @@ html, body, #root {
   white-space: nowrap;
 }
 
+/* NEW: Loading indicator pulse animation */
+.welcome-message.loading-pulse {
+  animation: pulse 1.5s infinite;
+  opacity: 0.7; /* Make it slightly dimmer while loading */
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+
 .dropdown-arrow {
   display: inline-block;
   margin-left: 0.25rem;

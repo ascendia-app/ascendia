@@ -19,8 +19,9 @@ import UserSettings from './pages/UserSettings';
 
 
 function App() {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading } = useAuth(); // AuthContext's loading state (for initial Firebase Auth readiness)
   const [displayedUsername, setDisplayedUsername] = useState('');
+  const [isUsernameLoading, setIsUsernameLoading] = useState(false); // NEW: State for username fetch loading
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('dark-mode');
     return savedTheme === 'true' ? true : false;
@@ -59,14 +60,15 @@ function App() {
   useEffect(() => {
     const fetchUsername = async () => {
       if (currentUser) {
-        // Immediately set a temporary display (email prefix) while fetching
+        setIsUsernameLoading(true); // Start loading
+        // Set a temporary display (email prefix) immediately while fetching
         setDisplayedUsername(currentUser.email ? currentUser.email.split('@')[0] : 'User');
 
         try {
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
-          if (userDocSnap.exists() && userDocSnap.data() && userDocSnap.data().username) { // Check if username field exists
+          if (userDocSnap.exists() && userDocSnap.data() && userDocSnap.data().username) {
             setDisplayedUsername(userDocSnap.data().username);
             console.log("Fetched username from Firestore:", userDocSnap.data().username);
           } else {
@@ -76,13 +78,16 @@ function App() {
         } catch (error) {
           console.error("Error fetching username from Firestore:", error);
           // If there's an error during fetch, keep the email prefix fallback.
+        } finally {
+          setIsUsernameLoading(false); // End loading regardless of success/failure
         }
       } else {
         setDisplayedUsername(''); // Clear username if no user is logged in
+        setIsUsernameLoading(false); // No user, so not loading username
       }
     };
 
-    if (!loading) { // Only fetch username once auth state is determined
+    if (!loading) { // Only fetch username once overall auth state is determined
       console.log("Auth state determined, attempting to fetch username...");
       fetchUsername();
     }
@@ -134,8 +139,9 @@ function App() {
         </div>
         <div className="nav-right">
           <div className="nav-buttons">
-            {loading ? (
-              <span className="welcome-message">Loading...</span>
+            {/* Conditional rendering based on authentication and username loading status */}
+            {loading || isUsernameLoading ? (
+              <span className="welcome-message loading-pulse">Loading...</span> // Show loading state for auth or username fetch
             ) : currentUser ? (
               <div className="user-profile-widget" ref={dropdownRef}>
                 <div className="user-info-trigger" onClick={toggleDropdown}>
@@ -150,7 +156,7 @@ function App() {
                     <Link to="/user-settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                       <span className="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings">
-                          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+                          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.04a2 2 0 0 1 0 2.83l-.04.04a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.78-1.28a2 2 0 0 0-.73-2.73l-.04-.04a2 2 0 0 1 0-2.83l.04-.04a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
                         </svg>
                       </span>
                       User Settings
