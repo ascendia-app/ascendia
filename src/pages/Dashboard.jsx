@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'; // Added useMemo
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Gauge, Book, ListChecks, Target, Bell, CalendarClock, GraduationCap, Trophy, Clock, Pencil, PlusCircle, Trash2, XCircle, Table, Download
-} from 'lucide-react';
+} from 'lucide-react'; // Ensure lucide-react is installed: npm install lucide-react
 
-// Import necessary Firestore functions
-import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+// Import necessary Firestore functions using the workaround for stubborn bundling issues
+import * as firestore from 'firebase/firestore'; // Import the entire firestore module
+const { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } = firestore; // Destructure the functions
 
 // Import Firebase (db, appId) and AuthContext
-import { db, appId } from '../firebaseConfig';
-import { useAuth } from '../contexts/AuthContext';
+import { db, appId } from '../firebaseConfig'; // Assuming firebaseConfig.js is in src/
+import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext.jsx is in src/contexts/
 
 // Import your separated modal components
-import EditExamsModal from '../modals/EditExamsModal';
-import ImageDisplayModal from '../modals/ImageDisplayModal';
+import EditExamsModal from '../modals/EditExamsModal'; // Assuming modals folder is in src/modals/
+import ImageDisplayModal from '../modals/ImageDisplayModal'; // Assuming modals folder is in src/modals/
 
-import '../PageStyles.css';
+import '../PageStyles.css'; // Common styles for pages (essential for styling)
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -483,7 +484,7 @@ function Dashboard() {
             {nextExam ? (
               <>
                 <div className="countdown-content">
-                  {/* Now timerComponents is correctly defined via useMemo */}
+                  {/* timerComponents is now correctly defined via useMemo */}
                   {timerComponents.length > 0 ? timerComponents : (
                     <p className="no-upcoming-exams">
                         {timeRemaining.days === 0 && timeRemaining.hours === 0 && timeRemaining.minutes === 0 && timeRemaining.seconds === 0
