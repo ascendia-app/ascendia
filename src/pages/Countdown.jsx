@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { calculateTimeLeft } from '../utils/dateUtils';
+import { getTimeRemaining } from '../utils/dateUtils'; // Corrected import name
 import { Settings, Eye } from 'lucide-react'; // Using lucide-react for icons
 
 // Countdown component displays a countdown to the nearest exam.
@@ -39,7 +39,8 @@ const Countdown = ({ exams, onEditExams, onSeeAllExams }) => {
         }
 
         const timer = setInterval(() => {
-            const newTimeLeft = calculateTimeLeft(nearestExam.date);
+            // Use the correctly imported getTimeRemaining function
+            const newTimeLeft = getTimeRemaining(nearestExam.date);
             // If all time components are zero or negative, clear interval and set to zero
             if (Object.values(newTimeLeft).every(val => val <= 0)) {
                 clearInterval(timer);
