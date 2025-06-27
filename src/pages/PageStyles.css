@@ -521,14 +521,15 @@
 }
 
 /* Specific styling for the buttons in countdown-actions */
+/* --- MODIFIED FOR SMALLER BUTTONS --- */
 .countdown-actions .dashboard-action-btn {
     background-color: white; /* Solid white background */
     color: #555; /* Grey text */
-    padding: 0.4rem 0.8rem; /* Smaller padding for a compact look */
+    padding: 0.3rem 0.7rem; /* Reduced padding for smaller size */
     border: 1px solid #ff4d88; /* Pink border */
     border-radius: 6px; /* Slightly smaller border radius */
     box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
-    font-size: 0.75rem; /* Smaller font size */
+    font-size: 0.7rem; /* Reduced font size */
     font-weight: 600; /* Make text bolder */
     text-decoration: none; /* Ensure no underline if it's a Link */
     display: flex;
@@ -536,6 +537,8 @@
     justify-content: center;
     gap: 0.3rem; /* Space between icon and text */
     transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer; /* Ensure cursor is pointer */
+    white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .countdown-actions .dashboard-action-btn:hover {
@@ -551,10 +554,15 @@
     background-clip: unset;
     stroke: currentColor; /* Ensure SVG strokes with currentColor */
     fill: none; /* Ensure SVG is outlined */
-    width: 28px; /* Increased size for quick action icons */
-    height: 28px; /* Increased size for quick action icons */
+    width: 20px; /* Reduced size for quick action icons */
+    height: 20px; /* Reduced size for quick action icons */
     transition: color 0.2s; /* Smooth color transition for icon */
 }
+.countdown-actions .dashboard-action-btn:hover svg {
+    color: white; /* Icon turns white on hover */
+}
+/* --- END MODIFIED FOR SMALLER BUTTONS --- */
+
 
 /* General Dashboard Section Styling (for Quick Stats, Links, Activity) */
 .dashboard-section {
@@ -1157,8 +1165,15 @@
     transition: opacity 0.3s ease-out; /* Smooth fade-in */
 }
 
+/* To ensure clickability, when modal is NOT active, it should not block events */
+.modal-overlay:not(.active) {
+    pointer-events: none; /* Crucial: Do not block clicks when not visible */
+}
+
+
 .modal-overlay.active {
     opacity: 1; /* Fade in */
+    pointer-events: auto; /* Allow clicks on the overlay itself */
 }
 
 .modal-content {
@@ -1323,13 +1338,167 @@
     border-color: #6200EE;
 }
 
-/* Modal form adjustments */
-.modal-content .form-group {
-    margin-bottom: 1.2rem; /* Adjusted space in modals */
+/* Modal form adjustments (specific for EditExamsModal) */
+.edit-exams-modal .form-group {
+    margin-bottom: 1rem; /* Slightly less vertical space for exam entries */
 }
-.modal-content .submit-button {
-    margin-top: 2rem; /* More space before submit in modal */
+.edit-exams-modal .form-group-inline {
+    margin-bottom: 0.8rem; /* Slightly less vertical space for inline groups */
 }
+
+/* Individual exam entry styling within EditExamsModal */
+.exam-entry {
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.2rem; /* Space between entries */
+    display: flex;
+    flex-direction: column; /* Stack fields vertically on small screens */
+    gap: 0.8rem; /* Space between stacked fields */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative; /* For positioning remove button */
+}
+
+.exam-entry .form-group-inline {
+    margin-bottom: 0; /* Remove default margin from inline group */
+}
+
+.exam-entry .remove-exam-btn {
+    background-color: #fcebeb; /* Light red background */
+    color: #dc3545; /* Red text */
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    margin-top: 0.8rem; /* Space from last input */
+    align-self: flex-end; /* Align to the right/end within the flex column */
+}
+.exam-entry .remove-exam-btn:hover {
+    background-color: #f8d7da;
+    color: #a71d2a;
+    border-color: #721c24;
+}
+
+/* Add Exam button inside Edit Exams Modal */
+.add-exam-btn {
+    background-color: #e6f7ff; /* Light blue */
+    color: #007bff; /* Blue text */
+    border: 1px solid #99d9ff;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    width: 100%;
+    margin-top: 1rem; /* Space from the last exam entry */
+}
+.add-exam-btn:hover {
+    background-color: #cceeff;
+    color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Modal Footer for Edit Exams Modal */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    margin-top: 1.5rem; /* Space from modal body */
+}
+
+.modal-cancel-btn {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.modal-cancel-btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+    border-color: #c0c0c0;
+}
+
+.modal-save-btn {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.modal-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* Image Display Modal specific styles */
+.image-modal-content {
+    max-width: 900px; /* Wider for image display */
+    padding: 1.5rem;
+    align-items: center; /* Center image within modal */
+}
+.image-modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+    min-height: 200px; /* Ensure some height for image */
+    background-color: #f8f8f8; /* Light background for image container */
+    border-radius: 10px;
+}
+.generated-image {
+    max-width: 100%; /* Ensure image fits within modal */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.modal-download-btn {
+    background-color: #4CAF50; /* Green for download */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.modal-download-btn:hover:not(:disabled) {
+    background-color: #388E3C;
+    transform: translateY(-2px);
+}
+.modal-download-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #cccccc;
+}
+
 
 /* Notifications Dropdown */
 .notifications-dropdown-container {
@@ -1955,6 +2124,60 @@ html.dark, body.dark, .app.dark {
     border-color: #a270f5;
 }
 
+/* Dark mode for EditExamsModal specific styles */
+.app.dark .edit-exams-modal .exam-entry {
+    background-color: #4a4a4a;
+    border-color: #666;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.app.dark .edit-exams-modal .exam-entry .remove-exam-btn {
+    background-color: #5a3a3a;
+    color: #f28c8c;
+    border-color: #7a4a4a;
+}
+.app.dark .edit-exams-modal .exam-entry .remove-exam-btn:hover {
+    background-color: #7a4a4a;
+    color: #f8c8c8;
+    border-color: #f28c8c;
+}
+.app.dark .edit-exams-modal .add-exam-btn {
+    background-color: #4a6a7a; /* Darker blue */
+    color: #99d9ff;
+    border-color: #6699b3;
+}
+.app.dark .edit-exams-modal .add-exam-btn:hover {
+    background-color: #5a7a8a;
+    color: #cceeff;
+    border-color: #88b3cc;
+}
+.app.dark .modal-footer .modal-cancel-btn {
+    background-color: #4a4a4a;
+    color: #c0c0c0;
+    border-color: #666;
+}
+.app.dark .modal-footer .modal-cancel-btn:hover {
+    background-color: #5a5a5a;
+    color: #f0f0f0;
+    border-color: #999;
+}
+.app.dark .modal-footer .modal-save-btn {
+    background: linear-gradient(to right, #ff6b6b, #ffb547);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.app.dark .modal-footer .modal-save-btn:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.35);
+}
+.app.dark .image-modal-body {
+    background-color: #3a3a3a;
+}
+.app.dark .modal-download-btn {
+    background-color: #388E3C; /* Darker green */
+}
+.app.dark .modal-download-btn:hover:not(:disabled) {
+    background-color: #2e7d32;
+}
+
+
 /* Dark mode for notifications dropdown */
 .app.dark .notifications-dropdown-container {
     background-color: #3a3a3a;
@@ -2054,6 +2277,33 @@ html.dark, body.dark, .app.dark {
     .modal-header h3 {
         font-size: 1.8rem;
     }
+
+    /* Edit Exams Modal on Medium Screens */
+    .edit-exams-modal .exam-entry {
+        flex-direction: row; /* Keep fields inline for tablet sizes */
+        flex-wrap: wrap; /* Allow wrapping if content is too long */
+        justify-content: space-between; /* Distribute items */
+        align-items: center;
+        gap: 0.5rem; /* Smaller gap */
+    }
+    .edit-exams-modal .form-group-inline {
+        flex-grow: 1; /* Allow each input to grow */
+        min-width: 150px; /* Ensure inputs don't get too small */
+    }
+    .edit-exams-modal .form-group-inline label {
+        width: auto; /* Allow labels to size naturally */
+        text-align: left; /* Align labels to the left */
+        margin-right: 0.5rem;
+    }
+    .edit-exams-modal .remove-exam-btn {
+        margin-top: 0; /* Align with inputs */
+        align-self: center; /* Center vertically */
+        padding: 0.3rem 0.6rem; /* Smaller padding */
+        font-size: 0.75rem; /* Smaller font */
+    }
+    .image-modal-content {
+        max-width: 700px; /* Adjust image modal width */
+    }
 }
 
 @media (max-width: 768px) {
@@ -2144,10 +2394,17 @@ html.dark, body.dark, .app.dark {
         padding: 0 1rem; /* Add horizontal padding */
         box-sizing: border-box;
         flex-direction: row; /* Keep buttons horizontal if possible */
+        gap: 0.3rem; /* Further reduce gap on small screens */
     }
     .countdown-actions .dashboard-action-btn {
         flex-grow: 1; /* Allow buttons to grow and fill space */
         max-width: 150px; /* Limit their max width */
+        padding: 0.25rem 0.5rem; /* Even smaller padding */
+        font-size: 0.65rem; /* Even smaller font size */
+    }
+    .countdown-actions .dashboard-action-btn svg {
+        width: 18px; /* Smaller icon size */
+        height: 18px;
     }
 
 
@@ -2195,6 +2452,34 @@ html.dark, body.dark, .app.dark {
         justify-content: flex-end; /* Align actions to the right */
         margin-top: 0.5rem;
     }
+
+    /* Edit Exams Modal on Small Screens */
+    .edit-exams-modal .exam-entry {
+        flex-direction: column; /* Stack fields vertically again for small phones */
+        align-items: stretch; /* Stretch items to fill width */
+        gap: 0.6rem;
+    }
+    .edit-exams-modal .form-group-inline {
+        flex-direction: column; /* Stack label and input */
+        align-items: flex-start; /* Align label/input to start */
+        width: 100%; /* Take full width */
+        gap: 0.2rem; /* Small gap between label and input */
+    }
+    .edit-exams-modal .form-group-inline label {
+        width: auto; /* Let label size naturally */
+        text-align: left;
+    }
+    .edit-exams-modal .form-group-inline input,
+    .edit-exams-modal .form-group-inline select {
+        width: 100%; /* Input takes full width */
+        min-width: unset; /* Remove min-width constraint */
+    }
+    .edit-exams-modal .remove-exam-btn {
+        margin-top: 0.8rem; /* Restore margin-top */
+        align-self: flex-end; /* Align to end */
+        width: auto; /* Auto width */
+    }
+
 
     .notifications-dropdown-container {
         right: 1rem; /* Adjust positioning for smaller screens */
