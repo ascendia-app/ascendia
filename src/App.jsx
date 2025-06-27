@@ -72,7 +72,7 @@ function App() {
             setDisplayedUsername(userDocSnap.data().username);
             console.log("Fetched username from Firestore:", userDocSnap.data().username);
           } else {
-            console.warn("No 'username' field found in Firestore for UID:", currentUser.uid, " or document does not exist. Displaying email prefix.");
+            console.warn("No 'username' field found in Firestore for UID:", currentUser.uid, ". Displaying email prefix.");
             // If doc doesn't exist or username field is missing, fallback already set.
           }
         } catch (error) {
