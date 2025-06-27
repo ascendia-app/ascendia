@@ -14,9 +14,12 @@ import { useAuth } from '../contexts/AuthContext'; // Assuming AuthContext.jsx i
 
 // Import your separated modal components
 import EditExamsModal from '../modals/EditExamsModal'; // Assuming modals folder is in src/modals/
-import ImageDisplayModal from '../modals/ImageDisplayModal'; // Assuming modals folder is in src/modals/
+import ViewExamsModal from '../modals/ViewExamsModal'; // <-- NEW: Import the ViewExamsModal
+// import ImageDisplayModal from '../modals/ImageDisplayModal'; // <-- REMOVED: No longer needed for 'See All' functionality
 
 import '../PageStyles.css'; // Common styles for pages (essential for styling)
+import '../ModalStyles.css'; // <-- NEW: Import the general modal styles
+
 
 // Helper function to format date and time for Date object construction
 const getDateTimeForExam = (exam) => {
@@ -54,11 +57,12 @@ function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exams, setExams] = useState([]); // Exams fetched from Firestore
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [imageDataUrl, setImageDataUrl] = useState('');
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false); // <-- NEW: State for ViewExamsModal
+  const [firebaseError, setFirebaseError] = useState(null); // State for Firebase errors
+  // const [imageDataUrl, setImageDataUrl] = useState(''); // <-- REMOVED: No longer needed with ViewExamsModal
   const [timeRemaining, setTimeRemaining] = useState({}); // State to hold calculated time remaining
   const [nextExam, setNextExam] = useState(null);
-  const [firebaseError, setFirebaseError] = useState(null); // State for Firebase errors
+
 
   // --- Effect to set userId once AuthContext loading is complete and currentUser is available ---
   useEffect(() => {
@@ -212,111 +216,13 @@ function Dashboard() {
   };
 
   const handleSeeAllExams = () => {
-    // Logic to generate the image (from previous prompt's code)
+    // Check if there are exams to view
     if (exams.length === 0) {
       setFirebaseError("No exams to display. Add some exams first!");
       return;
     }
-
     setFirebaseError(null); // Clear previous errors
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    const padding = 20;
-    const rowHeight = 40;
-    const headerHeight = 50;
-    const fontSize = 16;
-    const headerFontSize = 18;
-
-    const headers = ["Subject", "Component", "Date", "Session"];
-
-    const sortedExams = [...exams].sort((a, b) => {
-      const dateA = getDateTimeForExam(a).getTime();
-      const dateB = getDateTimeForExam(b).getTime();
-      return dateA - dateB;
-    });
-
-    const columnData = sortedExams.map(exam => ([
-      exam.subject || '-',
-      exam.component || '-',
-      formatDateWithOrdinal(exam.date),
-      exam.session || '-'
-    ]));
-
-    ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    let colWidths = headers.map(header => ctx.measureText(header).width + padding * 2);
-
-    ctx.font = `${fontSize}px 'Inter', sans-serif`;
-    columnData.forEach(row => {
-      row.forEach((cell, i) => {
-        if (cell) {
-          const textWidth = ctx.measureText(cell).width;
-          if (textWidth + padding * 2 > colWidths[i]) {
-            colWidths[i] = textWidth + padding * 2;
-          }
-        }
-      });
-    });
-
-    const sessionColumnIndex = headers.indexOf("Session");
-    if (sessionColumnIndex !== -1) {
-      const widestSessionText = Math.max(
-        ctx.measureText("AM").width,
-        ctx.measureText("PM").width,
-        ctx.measureText("EV").width
-      );
-      if (widestSessionText + padding * 2 > colWidths[sessionColumnIndex]) {
-        colWidths[sessionColumnIndex] = widestSessionText + padding * 2;
-      }
-    }
-
-    let totalColWidth = colWidths.reduce((sum, w) => sum + w, 0);
-    const minTableWidth = 600;
-    if (totalColWidth < minTableWidth) {
-        const diff = minTableWidth - totalColWidth;
-        const uniformAdd = diff / colWidths.length;
-        colWidths = colWidths.map(w => w + uniformAdd);
-        totalColWidth = minTableWidth;
-    }
-
-    const tableHeight = headerHeight + exams.length * rowHeight;
-    canvas.width = totalColWidth;
-    canvas.height = tableHeight + padding;
-
-    ctx.fillStyle = '#f9f9f9';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
-    ctx.fillStyle = '#ff4d88'; // Header background color
-    ctx.fillRect(0, 0, canvas.width, headerHeight); // Draw header background
-
-    ctx.fillStyle = 'white'; // Header text color
-    ctx.textAlign = 'left';
-    let currentX = 0;
-    headers.forEach((header, i) => {
-        ctx.fillText(header, currentX + padding, headerHeight / 2 + headerFontSize / 3);
-        currentX += colWidths[i];
-    });
-    currentY = headerHeight; // Start body drawing from below header
-
-    ctx.font = `${fontSize}px 'Inter', sans-serif`;
-    columnData.forEach((row, rowIndex) => {
-        ctx.fillStyle = rowIndex % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Alternating row colors
-        ctx.fillRect(0, currentY, canvas.width, rowHeight);
-
-        ctx.fillStyle = '#333'; // Body text color
-        currentX = 0;
-        row.forEach((cell, colIndex) => {
-            ctx.fillText(cell, currentX + padding, currentY + rowHeight / 2 + fontSize / 3);
-            currentX += colWidths[colIndex];
-        });
-        currentY += rowHeight;
-    });
-
-    const image = canvas.toDataURL('image/jpeg', 0.9);
-    setImageDataUrl(image);
-    setIsImageModalOpen(true); // Open the ImageDisplayModal
+    setIsViewModalOpen(true); // <-- NEW: Open the ViewExamsModal
   };
 
   // --- Handle Save Exams (Add/Update/Delete reconciliation with Firestore) ---
@@ -448,8 +354,8 @@ function Dashboard() {
     <div className="app">
         {/* Placeholder for Header, UserProfileWidget, ThemeToggle, NotificationsDropdown */}
         {/* These components are typically rendered in App.js or a Layout component
-            that wraps Dashboard. If they are directly in Dashboard, ensure they are imported. */}
-        {/* If you have these uncommented in your actual code, ensure they are imported */}
+            that wraps Dashboard. If you have these uncommented in your actual code,
+            ensure they are imported and have their necessary props/state handlers. */}
         {/*
         <Header>
             <Bell size={24} className="nav-bell-icon" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} />
@@ -513,7 +419,7 @@ function Dashboard() {
             ) : (
               <div className="no-upcoming-exams">
                 <p>No upcoming exams scheduled.</p>
-                {/* This button should also call handleEditExams */}
+                {/* This button should also call handleEditExams to add new exams */}
                 <button onClick={handleEditExams} className="dashboard-action-btn">
                   <PlusCircle size={16} /> Add Exams
                 </button>
@@ -577,10 +483,10 @@ function Dashboard() {
           initialExams={exams} // Pass current exams fetched from Firestore
         />
 
-        <ImageDisplayModal
-          isOpen={isImageModalOpen}
-          onClose={() => setIsImageModalOpen(false)}
-          imageUrl={imageDataUrl}
+        <ViewExamsModal // <-- NEW: Render ViewExamsModal
+          isOpen={isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          exams={exams} // Pass all exams to the ViewExamsModal
         />
       </main>
       {/* Footer component should also be here */}

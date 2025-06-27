@@ -1,0 +1,279 @@
+/* --- Base Modal Overlay --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top of everything */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+/* When modal is active */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Allow clicks on the overlay itself to close */
+}
+
+/* --- Modal Content Container --- */
+.modal-content {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    position: relative;
+    max-width: 90%;
+    max-height: 90%; /* Allow content to scroll if needed */
+    overflow-y: auto; /* Enable scrolling for content if it exceeds max-height */
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Specific size for large modals like ViewExamsModal */
+.modal-content.large-modal {
+    max-width: 800px; /* Wider for tables */
+    width: 90%;
+    padding: 2rem;
+}
+
+
+/* --- Modal Elements --- */
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #ff4d88; /* Vibrant close icon */
+    transition: transform 0.2s ease, color 0.2s;
+}
+
+.modal-close-btn:hover {
+    transform: scale(1.1);
+    color: #ff8c42; /* Slightly different color on hover */
+}
+
+.modal-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff4d88;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    width: 100%;
+}
+
+.modal-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    margin-top: 1.5rem; /* Space from content above */
+}
+
+.modal-action-btn.primary-gradient {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+    color: white;
+    border: none;
+}
+
+.modal-action-btn.primary-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+}
+
+.modal-action-btn.secondary-btn {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.modal-action-btn.secondary-btn:hover {
+    background-color: #e5e5e5;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+.modal-action-btn.download-btn { /* Specific style for download button */
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+}
+
+.modal-action-btn.download-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+}
+
+.no-exams-message {
+    color: #777;
+    font-style: italic;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* --- Form specific styles for modals (from EditExamsModal) --- */
+.modal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 1.5rem 2rem; /* Row gap and column gap */
+    width: 100%;
+    margin-top: 1rem;
+    max-height: 40vh; /* Make form scrollable if it gets too long */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+/* Individual form group styling within the modal */
+.modal-form-grid .form-group {
+    margin-bottom: 0; /* Override default margin from PageStyles.css */
+}
+
+.modal-form-grid .form-group label {
+    margin-bottom: 0.5rem; /* Keep a small margin below labels */
+}
+
+/* Style for individual exam input rows in EditExamsModal */
+.exam-input-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 0.8fr 0.5fr 40px; /* Subject, Component, Date, Time, Session, Delete button */
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #eee;
+}
+
+.exam-input-row:last-of-type {
+    border-bottom: none; /* No dashed line after the last input row */
+}
+
+.exam-input-row input,
+.exam-input-row select {
+    width: 100%; /* Ensure inputs take full width of their grid column */
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.exam-input-row input:focus,
+.exam-input-row select:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.exam-input-row .delete-exam-btn {
+    background: none;
+    border: none;
+    color: #dc3545; /* Red for delete icon */
+    cursor: pointer;
+    padding: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, color 0.2s;
+    font-size: 1.2rem;
+    margin-left: auto; /* Push to the right */
+}
+
+.exam-input-row .delete-exam-btn:hover {
+    transform: scale(1.1);
+    color: #c82333;
+}
+
+.add-exam-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #28a745; /* Green for add button */
+    color: white;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.add-exam-btn:hover {
+    background-color: #218838;
+}
+
+/* --- Table Styles for ViewExamsModal --- */
+.modal-table-container {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling for narrow screens */
+    margin-top: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    max-height: 60vh; /* Limit height and make table scrollable vertically */
+    overflow-y: auto;
+}
+
+.exams-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove space between cells */
+    min-width: 600px; /* Ensure table doesn't get too narrow on small screens */
+}
+
+.exams-table th,
+.exams-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Inter', sans-serif;
+}
+
+.exams-table th {
+    background-color: #f8f8f8; /* Light grey header background */
+    color: #555;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.exams-table tbody tr:nth-child(even) {
+    background-color: #fbfbfb; /* Slightly different background for even rows */
+}
+
+.exams-table tbody tr:hover {
+    background-color: #f0f8ff; /* Light blue on hover */
+}
+
+.exams-table td {
+    color: #333;
+    font-size: 0.95rem;
+}

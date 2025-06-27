@@ -1,131 +1,113 @@
-import React, { useEffect, useState } from 'react';
-import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa'; // Importing icons for edit, delete, and close
+import React from 'react';
+import PropTypes from 'prop-types';
+import { XCircle, Download } from 'lucide-react'; // Icons for close and download
+import '../ModalStyles.css'; // Import the new modal specific styles
 
-/**
- * ViewExamsModal Component
- *
- * This component displays a list of all exams in a sleek and modern modal window.
- * Users can view details of each exam and perform edit or delete actions.
- * It integrates with the shared modal and exam card CSS styles for a consistent look.
- *
- * Props:
- * - isOpen: Boolean, true if the modal should be visible.
- * - onClose: Function, callback to close the modal.
- * - exams: Array of exam objects, each with properties like id, subject, date, time, notes.
- * - onEditExam: Function, callback to trigger editing an exam. Receives exam ID.
- * - onDeleteExam: Function, callback to trigger deleting an exam. Receives exam ID.
- */
-const ViewExamsModal = ({ isOpen, onClose, exams, onEditExam, onDeleteExam }) => {
-    // State to control modal animation (active class for transitions)
-    const [isActive, setIsActive] = useState(false);
+// Helper function to format date as "Month Day, Year" (e.g., "July 15, 2025")
+const formatDateForDisplay = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+};
 
-    // useEffect hook to manage modal visibility and animations
-    useEffect(() => {
-        let timer;
-        if (isOpen) {
-            // When opening, set isActive to true to trigger fade-in and slide-up animation
-            setIsActive(true);
-            // Prevent scrolling on the background body when modal is open
-            document.body.style.overflow = 'hidden';
+// Helper function to format date as "YYYY-MM-DD" for CSV export
+const formatDateForCSV = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0]; // Gets YYYY-MM-DD
+};
+
+const ViewExamsModal = ({ isOpen, onClose, exams }) => {
+    if (!isOpen) return null; // Don't render anything if the modal is not open
+
+    // Sort exams by date for consistent display
+    const sortedExams = [...exams].sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateA - dateB;
+    });
+
+    const handleDownloadCSV = () => {
+        const headers = ["Subject", "Component", "Date", "Time", "Session"];
+        const rows = sortedExams.map(exam => [
+            exam.subject || '',
+            exam.component || '',
+            formatDateForCSV(exam.date), // Use CSV specific date format
+            exam.time || '',
+            exam.session || ''
+        ]);
+
+        let csvContent = headers.map(h => `"${h}"`).join(",") + "\n"; // Quote headers
+        rows.forEach(row => {
+            csvContent += row.map(e => `"${String(e).replace(/"/g, '""')}"`).join(",") + "\n"; // Quote and escape content
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        if (link.download !== undefined) { // Feature detection for download attribute
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "ascendia_exams.csv");
+            link.style.visibility = 'hidden'; // Hide the link
+            document.body.appendChild(link); // Append to body to make it clickable
+            link.click(); // Programmatically click the link
+            document.body.removeChild(link); // Remove the link after download
+            URL.revokeObjectURL(url); // Clean up the URL object
         } else {
-            // When closing, set isActive to false to trigger fade-out and slide-down animation
-            setIsActive(false);
-            // Set a timeout to actually remove the component from the DOM after the CSS transition completes
-            timer = setTimeout(() => {
-                // This callback will typically be used by the parent component to unmount the modal
-                // For this example, we don't need a direct unmount mechanism here,
-                // as 'isOpen' becoming false will stop rendering if !isActive.
-                // However, in complex apps, you might have a state in parent that changes here.
-            }, 300); // Matches the transition duration defined in PageStyles.css (.modal-content)
-            // Restore scrolling on the background body when modal is closed
-            document.body.style.overflow = '';
+            alert("Your browser does not support downloading files directly. Please copy the data manually.");
         }
-
-        // Cleanup function for useEffect: clear the timeout if the component unmounts or isOpen changes again
-        return () => {
-            if (timer) {
-                clearTimeout(timer);
-            }
-        };
-    }, [isOpen]); // Re-run this effect whenever 'isOpen' prop changes
-
-    // If the modal is not open and not in the process of animating out, don't render anything
-    // This prevents rendering invisible modals and optimizes performance.
-    if (!isOpen && !isActive) {
-        return null;
-    }
-
-    /**
-     * Handles the close action of the modal.
-     * Sets isActive to false to trigger the closing animation, then calls the onClose prop
-     * after the animation duration.
-     */
-    const handleClose = () => {
-        setIsActive(false);
-        setTimeout(onClose, 300); // Wait for the transition to complete before truly closing
     };
 
     return (
-        // Modal Overlay: Covers the entire screen, provides background dimming.
-        // Clicks on the overlay outside the modal content will close the modal.
-        <div className={`modal-overlay ${isActive ? 'active' : ''}`} onClick={handleClose}>
-            {/* Modal Content: The actual dialog box.
-                stopPropagation prevents clicks inside the content from closing the modal. */}
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                {/* Modal Header: Contains the title and close button */}
-                <div className="modal-header">
-                    <h3>All Exams</h3>
-                    {/* Close Button: Uses an imported FaTimes icon for a sleek look */}
-                    <button className="modal-close-btn" onClick={handleClose}>
-                        <FaTimes />
-                    </button>
-                </div>
+        <div className="modal-overlay active">
+            <div className="modal-content large-modal"> {/* Added large-modal class */}
+                <button className="modal-close-btn" onClick={onClose}>
+                    <XCircle size={24} />
+                </button>
+                <h2 className="modal-title">All Scheduled Exams</h2>
 
-                {/* Modal Body: Contains the main content of the modal (list of exams) */}
-                <div className="modal-body">
-                    {exams && exams.length > 0 ? (
-                        // If there are exams, map through them to render individual exam cards
-                        <div className="exam-list">
-                            {exams.map((exam) => (
-                                <div key={exam.id} className="exam-card">
-                                    {/* Exam Details Text */}
-                                    <div className="exam-details-text">
-                                        <h4>{exam.subject}</h4>
-                                        <p>Date: {new Date(exam.date).toLocaleDateString()}</p>
-                                        <p>Time: {exam.time}</p>
-                                        {/* Display notes if available */}
-                                        {exam.notes && <p>Notes: {exam.notes}</p>}
-                                    </div>
-                                    {/* Exam Actions: Edit and Delete buttons */}
-                                    <div className="exam-actions">
-                                        {/* Edit Button */}
-                                        <button
-                                            className="exam-action-btn edit"
-                                            onClick={() => onEditExam(exam)} // Pass the whole exam object for editing
-                                            aria-label={`Edit ${exam.subject}`}
-                                        >
-                                            <FaEdit />
-                                        </button>
-                                        {/* Delete Button */}
-                                        <button
-                                            className="exam-action-btn delete"
-                                            onClick={() => onDeleteExam(exam.id)}
-                                            aria-label={`Delete ${exam.subject}`}
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                {sortedExams && sortedExams.length > 0 ? (
+                    <>
+                        <div className="modal-table-container">
+                            <table className="exams-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Component</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Session</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sortedExams.map((exam) => (
+                                        <tr key={exam.id || exam.tempId}>
+                                            <td>{exam.subject || '-'}</td>
+                                            <td>{exam.component || '-'}</td>
+                                            <td>{formatDateForDisplay(exam.date)}</td>
+                                            <td>{exam.time || '-'}</td>
+                                            <td>{exam.session || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                    ) : (
-                        // If no exams are present, display a message
-                        <p className="no-exams-message">No exams added yet.</p>
-                    )}
-                </div>
+                        <button onClick={handleDownloadCSV} className="modal-action-btn download-btn">
+                            <Download size={18} /> Download CSV
+                        </button>
+                    </>
+                ) : (
+                    <p className="no-exams-message">No exams scheduled yet. Click "Edit Exams" to add some!</p>
+                )}
             </div>
         </div>
     );
+};
+
+ViewExamsModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    exams: PropTypes.array.isRequired,
 };
 
 export default ViewExamsModal;
