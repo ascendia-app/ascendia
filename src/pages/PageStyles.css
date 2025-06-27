@@ -453,13 +453,14 @@
 }
 
 .countdown-widget .countdown-content {
-    display: flex; /* Changed to flex for side-by-side */
-    flex-direction: row; /* Arranges items side-by-side */
-    justify-content: center; /* Centers the segments horizontally */
-    gap: 0.2rem; /* Reduced gap even on desktop */
-    width: 100%; /* Explicitly take all available width */
-    flex-wrap: nowrap !important; /* Force no wrapping across all screen sizes */
-    margin-bottom: 0.5rem; /* Small space between countdown segments and exam details */
+    display: flex;
+    flex-direction: row; /* Explicitly horizontal */
+    justify-content: space-evenly; /* Distribute segments evenly */
+    align-items: center; /* Vertically center segments */
+    gap: 0.5rem; /* Consistent gap between segments */
+    width: 100%; /* Take full width of parent */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    margin-bottom: 0.5rem; /* Maintain spacing below */
 }
 
 /* Individual countdown segment styling (Days, Hours, Minutes, Seconds) */
@@ -469,14 +470,14 @@
     align-items: center;
     justify-content: center;
     background-color: #f0f0f0; /* Light background for segments */
-    padding: 0.1rem 0.05rem; /* Reduced padding further */
+    padding: 0.3rem 0.6rem; /* Adjusted padding for better fit */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    min-width: 0; /* Important: Allow it to shrink to 0 if needed (overriding intrinsic size) */
-    flex-basis: 0; /* Key for even distribution with flex-grow */
-    flex-grow: 1; /* Allow segments to grow and take available space */
-    overflow: hidden; /* Crucial: Hides overflowing content, forcing the element to shrink */
-    box-sizing: border-box; /* Ensure padding/border are included in width calculation */
+    flex: 1; /* Each segment takes equal space */
+    min-width: 50px; /* Minimum width to prevent collapse */
+    max-width: 80px; /* Cap width to keep segments compact */
+    overflow: hidden; /* Hide overflowing content */
+    box-sizing: border-box; /* Include padding/border in width */
 }
 
 .countdown-widget .countdown-value {
@@ -2018,25 +2019,48 @@ html.dark, body.dark, .app.dark {
         grid-column: auto !important; /* Ensure all grid items stack on mobile */
     }
 
-    .countdown-widget .countdown-content {
-        flex-wrap: nowrap !important; /* IMPORTANT: Force no wrapping on smaller screens */
-        justify-content: center; /* Center segments */
-        gap: 0.1rem; /* Even smaller gap on tablets */
+.countdown-widget .countdown-content {
+        gap: 0.3rem; /* Smaller gap on tablets */
+        flex-wrap: nowrap !important; /* Force no wrapping */
+        justify-content: space-evenly; /* Even distribution */
     }
 
     .countdown-widget .countdown-segment {
-        padding: 0.3rem 0.1rem; /* Adjust padding for tightness */
-        min-width: 0; /* Important: Allow it to shrink to 0 if needed (overriding intrinsic size) */
+        padding: 0.2rem 0.4rem; /* Tighter padding */
+        min-width: 40px; /* Slightly smaller min-width */
+        max-width: 60px; /* Slightly smaller max-width */
     }
 
     .countdown-widget .countdown-value {
-        font-size: 0.8rem; /* Smaller font on mobile */
+        font-size: 0.8rem; /* Existing */
     }
 
     .countdown-widget .countdown-label {
-        font-size: 0.35rem; /* Even smaller font on mobile */
+        font-size: 0.35rem; /* Existing */
+    }
+}
+
+@media (max-width: 480px) {
+    .countdown-widget .countdown-content {
+        gap: 0.2rem; /* Minimal gap */
+        flex-wrap: nowrap !important; /* Force no wrapping */
+        justify-content: space-evenly; /* Even distribution */
     }
 
+    .countdown-widget .countdown-segment {
+        padding: 0.15rem 0.3rem; /* Minimal padding */
+        min-width: 35px; /* Smallest min-width */
+        max-width: 50px; /* Smallest max-width */
+    }
+
+    .countdown-widget .countdown-value {
+        font-size: 0.7rem; /* Existing */
+    }
+
+    .countdown-widget .countdown-label {
+        font-size: 0.3rem; /* Existing */
+    }
+}
     .countdown-actions {
         position: static; /* Ensure static positioning on mobile */
         margin-top: 1rem; /* Add margin after content */
@@ -2084,7 +2108,7 @@ html.dark, body.dark, .app.dark {
         right: 1rem; /* Adjust positioning for smaller screens */
         width: calc(100% - 2rem); /* Full width minus padding */
     }
-}
+
 
 @media (max-width: 480px) {
     .header {
