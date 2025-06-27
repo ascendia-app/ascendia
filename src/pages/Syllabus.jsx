@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore'; // Added setDoc
-import { db, appId } from '../firebaseConfig'; // Import db and appId
-import { useAuth } from '../contexts/AuthContext'; // Import useAuth hook
-import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle, ChevronDown, CheckSquare, Square } from 'lucide-react'; // Added new icons
+import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore';
+import { db, appId } from '../firebaseConfig';
+import { useAuth } from '../contexts/AuthContext';
+import { PlusCircle, Search, Edit2, Trash2, CheckCircle, CircleDot, CircleDashed, NotepadText, XCircle, ChevronDown, CheckSquare, Square } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import './PageStyles.css';
 
@@ -78,10 +78,35 @@ const NotesModal = ({ isOpen, onClose, initialNotes, onSaveNotes }) => {
   );
 };
 
+// Custom Confirmation Modal Component
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, itemName }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content confirmation-modal-content">
+        <div className="modal-header">
+          <h3>Confirm Deletion</h3>
+          <button onClick={onClose} className="modal-close-btn">
+            <XCircle size={24} />
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>{message} **{itemName}**?</p>
+        </div>
+        <div className="modal-footer">
+          <button onClick={onClose} className="modal-cancel-btn">Cancel</button>
+          <button onClick={onConfirm} className="modal-delete-btn">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 function Syllabus() {
-  const { currentUser, loading } = useAuth(); // Use the auth context
-  const [userId, setUserId] = useState(null); // Local state for userId
+  const { currentUser, loading } = useAuth();
+  const [userId, setUserId] = useState(null);
   const [subjects, setSubjects] = useState([]); // Subjects added by the user (from Firestore)
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedSubjectName, setSelectedSubjectName] = useState('');
@@ -91,7 +116,7 @@ function Syllabus() {
   const [selectedLevel, setSelectedLevel] = useState('O Level'); // Default to O Level
   const [predefinedSubjectsForLevel, setPredefinedSubjectsForLevel] = useState([]);
   const [subjectsToAdd, setSubjectsToAdd] = useState([]); // List of subject codes to be added by user
-  const [searchSubjectTerm, setSearchSubjectTerm] = useState(''); // For filtering user's added subjects
+  // const [searchSubjectTerm, setSearchSubjectTerm] = useState(''); // Removed search term state
 
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [currentNotes, setCurrentNotes] = useState('');
@@ -99,10 +124,16 @@ function Syllabus() {
 
   const [newTopicText, setNewTopicText] = useState(''); // State for adding new topic
 
+  // States for confirmation modal
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [confirmItemName, setConfirmItemName] = useState('');
+  const [confirmAction, setConfirmAction] = useState(null); // Function to call on confirm
+
 
   // Set userId from AuthContext
   useEffect(() => {
-    if (!loading) { // Only set userId once auth state is known
+    if (!loading) {
       if (currentUser) {
         setUserId(currentUser.uid);
         console.log("Syllabus.jsx: User ID set:", currentUser.uid);
@@ -125,7 +156,7 @@ function Syllabus() {
 
   // Fetch Subjects for the User (from Firestore)
   useEffect(() => {
-    if (loading || !userId || !db) { // Wait for auth loading to complete and userId to be available
+    if (loading || !userId || !db) {
       console.log("Syllabus.jsx: Skipping subject fetch - loading:", loading, "userId:", userId);
       setSubjects([]);
       return;
@@ -166,11 +197,14 @@ function Syllabus() {
     }
   }, [userId, db, selectedSubjectId, appId, loading]);
 
-  // Filter Subjects based on search term (for user's added subjects)
-  const filteredUserSubjects = subjects.filter(subject =>
-    subject.name.toLowerCase().includes(searchSubjectTerm.toLowerCase()) ||
-    subject.id.toLowerCase().includes(searchSubjectTerm.toLowerCase()) // Allow search by code too
-  );
+  // Filter Subjects based on search term (for user's added subjects) - No longer using search term directly
+  // const filteredUserSubjects = subjects.filter(subject =>
+  //   subject.name.toLowerCase().includes(searchSubjectTerm.toLowerCase()) ||
+  //   subject.id.toLowerCase().includes(searchSubjectTerm.toLowerCase())
+  // );
+  // Now, `filteredUserSubjects` will simply be `subjects` as search is removed
+  const displayedUserSubjects = subjects;
+
 
   // Fetch Syllabus Items for the Selected Subject
   useEffect(() => {
@@ -252,10 +286,13 @@ function Syllabus() {
       });
       await Promise.all(addPromises);
       setSubjectsToAdd([]); // Clear selections after adding
-      alert('Selected subjects added!'); // Simple alert for now, can be replaced by custom modal
+      // Use a non-alert message for user feedback
+      // alert('Selected subjects added!');
+      console.log('Selected subjects added successfully!');
     } catch (e) {
       console.error("Syllabus.jsx: Error adding selected subjects: ", e);
-      alert('Error adding subjects. Please try again.');
+      // alert('Error adding subjects. Please try again.');
+      console.error('Error adding subjects. Please try again.');
     }
   };
 
@@ -305,21 +342,31 @@ function Syllabus() {
     }
   };
 
-  const handleDeleteTopic = async (itemId) => {
-    if (confirm('Are you sure you want to delete this topic?')) { // Using confirm for simplicity for now
+  // Function to open delete topic confirmation modal
+  const confirmDeleteTopic = (itemId, topicName) => {
+    setConfirmMessage('Are you sure you want to delete this topic:');
+    setConfirmItemName(`"${topicName}"`);
+    setConfirmAction(() => async () => {
       if (!userId || !selectedSubjectId || !itemId) return;
       try {
         console.log(`Syllabus.jsx: Deleting topic ${itemId}.`);
         const topicDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects/${selectedSubjectId}/syllabusItems`, itemId);
         await deleteDoc(topicDocRef);
+        console.log(`Syllabus.jsx: Topic ${itemId} deleted successfully.`);
       } catch (e) {
         console.error("Syllabus.jsx: Error deleting topic: ", e);
+      } finally {
+        setIsConfirmModalOpen(false); // Close modal after action
       }
-    }
+    });
+    setIsConfirmModalOpen(true); // Open modal
   };
 
-  const handleDeleteSubject = async (subjectIdToDelete) => {
-    if (confirm('Deleting a subject will also delete all its topics. Are you sure?')) { // Using confirm for simplicity for now
+  // Function to open delete subject confirmation modal
+  const confirmDeleteSubject = (subjectIdToDelete, subjectName) => {
+    setConfirmMessage('Are you sure you want to delete this subject (and all its topics):');
+    setConfirmItemName(`"${subjectName} (${subjectIdToDelete})"`);
+    setConfirmAction(() => async () => {
       if (!userId || !subjectIdToDelete) return;
       try {
         console.log(`Syllabus.jsx: Deleting subject ${subjectIdToDelete} and its topics.`);
@@ -343,8 +390,11 @@ function Syllabus() {
         console.log(`Syllabus.jsx: Subject ${subjectIdToDelete} deleted successfully.`);
       } catch (e) {
         console.error("Syllabus.jsx: Error deleting subject: ", e);
+      } finally {
+        setIsConfirmModalOpen(false); // Close modal after action
       }
-    }
+    });
+    setIsConfirmModalOpen(true); // Open modal
   };
 
 
@@ -356,19 +406,54 @@ function Syllabus() {
       <div className="syllabus-grid-container">
         {/* Left Column: Subject Management */}
         <div className="syllabus-subjects-panel dashboard-card">
+
+          <h3 className="panel-heading">Your Subjects</h3>
+          <div className="subject-list">
+            {loading ? (
+              <p className="loading-message">Loading your subjects...</p>
+            ) : displayedUserSubjects.length > 0 ? (
+              displayedUserSubjects.map(subject => (
+                <div
+                  key={subject.id}
+                  className={`subject-item ${selectedSubjectId === subject.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSelectedSubjectId(subject.id);
+                    setSelectedSubjectName(subject.name);
+                  }}
+                >
+                  <span>{subject.name} ({subject.id})</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); confirmDeleteSubject(subject.id, subject.name); }}
+                    className="delete-subject-btn"
+                    title="Delete Subject and all its topics"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="no-items-message">No subjects added yet. Add some below!</p>
+            )}
+          </div>
+
+          <hr className="divider" /> {/* Divider between user's subjects and add section */}
+
           <h3 className="panel-heading">Add Subjects</h3>
           <div className="level-select-section">
             <label htmlFor="select-level" className="select-level-label">Select Level:</label>
-            <select
-              id="select-level"
-              value={selectedLevel}
-              onChange={(e) => setSelectedLevel(e.target.value)}
-              className="level-dropdown"
-            >
-              {Object.keys(PREDEFINED_SUBJECTS).map(level => (
-                <option key={level} value={level}>{level}</option>
-              ))}
-            </select>
+            <div className="custom-select-wrapper"> {/* New wrapper for custom arrow styling */}
+              <select
+                id="select-level"
+                value={selectedLevel}
+                onChange={(e) => setSelectedLevel(e.target.value)}
+                className="level-dropdown"
+              >
+                {Object.keys(PREDEFINED_SUBJECTS).map(level => (
+                  <option key={level} value={level}>{level}</option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="dropdown-arrow-icon" /> {/* Small arrow icon */}
+            </div>
           </div>
 
           <div className="predefined-subject-list">
@@ -398,48 +483,6 @@ function Syllabus() {
             >
               <PlusCircle size={18} /> Add Selected Subjects ({subjectsToAdd.length})
             </button>
-          </div>
-
-          <hr className="divider" /> {/* Divider between add section and user's subjects */}
-
-          <h3 className="panel-heading">Your Added Subjects</h3>
-          <div className="search-subject-section">
-            <input
-              type="text"
-              placeholder="Search My Subjects..."
-              value={searchSubjectTerm}
-              onChange={(e) => setSearchSubjectTerm(e.target.value)}
-              className="search-subject-input"
-            />
-            <Search size={18} className="search-icon" />
-          </div>
-
-          <div className="subject-list">
-            {loading ? (
-              <p className="loading-message">Loading your subjects...</p>
-            ) : filteredUserSubjects.length > 0 ? (
-              filteredUserSubjects.map(subject => (
-                <div
-                  key={subject.id}
-                  className={`subject-item ${selectedSubjectId === subject.id ? 'selected' : ''}`}
-                  onClick={() => {
-                    setSelectedSubjectId(subject.id);
-                    setSelectedSubjectName(subject.name);
-                  }}
-                >
-                  <span>{subject.name} ({subject.id})</span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDeleteSubject(subject.id); }}
-                    className="delete-subject-btn"
-                    title="Delete Subject and all its topics"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="no-items-message">No subjects added yet. Use the 'Add Subjects' section above.</p>
-            )}
           </div>
         </div>
 
@@ -516,7 +559,7 @@ function Syllabus() {
                           <button onClick={() => handleOpenNotes(item.id, item.notes)} className="notes-btn" title="Add/View Notes">
                             <NotepadText size={18} />
                           </button>
-                          <button onClick={() => handleDeleteTopic(item.id)} className="delete-topic-btn" title="Delete Topic">
+                          <button onClick={() => confirmDeleteTopic(item.id, item.text)} className="delete-topic-btn" title="Delete Topic">
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -539,6 +582,14 @@ function Syllabus() {
         onClose={() => setIsNotesModalOpen(false)}
         initialNotes={currentNotes}
         onSaveNotes={handleSaveNotes}
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmAction}
+        message={confirmMessage}
+        itemName={confirmItemName}
       />
     </div>
   );
