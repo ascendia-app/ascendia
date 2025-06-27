@@ -1,20 +1,13 @@
 // src/firebaseConfig.js
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithCustomToken, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-// Your web app's Firebase configuration
-// IMPORTANT: Replace this with YOUR actual Firebase config from the Firebase Console
-const firebaseConfig = {
-apiKey: "AIzaSyC5xNK1gThitsLgSnzF7iujPKUEsnqA1jA",
-authDomain: "ascendia-app.firebaseapp.com",
-projectId: "ascendia-app",
-storageBucket: "ascendia-app.firebasestorage.app",
-messagingSenderId: "537890941125",
-appId: "1:537890941125:web:b3bdbd902b5ac7b5d6e8ac"
-};
-console.log("Firebase config loaded:", firebaseConfig.projectId); // DEBUG: Check if config is read
-console.log("Firebase API Key (partial for security):", firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 5) + '...' : 'N/A'); // DEBUG: Check API Key
+// IMPORTANT: Use these global variables provided by the Canvas environment.
+// DO NOT hardcode your Firebase configuration here.
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
 let app;
 let auth;
@@ -25,14 +18,41 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  console.log("Firebase app initialized successfully."); // DEBUG: Confirm initialization
+  console.log("Firebase app initialized successfully.");
+
+  // Perform initial authentication. This is crucial for Firestore rules.
+  if (initialAuthToken) {
+    signInWithCustomToken(auth, initialAuthToken)
+      .then(() => {
+        console.log("Firebase signed in with custom token!");
+      })
+      .catch((error) => {
+        console.error("Firebase custom token sign-in error:", error);
+        // Fallback to anonymous sign-in if custom token fails
+        signInAnonymously(auth)
+          .then(() => console.log("Signed in anonymously after custom token failure."))
+          .catch(anonError => console.error("Anonymous sign-in error during fallback:", anonError));
+      });
+  } else {
+    // If no custom token is provided (e.g., in a non-Canvas or local dev without token)
+    signInAnonymously(auth)
+      .then(() => console.log("Signed in anonymously (no initial token provided)."))
+      .catch(error => console.error("Anonymous sign-in error:", error));
+  }
+
+  // Optional: Listen for auth state changes (useful for debugging and understanding user status)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("Firebase Auth State Changed: User is signed in:", user.uid);
+    } else {
+      console.log("Firebase Auth State Changed: User is signed out.");
+    }
+  });
+
 } catch (error) {
-  console.error("Firebase initialization failed:", error); // DEBUG: Catch any init errors
-  // If initialization fails, 'auth' and 'db' will be undefined, and subsequent
-  // attempts to use them will result in runtime errors. This is expected
-  // as the app cannot function without Firebase.
+  console.error("Firebase initialization failed:", error);
+  // Log the error but continue execution; 'auth' and 'db' will be undefined.
 }
 
-// Export auth and db services for use in components
-// This export statement MUST be at the top level of the module
-export { auth, db };
+// Export auth, db, and appId for use in other components
+export { auth, db, appId };
