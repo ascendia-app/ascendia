@@ -494,12 +494,8 @@
 }
 
 .countdown-widget .exam-details {
-    font-size: 0.95rem;
-    color: #555;
-    text-align: center;
-    margin-top: 0.5rem;
-    font-weight: 500;
-    max-width: 90%; /* Prevent text from being too wide */
+    /* Removed for now, as per user request */
+    display: none;
 }
 
 .countdown-widget .no-upcoming-exams {
@@ -904,7 +900,7 @@
   padding: 0.8rem 1rem;
   margin-bottom: 0.5rem;
   background-color: #f0f0f0;
-  border-radius: 8px;
+  border-radius: 8鳴;
   cursor: pointer;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
@@ -1527,8 +1523,9 @@ html.dark, body.dark, .app.dark {
     color: #c0c0c0;
 }
 
+/* Removed exam details in dark mode as well */
 .app.dark .countdown-widget .exam-details {
-    color: #c0c0c0;
+    display: none;
 }
 
 .app.dark .countdown-actions .dashboard-action-btn {
@@ -2023,25 +2020,32 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        display: flex; /* Ensure flex is applied */
-        flex-direction: row; /* Ensure horizontal layout */
-        flex-wrap: nowrap !important; /* Force no wrapping */
-        justify-content: center; /* Center segments */
-        gap: 0.5rem; /* Reverted to slightly larger gap */
+        /* Force flex properties for small screens */
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important; /* This is absolutely critical for no wrapping */
+        justify-content: center !important;
+        gap: 0.5rem !important; /* Reduce gap to give segments more space */
+        width: 100% !important; /* Ensure it takes full available width */
     }
 
     .countdown-widget .countdown-segment {
-        padding: 0.6rem 0.3rem; /* Reverted to more generous padding */
-        min-width: 50px; /* Reverted to more generous min-width */
-        /* Removed flex-shrink: 1; to avoid over-shrinking */
+        /* Distribute space equally, allowing some shrinking but prioritizing fitting in one row */
+        flex: 1 1 22% !important; /* flex-grow, flex-shrink, flex-basis: roughly 100% / 4 segments = 25%, slightly less to account for gap */
+        min-width: 40px !important; /* A very small minimum to ensure they don't disappear */
+        max-width: 25% !important; /* Ensure no segment tries to take more than its share */
+        padding: 0.4rem 0.1rem !important; /* Minimal padding */
+        box-sizing: border-box !important; /* Crucial for width calculation */
     }
 
     .countdown-widget .countdown-value {
-        font-size: 1.8rem; /* Reverted font size */
+        font-size: 1.2rem !important; /* Reduce font size further to fit */
+        line-height: 1.2 !important;
     }
 
     .countdown-widget .countdown-label {
-        font-size: 0.7rem; /* Reverted font size */
+        font-size: 0.6rem !important; /* Reduce label font size further */
+        line-height: 1.2 !important;
     }
 
     .countdown-actions {
@@ -2112,30 +2116,34 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        /* Re-emphasize flex properties for the smallest screen */
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap !important; /* This is the key to preventing wrapping */
-        justify-content: space-around; /* Distribute space evenly */
-        align-items: stretch; /* Make items stretch to fill height */
-        gap: 0.5rem; /* Maintain a small gap */
+        /* Absolute strictness for smallest screens */
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important; /* THIS IS THE MOST IMPORTANT PART: PREVENT WRAPPING */
+        justify-content: space-between !important; /* Distribute space as much as possible */
+        align-items: stretch !important; /* Stretch to fill height */
+        gap: 0.2rem !important; /* Minimize gap to save space */
+        padding: 0 0.2rem !important; /* Small padding on content itself */
+        box-sizing: border-box !important;
     }
 
     .countdown-widget .countdown-segment {
-        /* Calculate width to ensure they fit side-by-side without wrapping */
-        flex: 1 1 auto; /* Allow growth, allow shrinking, base on content */
-        min-width: 20%; /* Ensure a minimum width, adjust as needed */
-        max-width: 25%; /* Limit maximum width to keep them in one row */
-        padding: 0.4rem 0.1rem; /* Ensure some padding for readability */
-        box-sizing: border-box; /* Include padding in width calculation */
+        /* Precise flex-basis to ensure 4 fit side-by-side, allowing minimal shrinking */
+        flex: 0 0 calc(25% - 0.2rem) !important; /* 25% for each minus a tiny bit for gap */
+        min-width: calc(25% - 0.2rem) !important; /* Enforce this minimum width */
+        max-width: calc(25% - 0.2rem) !important; /* Enforce this maximum width */
+        padding: 0.2rem 0.1rem !important; /* Very minimal padding */
+        box-sizing: border-box !important; /* Absolutely crucial */
     }
     .countdown-widget .countdown-value {
-        font-size: 1.1rem; /* Keep value readable */
-        line-height: 1.2; /* Adjust line height for better spacing */
+        font-size: 1.0rem !important; /* Further reduce font size */
+        line-height: 1 !important;
     }
     .countdown-widget .countdown-label {
-        font-size: 0.5rem; /* Keep label readable */
-        line-height: 1.2;
+        font-size: 0.45rem !important; /* Further reduce label font size */
+        line-height: 1 !important;
+        word-break: break-word; /* Allow long words to break */
+        text-align: center;
     }
 
     .countdown-actions {
