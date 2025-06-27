@@ -1,110 +1,101 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import './PageStyles.css'; // Import the consolidated styles
+import { calculateTimeLeft } from '../utils/dateUtils';
+import { Settings, Eye } from 'lucide-react'; // Using lucide-react for icons
 
-// Import Lucide icons for the buttons
-import { PencilLine, Eye } from 'lucide-react'; 
+// Countdown component displays a countdown to the nearest exam.
+// It also provides buttons to manage exams.
+const Countdown = ({ exams, onEditExams, onSeeAllExams }) => {
+    const [nearestExam, setNearestExam] = useState(null);
+    const [timeLeft, setTimeLeft] = useState({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+    });
 
-function Countdown() {
-  // Placeholder for an upcoming exam. In a real app, this would come from state/props
-  // fetched from a database.
-  // Format: { name: 'Exam Name', date: 'YYYY-MM-DDTHH:MM:SS' }
-  // Example: '2025-07-28T10:00:00' (July 28, 2025, 10:00 AM)
-  const [upcomingExam, setUpcomingExam] = useState({
-    name: 'Mathematics A-Level Paper 1',
-    date: '2025-10-27T09:30:00' // Example: October 27, 2025, 9:30 AM
-  });
+    // Effect to find the nearest upcoming exam and set up the countdown
+    useEffect(() => {
+        if (!exams || exams.length === 0) {
+            setNearestExam(null);
+            return;
+        }
 
-  const [timeLeft, setTimeLeft] = useState({});
+        // Filter for upcoming exams and sort to find the nearest one
+        const now = new Date();
+        const upcoming = exams.filter(exam => new Date(exam.date) > now);
+        upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  useEffect(() => {
-    // Function to calculate the time left
-    const calculateTimeLeft = () => {
-      if (!upcomingExam || !upcomingExam.date) {
-        return {}; // Return empty if no exam is set
-      }
+        if (upcoming.length > 0) {
+            setNearestExam(upcoming[0]);
+        } else {
+            setNearestExam(null);
+        }
+    }, [exams]); // Re-run when exams data changes
 
-      const difference = +new Date(upcomingExam.date) - +new Date();
-      let calculatedTimeLeft = {};
+    // Effect to update the countdown time every second
+    useEffect(() => {
+        if (!nearestExam) {
+            return;
+        }
 
-      if (difference > 0) {
-        calculatedTimeLeft = {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
-        };
-      } else {
-        // If difference is 0 or negative, exam has passed or is ongoing
-        calculatedTimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0, passed: true };
-      }
-      return calculatedTimeLeft;
-    };
+        const timer = setInterval(() => {
+            const newTimeLeft = calculateTimeLeft(nearestExam.date);
+            // If all time components are zero or negative, clear interval and set to zero
+            if (Object.values(newTimeLeft).every(val => val <= 0)) {
+                clearInterval(timer);
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                setNearestExam(null); // Clear the nearest exam as it has passed
+            } else {
+                setTimeLeft(newTimeLeft);
+            }
+        }, 1000);
 
-    // Set initial time and then update every second
-    setTimeLeft(calculateTimeLeft());
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
+        // Cleanup function to clear the interval when component unmounts or exam changes
+        return () => clearInterval(timer);
+    }, [nearestExam]); // Re-run when the nearest exam changes
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(timer);
-  }, [upcomingExam]); // Recalculate if upcomingExam changes
-
-  const countdownComponents = [];
-  // Ensure that timeLeft object contains all expected properties before iterating
-  const timeUnits = ['days', 'hours', 'minutes', 'seconds'];
-
-  // Only render segments if timeLeft is valid and not marked as 'passed'
-  if (Object.keys(timeLeft).length > 0 && !timeLeft.passed) {
-    for (const unit of timeUnits) {
-      countdownComponents.push(
-        <div key={unit} className="countdown-segment">
-          <span className="countdown-value">
-            {timeLeft[unit] < 10 && timeLeft[unit] >= 0 ? `0${timeLeft[unit]}` : timeLeft[unit]}
-          </span>
-          <span className="countdown-label">{unit.toUpperCase()}</span>
-        </div>
-      );
-    }
-  }
-
-  return (
-    <div className="page-container countdown-page">
-      <h2 className="page-title">Exam Countdown</h2>
-
-      <div className="countdown-widget dashboard-card"> {/* Reusing dashboard-card for consistent styling */}
-        <h3 className="widget-title">Upcoming Exam</h3>
-        
-        {upcomingExam && !timeLeft.passed && Object.keys(timeLeft).length > 0 ? (
-          <>
-            <p className="exam-details">
-              {upcomingExam.name} on {new Date(upcomingExam.date).toLocaleDateString()} at {new Date(upcomingExam.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </p>
-            <div className="countdown-content">
-              {countdownComponents}
+    return (
+        <div className="dashboard-card countdown-widget grid-item">
+            <h3 className="widget-title">Next Exam</h3>
+            {nearestExam ? (
+                <>
+                    <div className="countdown-content">
+                        <div className="countdown-segment">
+                            <span className="countdown-value">{timeLeft.days}</span>
+                            <span className="countdown-label">Days</span>
+                        </div>
+                        <div className="countdown-segment">
+                            <span className="countdown-value">{timeLeft.hours}</span>
+                            <span className="countdown-label">Hours</span>
+                        </div>
+                        <div className="countdown-segment">
+                            <span className="countdown-value">{timeLeft.minutes}</span>
+                            <span className="countdown-label">Minutes</span>
+                        </div>
+                        <div className="countdown-segment">
+                            <span className="countdown-value">{timeLeft.seconds}</span>
+                            <span className="countdown-label">Seconds</span>
+                        </div>
+                    </div>
+                    <p className="exam-details">
+                        {nearestExam.name} on {new Date(nearestExam.date).toLocaleDateString()}
+                    </p>
+                </>
+            ) : (
+                <p className="no-upcoming-exams">No upcoming exams scheduled.</p>
+            )}
+            <div className="countdown-actions">
+                <button onClick={onEditExams} className="dashboard-action-btn">
+                    <Settings size={20} strokeWidth={2} /> {/* Settings icon */}
+                    Edit Exams
+                </button>
+                <button onClick={onSeeAllExams} className="dashboard-action-btn">
+                    <Eye size={20} strokeWidth={2} /> {/* Eye icon */}
+                    See All
+                </button>
             </div>
-          </>
-        ) : (
-          <p className="no-upcoming-exams">
-            {upcomingExam && timeLeft.passed ? `The exam "${upcomingExam.name}" has already passed.` : 'No upcoming exams scheduled.'}
-          </p>
-        )}
-        
-        {/* Action Buttons */}
-        <div className="countdown-actions">
-          <Link to="/edit-exams" className="dashboard-action-btn">
-            <PencilLine size={16} /> {/* Lucide Icon for Edit */}
-            Edit Exams
-          </Link>
-          <Link to="/all-exams" className="dashboard-action-btn">
-            <Eye size={16} /> {/* Lucide Icon for See All */}
-            See All Exams
-          </Link>
         </div>
-      </div>
-    </div>
-  );
-}
+    );
+};
 
 export default Countdown;
