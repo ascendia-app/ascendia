@@ -2110,19 +2110,21 @@ html.dark, body.dark, .app.dark {
     }
 
     .countdown-widget .countdown-content {
-        gap: 0.2rem; /* Slightly more gap than last attempt for readability */
+        gap: 0.2rem; /* Small gap between segments */
+        /* flex-wrap: nowrap !important; already defined globally and strong */
     }
 
     .countdown-widget .countdown-segment {
-        padding: 0.1rem 0.05rem; /* Slightly more padding than last attempt */
-        min-width: 0; /* Explicitly allow shrinking */
-        /* Removed flex-shrink: 1; to avoid over-shrinking */
+        /* Adjusted padding and min-width to ensure readability while staying horizontal */
+        padding: 0.4rem 0.1rem; /* Slightly more padding for readability */
+        min-width: calc((100% - 3 * 0.2rem) / 4); /* Ensure segments are equally sized and fill space */
+        max-width: calc((100% - 3 * 0.2rem) / 4); /* Match min-width for consistency */
     }
     .countdown-widget .countdown-value {
-        font-size: 0.9rem; /* Slightly larger font than last attempt for readability */
+        font-size: 1.1rem; /* Increased font size for readability */
     }
     .countdown-widget .countdown-label {
-        font-size: 0.4rem; /* Slightly larger font than last attempt for readability */
+        font-size: 0.5rem; /* Increased font size for readability */
     }
 
     .countdown-actions {
