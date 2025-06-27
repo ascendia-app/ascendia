@@ -136,7 +136,7 @@ const ExamEditorModal = ({ isOpen, onClose, onSave, initialExams }) => {
               </button>
             </div>
           ))}
-          <button onClick={handleAddExam} className="add-exam-btn">
+          <button onClick={() => handleAddExam()} className="add-exam-btn">
             <PlusCircle size={20} /> Add Exam
           </button>
         </div>
@@ -357,26 +357,26 @@ function Dashboard() {
 
     const tableHeight = headerHeight + exams.length * rowHeight;
     canvas.width = totalColWidth;
-    canvas.height = tableHeight + padding * 2; // Add some vertical padding
+    canvas.height = tableHeight + padding; // Removed top padding, keeping only bottom padding
 
     ctx.fillStyle = '#f9f9f9'; // Background color for the image
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill entire canvas from top-left
 
-    let currentY = padding; // Start Y with padding
+    let currentY = 0; // Start Y at 0, no initial top padding
 
     // Draw Header
     ctx.fillStyle = '#ff4d88'; // Header background color (Pink)
-    ctx.fillRect(0, currentY, canvas.width, headerHeight); // Use full canvas width for header background
+    ctx.fillRect(0, currentY, canvas.width, headerHeight); // Header rectangle starts at Y=0
 
     ctx.font = `${headerFontSize}px 'Poppins', sans-serif`;
     ctx.fillStyle = 'white'; // Header text color
     ctx.textAlign = 'left';
-    let currentX = 0; // Start at 0 for drawing within the canvas's left edge
+    let currentX = 0;
     headers.forEach((header, i) => {
-        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3);
+        ctx.fillText(header, currentX + padding, currentY + headerHeight / 2 + headerFontSize / 3); // Text positioned relative to Y=0
         currentX += colWidths[i];
     });
-    currentY += headerHeight;
+    currentY += headerHeight; // currentY is now `headerHeight`
 
     // Draw Rows
     ctx.font = `${fontSize}px 'Inter', sans-serif`;
