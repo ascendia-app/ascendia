@@ -188,7 +188,7 @@ function App() {
                       Log Out
                     </button>
                   </div>
-                </div>
+                      )}</div>;
                 {/* NEW: Bell icon for notifications, visible when logged in */}
                 <Link to="/notifications" className="bell-icon-link" aria-label="Notifications">
                     <Bell size={24} className="nav-bell-icon" />
