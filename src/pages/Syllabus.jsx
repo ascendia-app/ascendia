@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import PropTypes from 'prop-types'; // <-- ADD THIS LINE
 import { collection, query, onSnapshot, addDoc, doc, updateDoc, deleteDoc, setDoc, getDocs } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import { PlusCircle, Trash2, XCircle, ChevronDown, CheckSquare, Square, NotepadText } from 'lucide-react';
+import { PlusCircle, Trash2, XCircle, ChevronDown, CheckSquare, Square, NotepadText, FileText, Save, Loader2 } from 'lucide-react'; // Added icons for NotesModal
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import '../PageStyles.css';
 import '../ModalStyles.css'; // Ensure modal styles are imported for custom modals
@@ -53,7 +54,7 @@ const STATUS_COLORS = {
     'Mastered': '#4CAF50',    // Green
 };
 
-// Notes Modal Component
+// Notes Modal Component (moved back into Syllabus.jsx as per common usage in these scenarios)
 // IMPORTANT: This component assumes topicId refers to the document ID of the topic,
 // and syllabusId refers to the document ID of the subject (e.g., '5054' for Physics).
 const NotesModal = ({ isOpen, onClose, topicId, initialNotes, syllabusId }) => {
@@ -162,8 +163,7 @@ NotesModal.propTypes = {
     syllabusId: PropTypes.string.isRequired, // syllabusId is now required for the Firestore path
 };
 
-// Custom Confirmation Modal Component
-// Re-included directly as it might not be in a separate file yet
+// Custom Confirmation Modal Component (Re-included directly for simplicity based on common patterns)
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, itemName }) => {
     if (!isOpen) return null;
 
@@ -280,7 +280,7 @@ function Syllabus() {
             console.log("Syllabus.jsx: Unsubscribing from subjects listener.");
             unsubscribe();
         }
-    }, [userId, db, appId, loading, isFirebaseInitialized, selectedSubjectId]); // Added selectedSubjectId to dependencies
+    }, [userId, db, appId, loading, isFirebaseInitialized, selectedSubjectId]);
 
 
     const displayedUserSubjects = useMemo(() => subjects.sort((a, b) => a.name.localeCompare(b.name)), [subjects]);
