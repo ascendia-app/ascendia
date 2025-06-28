@@ -1,0 +1,415 @@
+/* src/PageStyles.css - General styles for content pages */
+
+.page-container {
+  flex-grow: 1; /* Allow content to take full height */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  padding: 2rem;
+  max-width: 1200px; /* Max width for content */
+  width: 100%;
+  margin: 0 auto; /* Center the container itself */
+  min-height: calc(100vh - 80px); /* Adjust based on header height */
+  padding-top: calc(80px + 2rem); /* Padding to account for fixed header */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Specific page layouts */
+.dashboard-page, .syllabus-page, .form-page, .hero-page,
+.papers-page, .planner-page, .tracker-page, .downloads-page, .profile-page {
+    /* Base styles for all content pages */
+    align-items: flex-start; /* Align content to start for structured pages */
+}
+
+.page-title {
+  font-size: 2.8rem;
+  color: var(--color-primary); /* Ascendia Pink */
+  margin-bottom: 0.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.page-description {
+  font-size: 1.1rem;
+  color: var(--color-text-dark);
+  margin-bottom: 2rem;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 700px;
+}
+.dark .page-description {
+  color: var(--color-dark-text-dark);
+}
+
+/* General card style for content blocks */
+.dashboard-card {
+  background-color: var(--color-card-background-light);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-shadow-light);
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%; /* Default to full width within container */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--color-border-light);
+}
+
+.dark .dashboard-card {
+  background-color: var(--color-dark-card-background);
+  box-shadow: 0 4px 12px var(--color-dark-shadow);
+  border: 1px solid var(--color-dark-border);
+}
+
+
+/* Hero Section Styles (for GettingStarted page) */
+.hero-page .hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Pink to Blue gradient */
+    color: white;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 20px var(--color-shadow-light);
+    width: 100%;
+}
+
+.hero-page .hero .page-title {
+    color: white;
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-page .hero .page-description {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-page .hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.hero-page .hero-actions .cta {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-page .hero-actions .cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hero-page .hero-actions .cta.primary-gradient {
+    background: linear-gradient(45deg, #fff, #eee); /* Lighter background for CTA */
+    color: var(--color-primary); /* Primary pink text */
+    border: none;
+}
+.hero-page .hero-actions .cta.primary-gradient:hover {
+    color: var(--color-secondary); /* Secondary blue on hover */
+}
+
+.hero-page .hero-actions .cta.secondary-btn {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    color: white;
+}
+
+.hero-page .hero-actions .cta.secondary-btn:hover {
+    background-color: white;
+    color: var(--color-primary); /* Primary pink on hover */
+}
+
+
+/* Features Section Styles */
+.features-section {
+    width: 100%;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.features-section .section-heading {
+    font-size: 2rem;
+    color: var(--color-primary); /* Primary pink */
+    margin-bottom: 30px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    text-align: left;
+}
+
+.feature-card-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+    text-align: center;
+}
+
+.feature-card h4 {
+    font-size: 1.4rem;
+    color: var(--color-text-dark);
+    margin-bottom: 10px;
+    text-align: center;
+}
+.dark .feature-card h4 {
+    color: var(--color-dark-text-dark);
+}
+
+.feature-card p {
+    font-size: 0.95rem;
+    color: #666;
+    text-align: center;
+}
+.dark .feature-card p {
+    color: #bbb;
+}
+
+
+/* Form Styling */
+.form-page {
+    justify-content: flex-start; /* Align forms to top */
+}
+
+.auth-form {
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  margin: 20px auto;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+.dark .form-group label {
+  color: var(--color-dark-text-dark);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-background-light);
+  color: var(--color-text-dark);
+}
+.dark .form-group input {
+  background-color: var(--color-dark-background);
+  border-color: var(--color-dark-border);
+  color: var(--color-dark-text-dark);
+}
+
+.form-message {
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9em;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.error-message {
+  color: #a94442; /* Red for error */
+  background-color: #f2dede; /* Light red background */
+  border: 1px solid #ebccd1;
+}
+
+.success-message {
+  color: #3c763d; /* Green for success */
+  background-color: #dff0d8; /* Light green background */
+  border: 1px solid #d6e9c6;
+}
+
+.dark .error-message {
+  background-color: #5a2c2c;
+  color: #f2dede;
+  border-color: #7b4b4b;
+}
+
+.dark .success-message {
+  background-color: #2e5a2e;
+  color: #dff0d8;
+  border-color: #4b7b4b;
+}
+
+
+.form-page button[type="submit"] {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1.2em;
+  margin-top: 1rem;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95em;
+  color: var(--color-text-dark);
+}
+.dark .form-footer {
+  color: var(--color-dark-text-dark);
+}
+
+.form-footer .inline-link {
+  color: var(--color-primary); /* Primary pink */
+  font-weight: 600;
+  text-decoration: underline;
+}
+.form-footer .inline-link:hover {
+  color: var(--color-secondary); /* Secondary blue on hover */
+}
+
+/* General Layout for Dashboard and Syllabus (two columns often) */
+.dashboard-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .dashboard-grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    .grid-span-2 {
+        grid-column: span 2;
+    }
+    .grid-span-full {
+        grid-column: 1 / -1; /* Spans all columns */
+    }
+}
+
+/* Specific to Syllabus page */
+.syllabus-page .syllabus-grid-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column */
+    gap: 25px;
+    width: 100%;
+}
+
+@media (min-width: 900px) {
+    .syllabus-page .syllabus-grid-container {
+        grid-template-columns: 300px 1fr; /* Two columns: fixed sidebar + main content */
+        align-items: flex-start;
+    }
+}
+
+.syllabus-subjects-panel, .syllabus-content-panel {
+    min-height: 400px; /* Ensure panels have some height */
+    padding: 20px;
+    border-radius: 12px;
+    background-color: var(--color-card-background-light);
+    box-shadow: 0 4px 12px var(--color-shadow-light);
+    display: flex;
+    flex-direction: column;
+}
+
+.dark .syllabus-subjects-panel, .dark .syllabus-content-panel {
+    background-color: var(--color-dark-card-background);
+    box-shadow: 0 4px 12px var(--color-dark-shadow);
+}
+
+
+.panel-heading {
+    font-size: 1.5rem;
+    color: var(--color-primary); /* Primary pink */
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.dark .panel-heading {
+    border-bottom: 1px solid var(--color-dark-border);
+}
+
+
+/* No items/message styles */
+.no-items-message, .no-progress-data, .no-subject-selected-message, .no-notifications-message, .no-exams-message, .no-upcoming-exams, .no-activity {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.dark .no-items-message, .dark .no-progress-data, .dark .no-subject-selected-message, .dark .no-notifications-message, .dark .no-exams-message, .dark .no-upcoming-exams, .dark .no-activity {
+    color: #aaa;
+}
+
+.cta {
+    background-color: var(--color-primary); /* Primary pink */
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+}
+
+.cta:hover {
+    background-color: var(--color-secondary); /* Secondary blue on hover */
+    transform: translateY(-2px);
+}
+.dark .cta {
+    background-color: var(--color-dark-primary);
+}
+.dark .cta:hover {
+    background-color: var(--color-dark-secondary);
+}
+
+.section-heading {
+  font-size: 1.8rem;
+  color: var(--color-primary); /* Primary pink */
+  margin-bottom: 1.5rem;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: 0.5rem;
+}
+.dark .section-heading {
+    border-bottom: 1px solid var(--color-dark-border);
+}
+
+
+/* Disabled input styling */
+input.disabled-input {
+    background-color: #e9ecef; /* Light gray background */
+    color: #6c757d; /* Darker gray text */
+    cursor: not-allowed;
+    border: 1px dashed #ced4da; /* Dashed border to indicate non-interactivity */
+    opacity: 0.8; /* Slightly faded look */
+}
+
+.dark input.disabled-input {
+    background-color: #343a40; /* Darker background in dark mode */
+    color: #adb5bd; /* Lighter gray text in dark mode */
+    border: 1px dashed #495057;
+}
+

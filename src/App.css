@@ -1,0 +1,360 @@
+/* src/App.css - Styles for the main App component, header, and overall layout */
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-background-light);
+  color: var(--color-text-dark);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark .app {
+  background-color: var(--color-dark-background);
+  color: var(--color-dark-text-dark);
+}
+
+/* Header styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--color-card-background-light);
+  box-shadow: 0 2px 4px var(--color-shadow-light);
+  width: 100%;
+  z-index: 1000;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 1rem;
+}
+
+.dark .header {
+  background-color: var(--color-dark-card-background);
+  box-shadow: 0 2px 4px var(--color-dark-shadow);
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primary); /* Ascendia Pink */
+  text-decoration: none;
+  white-space: nowrap; /* Prevent logo from wrapping */
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem; /* Spacing between nav links */
+}
+
+.nav-links a {
+  font-size: 1.1rem;
+  color: var(--color-text-dark);
+  transition: color 0.3s ease;
+}
+
+.dark .nav-links a {
+  color: var(--color-dark-text-dark);
+}
+
+.nav-links a:hover {
+  color: var(--color-primary); /* Hover color is primary pink */
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative; /* For dropdowns */
+}
+
+/* User Profile Widget in Header */
+.user-profile-widget {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 9999px; /* Fully rounded */
+    background-color: var(--color-background-light);
+    padding: 6px 12px;
+    box-shadow: 0 2px 5px var(--color-shadow-light);
+    transition: all 0.2s ease;
+    min-width: 150px;
+    justify-content: space-between;
+}
+
+.dark .user-profile-widget {
+    background-color: var(--color-dark-background);
+    box-shadow: 0 2px 5px var(--color-dark-shadow);
+}
+
+.user-profile-widget:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--color-shadow-light);
+}
+.dark .user-profile-widget:hover {
+    box-shadow: 0 4px 8px var(--color-dark-shadow);
+}
+
+.user-info-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1; /* Allow info to take space */
+}
+
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-primary); /* Primary pink avatar background */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.welcome-message {
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long names */
+    max-width: 100px; /* Limit width */
+}
+
+.dark .welcome-message {
+    color: var(--color-dark-text-dark);
+}
+
+.dropdown-arrow {
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+    color: var(--color-text-dark);
+}
+
+.dark .dropdown-arrow {
+    color: var(--color-dark-text-dark);
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu Styles (used by UserProfileWidget and NotificationsDropdown) */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px); /* Position below the widget */
+    right: 0;
+    background-color: var(--color-card-background-light);
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--color-shadow-light);
+    min-width: 180px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* For rounded corners */
+}
+
+.dark .dropdown-menu {
+    background-color: var(--color-dark-card-background);
+    border: 1px solid var(--color-dark-border);
+    box-shadow: 0 4px 12px var(--color-dark-shadow);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: var(--color-text-dark);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    width: 100%; /* Ensure full width for buttons as well */
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dark .dropdown-item {
+    color: var(--color-dark-text-dark);
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-primary); /* Primary pink background on hover */
+    color: white;
+}
+
+.dark .dropdown-item:hover {
+    background-color: var(--color-dark-primary);
+    color: white;
+}
+
+.dropdown-item .icon {
+    margin-right: 10px;
+    display: flex;
+    align-items: center; /* Center icon vertically */
+}
+
+.dropdown-item:hover .icon svg {
+    color: white; /* Change icon color to white on hover */
+}
+
+.logout-btn {
+    border-top: 1px solid var(--color-border-light);
+    color: var(--color-primary);
+}
+
+.dark .logout-btn {
+    border-top: 1px solid var(--color-dark-border);
+    color: var(--color-dark-primary);
+}
+
+.logout-btn:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.dark .logout-btn:hover {
+    background-color: var(--color-dark-primary);
+    color: white;
+}
+
+/* Bell Icon */
+.bell-icon-link {
+    cursor: pointer;
+    color: var(--color-text-dark);
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .bell-icon-link {
+    color: var(--color-dark-text-dark);
+}
+
+.bell-icon-link:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--color-primary); /* Primary pink on hover */
+}
+
+.dark .bell-icon-link:hover {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--color-dark-primary);
+}
+
+.nav-bell-icon {
+    stroke-width: 2.5px; /* Make bell icon a bit bolder */
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--color-text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark .theme-toggle {
+    color: var(--color-dark-text-dark);
+}
+
+.theme-toggle:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.dark .theme-toggle:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+
+/* Main content area */
+.main-content-area {
+  flex-grow: 1; /* Allows the main content to take up available space */
+  display: flex; /* Use flex to control content within */
+  justify-content: center; /* Center content horizontally */
+  align-items: flex-start; /* Align content to the top */
+  padding: 2rem;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .nav-links {
+    display: none; /* Hide nav links on smaller screens, can add a hamburger menu later */
+  }
+  .header {
+    flex-direction: row; /* Keep elements in a row */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+  }
+  .nav-left {
+    gap: 0.5rem;
+  }
+  .logo {
+    font-size: 1.5rem;
+  }
+  .nav-right {
+    gap: 0.5rem;
+  }
+  .user-profile-widget {
+      min-width: unset; /* Remove min-width */
+      padding: 4px 8px;
+      justify-content: flex-start;
+      gap: 4px;
+  }
+  .welcome-message {
+      display: none; /* Hide text, show only avatar on smaller screens */
+  }
+  .dropdown-arrow {
+      margin-left: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.5rem;
+  }
+  .nav-left, .nav-right {
+    gap: 0.25rem;
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+  }
+  .bell-icon-link {
+    padding: 6px;
+  }
+}

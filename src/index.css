@@ -1,0 +1,202 @@
+/* src/index.css - Global styles for the entire application */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Ascendia Primary Colors (Light Mode) */
+  --color-primary: #ff4d88; /* Bright Pink */
+  --color-secondary: #007bff; /* Vibrant Blue */
+  --color-accent: #28a745;   /* Green (for success/highlight) */
+  
+  /* Text & Background Colors (Light Mode) */
+  --color-text-dark: #333;
+  --color-text-light: #f8f9fa; /* Used for text on dark backgrounds */
+  --color-background-light: #f8f9fa; /* Very light gray background */
+  --color-card-background-light: #ffffff; /* White cards/elements */
+  --color-border-light: #e0e0e0; /* Light gray borders */
+  --color-shadow-light: rgba(0, 0, 0, 0.1); /* Subtle shadow */
+
+  /* Ascendia Dark Mode Colors (applied via .dark class) */
+  --color-dark-primary: #ff80ab; /* Lighter, softer Pink for dark mode */
+  --color-dark-secondary: #66b3ff; /* Lighter Blue for dark mode */
+  --color-dark-accent: #66cc88;   /* Lighter Green for dark mode */
+  
+  /* Text & Background Colors (Dark Mode) */
+  --color-dark-text-dark: #e0e0e0; /* Light text on dark backgrounds */
+  --color-dark-text-light: #333; /* Used for text on light backgrounds in dark mode (less common) */
+  --color-dark-background: #1a1a1a; /* Dark background */
+  --color-dark-card-background: #2a2a2a; /* Slightly lighter dark for cards */
+  --color-dark-border: #444; /* Darker borders */
+  --color-dark-shadow: rgba(0, 0, 0, 0.4); /* More pronounced dark shadow */
+
+  /* Font settings */
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Color scheme preference for browser */
+  color-scheme: light dark;
+  /* Default colors */
+  color: var(--color-text-dark);
+  background-color: var(--color-background-light);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode specific overrides */
+.dark {
+  color: var(--color-dark-text-dark);
+  background-color: var(--color-dark-background);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Ensures app children stack vertically */
+  overflow-x: hidden; /* Prevents horizontal scrolling issues */
+}
+
+/* Basic resets and base styles for all elements */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Link styling */
+a {
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: var(--color-secondary);
+}
+
+/* Button styling */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--color-primary); /* Uses primary Ascendia pink */
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.25s, background-color 0.25s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 6px var(--color-shadow-light);
+}
+.dark button {
+  background-color: var(--color-dark-primary); /* Dark mode primary pink */
+  box-shadow: 0 4px 6px var(--color-dark-shadow);
+}
+
+button:hover {
+  border-color: var(--color-secondary); /* Border changes to blue on hover */
+  background-color: var(--color-secondary); /* Background changes to blue on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+.dark button:hover {
+  border-color: var(--color-dark-secondary);
+  background-color: var(--color-dark-secondary);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Input, Select, Textarea styling */
+input, select, textarea {
+  padding: 10px 15px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1em;
+  background-color: var(--color-card-background-light); /* White background for input */
+  color: var(--color-text-dark);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.dark input, .dark select, .dark textarea {
+  border: 1px solid var(--color-dark-border);
+  background-color: var(--color-dark-card-background);
+  color: var(--color-dark-text-dark);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primary); /* Border changes to primary pink on focus */
+  box-shadow: 0 0 0 3px rgba(255, 77, 136, 0.2); /* Soft pink glow on focus */
+  outline: none;
+}
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  border-color: var(--color-dark-primary);
+  box-shadow: 0 0 0 3px rgba(255, 128, 171, 0.2);
+}
+
+/* Primary Gradient Button Utility Class */
+.primary-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); /* Pink to Blue gradient */
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.primary-gradient:hover {
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-primary)); /* Reverse gradient on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dark .primary-gradient {
+    background: linear-gradient(135deg, var(--color-dark-primary), var(--color-dark-secondary));
+}
+.dark .primary-gradient:hover {
+    background: linear-gradient(135deg, var(--color-dark-secondary), var(--color-dark-primary));
+}
+
+/* Secondary Button Utility Class */
+.secondary-btn {
+  background-color: transparent;
+  color: var(--color-primary); /* Primary pink text */
+  border: 1px solid var(--color-primary); /* Primary pink border */
+  box-shadow: none;
+}
+
+.secondary-btn:hover {
+  background-color: var(--color-primary); /* Primary pink background on hover */
+  color: white;
+}
+
+.dark .secondary-btn {
+  color: var(--color-dark-primary);
+  border: 1px solid var(--color-dark-primary);
+}
+
+.dark .secondary-btn:hover {
+  background-color: var(--color-dark-primary);
+  color: white;
+}
+
+/* Loading animation for content */
+.loading-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
