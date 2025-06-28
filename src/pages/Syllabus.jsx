@@ -53,55 +53,122 @@ const STATUS_COLORS = {
     'Mastered': '#4CAF50',    // Green
 };
 
-// Notes Modal Component (kept as is, but ensure its CSS is robust)
-const NotesModal = ({ isOpen, onClose, initialNotes, onSaveNotes }) => {
-    const [notes, setNotes] = useState(initialNotes || '');
+// Notes Modal Component
+// IMPORTANT: This component assumes topicId refers to the document ID of the topic,
+// and syllabusId refers to the document ID of the subject (e.g., '5054' for Physics).
+const NotesModal = ({ isOpen, onClose, topicId, initialNotes, syllabusId }) => {
+    const { db, appId, userId, currentUser } = useAuth(); // Get db, appId, userId from useAuth
+    const [notesContent, setNotesContent] = useState(initialNotes || '');
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState(null);
+    const [saveSuccess, setSaveSuccess] = useState(false);
 
+    // Update notes content when initialNotes prop changes (e.g., when opening for a new topic)
     useEffect(() => {
-        // Reset notes when modal opens with new initialNotes
-        setNotes(initialNotes || '');
-    }, [initialNotes, isOpen]); // Depend on isOpen too to ensure reset on open
+        setNotesContent(initialNotes || '');
+        setSaveError(null);
+        setSaveSuccess(false);
+    }, [initialNotes, isOpen]); // Reset state when modal opens or initialNotes changes
 
-    if (!isOpen) return null;
+    // If the modal is not open, return null to render nothing
+    if (!isOpen) {
+        return null;
+    }
 
-    const handleSave = () => {
-        onSaveNotes(notes);
-        onClose();
+    const handleSaveNotes = async () => {
+        if (!db || !appId || !userId || !currentUser || !syllabusId || !topicId) {
+            setSaveError("Firebase not initialized or required IDs are missing.");
+            console.error("NotesModal: Cannot save notes. Missing:", { db: !!db, appId: !!appId, userId: !!userId, currentUser: !!currentUser, syllabusId, topicId });
+            return;
+        }
+
+        setIsSaving(true);
+        setSaveError(null);
+        setSaveSuccess(false);
+
+        try {
+            // Construct the Firestore document reference for the specific topic within the user's subject
+            const topicDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects/${syllabusId}/syllabusItems`, topicId);
+
+            // Update the 'notes' field for this topic
+            await updateDoc(topicDocRef, {
+                notes: notesContent,
+            });
+
+            setSaveSuccess(true);
+            console.log(`Notes for topic ${topicId} saved successfully for subject ${syllabusId}.`);
+            setTimeout(() => { // Briefly show success, then close
+                setSaveSuccess(false);
+                onClose(); // Close the modal after successful save
+            }, 1000);
+        } catch (error) {
+            console.error("NotesModal: Error saving notes:", error);
+            setSaveError("Failed to save notes. Please try again.");
+            setSaveSuccess(false);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay active">
             <div className="modal-content notes-modal-content">
                 <div className="modal-header">
-                    <h3>Topic Notes</h3>
+                    <h3><FileText size={24} /> Topic Notes</h3> {/* Removed topicId from header for cleaner display */}
                     <button onClick={onClose} className="modal-close-btn">
                         <XCircle size={24} />
                     </button>
                 </div>
                 <div className="modal-body">
                     <textarea
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Add your notes here..."
-                        rows="8"
                         className="notes-textarea"
+                        value={notesContent}
+                        onChange={(e) => setNotesContent(e.target.value)}
+                        placeholder="Type your notes here..."
                     />
+                    {saveError && <p className="form-message error-message">{saveError}</p>}
+                    {saveSuccess && <p className="form-message success-message">Notes saved successfully!</p>}
                 </div>
                 <div className="modal-footer">
-                    <button onClick={onClose} className="modal-cancel-btn">Cancel</button>
-                    <button onClick={handleSave} className="modal-save-btn">Save Notes</button>
+                    <button onClick={onClose} className="modal-cancel-btn secondary-btn" disabled={isSaving}>
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSaveNotes}
+                        className="modal-action-btn primary-gradient"
+                        disabled={isSaving}
+                    >
+                        {isSaving ? (
+                            <>
+                                <Loader2 size={20} className="loading-spinner" /> Saving...
+                            </>
+                        ) : (
+                            <>
+                                <Save size={20} /> Save Notes
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>
     );
 };
 
-// Custom Confirmation Modal Component (kept as is)
+NotesModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    topicId: PropTypes.string.isRequired,
+    initialNotes: PropTypes.string, // Can be empty initially
+    syllabusId: PropTypes.string.isRequired, // syllabusId is now required for the Firestore path
+};
+
+// Custom Confirmation Modal Component
+// Re-included directly as it might not be in a separate file yet
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, itemName }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay active">
             <div className="modal-content confirmation-modal-content">
                 <div className="modal-header">
                     <h3>Confirm Deletion</h3>
@@ -113,58 +180,59 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, itemName }) =>
                     <p>{message} <strong>{itemName}</strong>?</p>
                 </div>
                 <div className="modal-footer">
-                    <button onClick={onClose} className="modal-cancel-btn">Cancel</button>
-                    <button onClick={onConfirm} className="modal-delete-btn">Yes, Delete</button>
+                    <button onClick={onClose} className="modal-cancel-btn secondary-btn">Cancel</button>
+                    <button onClick={onConfirm} className="modal-action-btn modal-delete-btn primary-gradient">Yes, Delete</button>
                 </div>
             </div>
         </div>
     );
 };
+ConfirmationModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    message: PropTypes.string.isRequired,
+    itemName: PropTypes.string.isRequired,
+};
 
 
 function Syllabus() {
-    // Destructure currentUser, loading, db, appId, and userId from AuthContext
-    const { currentUser, loading, db, appId, userId, isFirebaseInitialized } = useAuth(); // <-- Added isFirebaseInitialized
+    const { currentUser, loading, db, appId, userId, isFirebaseInitialized } = useAuth();
 
-    const [subjects, setSubjects] = useState([]); // Subjects added by the user (from Firestore)
+    const [subjects, setSubjects] = useState([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState(null);
     const [selectedSubjectName, setSelectedSubjectName] = useState('');
     const [syllabusItems, setSyllabusItems] = useState([]);
-    const [firebaseError, setFirebaseError] = useState(null); // State for displaying Firebase errors
+    const [firebaseError, setFirebaseError] = useState(null);
 
-    // New states for level-based subject selection
-    const [selectedLevel, setSelectedLevel] = useState('O Level'); // Default to O Level
+    const [selectedLevel, setSelectedLevel] = useState('O Level');
     const [predefinedSubjectsForLevel, setPredefinedSubjectsForLevel] = useState([]);
-    const [subjectsToAdd, setSubjectsToAdd] = useState([]); // List of subject codes to be added by user
+    const [subjectsToAdd, setSubjectsToAdd] = useState([]);
 
     const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
     const [currentNotes, setCurrentNotes] = useState('');
     const [currentTopicIdForNotes, setCurrentTopicIdForNotes] = useState(null);
 
-    const [newTopicText, setNewTopicText] = useState(''); // State for adding new topic
+    const [newTopicText, setNewTopicText] = useState('');
 
-    // States for confirmation modal
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
     const [confirmItemName, setConfirmItemName] = useState('');
-    const [confirmAction, setConfirmAction] = useState(null); // Function to call on confirm
+    const [confirmAction, setConfirmAction] = useState(null);
 
 
-    // Update predefined subjects when level changes
     useEffect(() => {
         setPredefinedSubjectsForLevel(PREDEFINED_SUBJECTS[selectedLevel] || []);
-        setSubjectsToAdd([]); // Clear selected subjects to add when level changes
+        setSubjectsToAdd([]);
         console.log("Syllabus.jsx: Predefined subjects updated for level:", selectedLevel);
     }, [selectedLevel]);
 
     // Fetch Subjects for the User (from Firestore)
     useEffect(() => {
-        // Ensure Firebase is initialized AND userId, db, and appId are available before attempting Firestore connection
         if (!isFirebaseInitialized || loading || !userId || !db || !appId) {
             console.log("Syllabus.jsx: Skipping subject fetch - isFirebaseInitialized:", isFirebaseInitialized, "loading:", loading, "userId:", userId, "db:", !!db, "appId:", !!appId);
             setSubjects([]);
-            // Ensure selectedSubjectId is cleared if user logs out or Firebase isn't ready
-            if (!userId) { // Only clear if user is genuinely logged out
+            if (!userId) {
                 setSelectedSubjectId(null);
                 setSelectedSubjectName('');
                 setSyllabusItems([]);
@@ -172,20 +240,19 @@ function Syllabus() {
             return;
         }
 
-        setFirebaseError(null); // Clear previous errors before subscribing
+        setFirebaseError(null);
         console.log(`Syllabus.jsx: Subscribing to user subjects at path: artifacts/${appId}/users/${userId}/subjects`);
         const subjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects`);
         const q = query(subjectsCollectionRef);
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const fetchedSubjects = snapshot.docs.map(doc => ({
-                id: doc.id, // Firestore document ID (which is the subject code here)
+                id: doc.id,
                 ...doc.data()
             }));
             setSubjects(fetchedSubjects);
             console.log("Syllabus.jsx: Fetched subjects:", fetchedSubjects.length);
 
-            // Auto-select first subject if none selected or current selected subject was deleted
             if (fetchedSubjects.length > 0) {
                 const currentSelectedExists = fetchedSubjects.some(s => s.id === selectedSubjectId);
                 if (!selectedSubjectId || !currentSelectedExists) {
@@ -193,7 +260,6 @@ function Syllabus() {
                     setSelectedSubjectName(fetchedSubjects[0].name);
                     console.log("Syllabus.jsx: Auto-selected first subject:", fetchedSubjects[0].name);
                 } else if (currentSelectedExists) {
-                    // If the selected subject still exists, ensure its name is up-to-date
                     const currentSelection = fetchedSubjects.find(s => s.id === selectedSubjectId);
                     if (currentSelection && currentSelection.name !== selectedSubjectName) {
                         setSelectedSubjectName(currentSelection.name);
@@ -207,29 +273,28 @@ function Syllabus() {
             }
         }, (error) => {
             console.error("Syllabus.jsx: Error fetching subjects:", error);
-            setFirebaseError("Failed to load your subjects. Please try again."); // Set error state
+            setFirebaseError("Failed to load your subjects. Please try again.");
         });
 
         return () => {
             console.log("Syllabus.jsx: Unsubscribing from subjects listener.");
             unsubscribe();
         }
-    }, [userId, db, appId, loading, isFirebaseInitialized]); // Added isFirebaseInitialized to dependencies
+    }, [userId, db, appId, loading, isFirebaseInitialized, selectedSubjectId]); // Added selectedSubjectId to dependencies
 
-    // Memoize displayedUserSubjects to avoid unnecessary re-renders
+
     const displayedUserSubjects = useMemo(() => subjects.sort((a, b) => a.name.localeCompare(b.name)), [subjects]);
 
 
     // Fetch Syllabus Items for the Selected Subject
     useEffect(() => {
-        // Ensure Firebase is initialized AND userId, db, appId, and selectedSubjectId are available
         if (!isFirebaseInitialized || loading || !userId || !db || !appId || !selectedSubjectId) {
             console.log("Syllabus.jsx: Skipping syllabus item fetch - isFirebaseInitialized:", isFirebaseInitialized, "loading:", loading, "userId:", userId, "selectedSubjectId:", selectedSubjectId);
             setSyllabusItems([]);
             return;
         }
 
-        setFirebaseError(null); // Clear previous errors before subscribing
+        setFirebaseError(null);
         console.log(`Syllabus.jsx: Subscribing to topics for ${selectedSubjectName} at path: artifacts/${appId}/users/${userId}/subjects/${selectedSubjectId}/syllabusItems`);
         const syllabusItemsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects/${selectedSubjectId}/syllabusItems`);
         const q = query(syllabusItemsCollectionRef);
@@ -238,19 +303,19 @@ function Syllabus() {
             const fetchedItems = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-            })).sort((a, b) => a.text.localeCompare(b.text)); // Sort topics alphabetically
+            })).sort((a, b) => a.text.localeCompare(b.text));
             setSyllabusItems(fetchedItems);
             console.log(`Syllabus.jsx: Fetched ${fetchedItems.length} syllabus items for ${selectedSubjectName}.`);
         }, (error) => {
             console.error(`Syllabus.jsx: Error fetching syllabus items for ${selectedSubjectName}:`, error);
-            setFirebaseError("Failed to load topics for this subject. Please try again."); // Set error state
+            setFirebaseError("Failed to load topics for this subject. Please try again.");
         });
 
         return () => {
             console.log(`Syllabus.jsx: Unsubscribing from topics listener for ${selectedSubjectName}.`);
             unsubscribe();
         }
-    }, [userId, db, selectedSubjectId, selectedSubjectName, appId, loading, isFirebaseInitialized]); // Added isFirebaseInitialized to dependencies
+    }, [userId, db, selectedSubjectId, selectedSubjectName, appId, loading, isFirebaseInitialized]);
 
     // Data for the progress chart
     const getChartData = useCallback(() => {
@@ -259,7 +324,6 @@ function Syllabus() {
             return acc;
         }, { "Not Started": 0, "In Progress": 0, "Mastered": 0 });
 
-        // Filter out statuses with 0 value for cleaner chart
         return Object.keys(statusCounts).map(status => ({
             name: status,
             value: statusCounts[status],
@@ -270,7 +334,6 @@ function Syllabus() {
     const masteredTopicsCount = syllabusItems.filter(item => item.status === 'Mastered').length;
     const masteredPercentage = totalTopics > 0 ? ((masteredTopicsCount / totalTopics) * 100).toFixed(0) : 0;
 
-    // Handlers for Firestore operations
 
     const handleToggleSubjectToAdd = (subjectCode) => {
         setSubjectsToAdd(prev =>
@@ -281,13 +344,12 @@ function Syllabus() {
     };
 
     const handleAddSelectedSubjects = async () => {
-        // Explicitly check for db, appId, userId, and subjectsToAdd before proceeding
         if (!userId || !db || !appId || subjectsToAdd.length === 0) {
             console.log("Syllabus.jsx: Cannot add subjects - missing userId, db, appId, or no subjects selected.");
             setFirebaseError("Authentication or database connection error, or no subjects selected.");
             return;
         }
-        setFirebaseError(null); // Clear any previous errors
+        setFirebaseError(null);
 
         try {
             const subjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects`);
@@ -318,13 +380,12 @@ function Syllabus() {
 
 
     const handleAddTopic = async () => {
-        // Explicitly check for db, appId, userId, selectedSubjectId, and newTopicText before proceeding
         if (!userId || !db || !appId || !selectedSubjectId || !newTopicText.trim()) {
             setFirebaseError("Please select a subject and enter a topic name.");
             console.log("Syllabus.jsx: Cannot add topic - missing userId, db, appId, selectedSubjectId, or empty topic text.");
             return;
         }
-        setFirebaseError(null); // Clear any previous errors
+        setFirebaseError(null);
 
         try {
             console.log(`Syllabus.jsx: Adding topic '${newTopicText.trim()}' to subject ${selectedSubjectName}.`);
@@ -343,13 +404,12 @@ function Syllabus() {
     };
 
     const handleUpdateTopicStatus = async (itemId, newStatus) => {
-        // Explicitly check for db, appId, userId, selectedSubjectId, and itemId before proceeding
         if (!userId || !db || !appId || !selectedSubjectId || !itemId) {
             console.log("Syllabus.jsx: Cannot update topic status - missing userId, db, appId, selectedSubjectId, or itemId.");
             setFirebaseError("Authentication or database error, or invalid topic.");
             return;
         }
-        setFirebaseError(null); // Clear any previous errors
+        setFirebaseError(null);
 
         try {
             console.log(`Syllabus.jsx: Updating status of topic ${itemId} to '${newStatus}'.`);
@@ -368,13 +428,12 @@ function Syllabus() {
     };
 
     const handleSaveNotes = async (newNotes) => {
-        // Explicitly check for db, appId, userId, selectedSubjectId, and currentTopicIdForNotes before proceeding
         if (!userId || !db || !appId || !selectedSubjectId || !currentTopicIdForNotes) {
             console.log("Syllabus.jsx: Cannot save notes - missing userId, db, appId, selectedSubjectId, or currentTopicIdForNotes.");
             setFirebaseError("Authentication or database error, or invalid topic for notes.");
             return;
         }
-        setFirebaseError(null); // Clear any previous errors
+        setFirebaseError(null);
 
         try {
             console.log(`Syllabus.jsx: Saving notes for topic ${currentTopicIdForNotes}.`);
@@ -384,7 +443,6 @@ function Syllabus() {
             console.error("Syllabus.jsx: Error saving notes: ", e);
             setFirebaseError('Error saving notes. Please try again.');
         } finally {
-            // Close notes modal on save, regardless of success/failure for now
             setIsNotesModalOpen(false);
         }
     };
@@ -393,14 +451,13 @@ function Syllabus() {
         setConfirmMessage('Are you sure you want to delete this topic:');
         setConfirmItemName(topicName);
         setConfirmAction(() => async () => {
-            // Explicitly check for db, appId, userId, selectedSubjectId, and itemId before proceeding
             if (!userId || !db || !appId || !selectedSubjectId || !itemId) {
                 console.log("Syllabus.jsx: Cannot delete topic - missing userId, db, appId, selectedSubjectId, or itemId.");
                 setFirebaseError("Authentication or database error, or invalid topic for deletion.");
                 setIsConfirmModalOpen(false);
                 return;
             }
-            setFirebaseError(null); // Clear any previous errors
+            setFirebaseError(null);
             try {
                 console.log(`Syllabus.jsx: Deleting topic ${itemId}.`);
                 const topicDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects/${selectedSubjectId}/syllabusItems`, itemId);
@@ -410,7 +467,7 @@ function Syllabus() {
                 console.error("Syllabus.jsx: Error deleting topic: ", e);
                 setFirebaseError('Error deleting topic. Please try again.');
             } finally {
-                setIsConfirmModalOpen(false); // Close modal after action
+                setIsConfirmModalOpen(false);
             }
         });
         setIsConfirmModalOpen(true);
@@ -420,31 +477,27 @@ function Syllabus() {
         setConfirmMessage('Are you sure you want to delete this subject (and all its topics):');
         setConfirmItemName(`${subjectName} (${subjectIdToDelete})`);
         setConfirmAction(() => async () => {
-            // Explicitly check for db, appId, userId, and subjectIdToDelete before proceeding
             if (!userId || !db || !appId || !subjectIdToDelete) {
                 console.log("Syllabus.jsx: Cannot delete subject - missing userId, db, appId, or subjectIdToDelete.");
                 setFirebaseError("Authentication or database error, or invalid subject for deletion.");
                 setIsConfirmModalOpen(false);
                 return;
             }
-            setFirebaseError(null); // Clear any previous errors
+            setFirebaseError(null);
             try {
                 console.log(`Syllabus.jsx: Deleting subject ${subjectIdToDelete} and its topics.`);
-                // Delete all syllabus items (topics) within the subject's subcollection first
                 const syllabusItemsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/subjects/${subjectIdToDelete}/syllabusItems`);
                 const q = query(syllabusItemsCollectionRef);
-                const snapshot = await getDocs(q); // Get all topic documents
+                const snapshot = await getDocs(q);
                 const deletePromises = [];
                 snapshot.docs.forEach((d) => {
                     deletePromises.push(deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/subjects/${subjectIdToDelete}/syllabusItems`, d.id)));
                 });
-                await Promise.all(deletePromises); // Execute all topic deletions
+                await Promise.all(deletePromises);
 
-                // Now delete the subject document itself
                 const subjectDocRef = doc(db, `artifacts/${appId}/users/${userId}/subjects`, subjectIdToDelete);
                 await deleteDoc(subjectDocRef);
 
-                // If the deleted subject was the one currently selected, clear the selection
                 if (selectedSubjectId === subjectIdToDelete) {
                     setSelectedSubjectId(null);
                     setSelectedSubjectName('');
@@ -455,13 +508,12 @@ function Syllabus() {
                 console.error("Syllabus.jsx: Error deleting subject: ", e);
                 setFirebaseError('Error deleting subject. Please try again.');
             } finally {
-                setIsConfirmModalOpen(false); // Close modal after action
+                setIsConfirmModalOpen(false);
             }
         });
         setIsConfirmModalOpen(true);
     };
 
-    // Show a loading screen from Syllabus.jsx if Firebase is not yet initialized or authentication is still loading
     if (!isFirebaseInitialized || loading) {
         return (
             <div className="page-container syllabus-page" style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -518,7 +570,7 @@ function Syllabus() {
                         )}
                     </div>
 
-                    <hr className="divider" /> {/* Divider between user's subjects and add section */}
+                    <hr className="divider" />
 
                     <h3 className="panel-heading">Add Subjects</h3>
                     <div className="level-select-section">
@@ -559,7 +611,6 @@ function Syllabus() {
                             <p className="no-items-message">No subjects defined for this level yet.</p>
                         )}
                     </div>
-                    {/* Moved Add Selected Subjects Button outside predefined-subject-list */}
                     <button
                         onClick={handleAddSelectedSubjects}
                         className="add-selected-subjects-btn"
@@ -575,7 +626,6 @@ function Syllabus() {
                         <>
                             <div className="syllabus-header-with-chart">
                                 <h3 className="panel-heading">{selectedSubjectName} Syllabus</h3>
-                                {/* Progress Chart */}
                                 <div className="progress-chart-container dashboard-card">
                                     <h4>Overall Progress</h4>
                                     {totalTopics > 0 ? (
@@ -658,11 +708,13 @@ function Syllabus() {
                 </div>
             </div>
 
+            {/* NotesModal now correctly passed the syllabusId (which is selectedSubjectId) */}
             <NotesModal
                 isOpen={isNotesModalOpen}
                 onClose={() => setIsNotesModalOpen(false)}
+                topicId={currentTopicIdForNotes || ''} // Ensure topicId is passed
                 initialNotes={currentNotes}
-                onSaveNotes={handleSaveNotes}
+                syllabusId={selectedSubjectId || ''} // Pass the selected subject's ID as syllabusId
             />
 
             <ConfirmationModal

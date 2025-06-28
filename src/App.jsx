@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from './components/Header'; // Assuming you have this component
-import UserProfileWidget from './components/UserProfileWidget'; // Assuming you have this component
-import NotificationsDropdown from './components/NotificationsDropdown'; // Assuming you have this component
-import ThemeToggle from './components/ThemeToggle'; // Assuming you have this component
+import Header from './components/Header';
+import UserProfileWidget from './components/UserProfileWidget';
+import NotificationsDropdown from './components/NotificationsDropdown';
+import ThemeToggle from './components/ThemeToggle';
 
-import { Bell } from 'lucide-react'; // For the notification bell icon
+import { Bell } from 'lucide-react';
 
 // Import your pages
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import GettingStarted from './pages/GettingStarted';
-import Syllabus from './pages/Syllabus'; // Ensure Syllabus page is imported
-import Papers from './pages/Papers'; // Assuming you have this page
-import Planner from './pages/Planner'; // Assuming you have this page
-import Tracker from './pages/Tracker'; // Assuming you have this page
-import Downloads from './pages/Downloads'; // Assuming you have this page
-import Profile from './pages/Profile'; // Assuming you have this page
+import Syllabus from './pages/Syllabus';
+import Papers from './pages/Papers';
+import Planner from './pages/Planner';
+import Tracker from './pages/Tracker';
+import Downloads from './pages/Downloads';
+import Profile from './pages/Profile';
 
 // Import the AuthContext to get Firebase instances and user info
 import { useAuth } from './contexts/AuthContext';
 
-// Import Firestore functions needed here
-import { doc, getDoc } from 'firebase/firestore'; // Import specific functions
+// Import Firestore functions needed here (only doc and getDoc for App.jsx's user profile fetch)
+import { doc, getDoc } from 'firebase/firestore';
 
 import './App.css'; // Your main App-level CSS
 import './PageStyles.css'; // General page styles (buttons, etc.)
@@ -31,8 +31,7 @@ import './PageStyles.css'; // General page styles (buttons, etc.)
 
 function App() {
     // Get currentUser, loading, db, appId, and userId from AuthContext
-    // 't' in minified code is 'currentUser', 'e' is 'loading'
-    const { currentUser, loading, db, appId, userId, isFirebaseInitialized } = useAuth();
+    const { currentUser, loading, db, appId, userId, isFirebaseInitialized, logout } = useAuth(); // Added logout here
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         // Initialize dark mode from localStorage or default to false
@@ -40,19 +39,18 @@ function App() {
         return savedMode ? JSON.parse(savedMode) : false;
     });
 
-    const [displayedUsername, setDisplayedUsername] = useState(''); // 'n' in minified code
-    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false); // 'v' in minified code
-    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // 'h' in minified code
+    const [displayedUsername, setDisplayedUsername] = useState('');
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-    const notificationsRef = useRef(null); // 'm' in minified code
-    const profileMenuRef = useRef(null); // 'b' in minified code
+    const notificationsRef = useRef(null);
+    const profileMenuRef = useRef(null);
 
 
     // Effect to set dark mode class on document/body
-    // This corresponds to the minified useEffect with 'l' (isDarkMode) as dependency
     useEffect(() => {
         const rootHtmlElement = document.documentElement;
-        const appContainer = document.querySelector(".app");
+        const appContainer = document.querySelector(".app"); // Get the .app div
 
         if (isDarkMode) {
             rootHtmlElement.classList.add("dark");
@@ -64,23 +62,23 @@ function App() {
             if (appContainer) appContainer.classList.remove("dark");
         }
         localStorage.setItem("dark-mode", JSON.stringify(isDarkMode));
-    }, [isDarkMode]); // 'l' in minified code
+    }, [isDarkMode]);
 
     // Effect to fetch username from Firestore
-    // This corresponds to the minified useEffect that was causing the error
     useEffect(() => {
         const fetchUsername = async () => {
-            // CRITICAL: Ensure Firebase db, appId, and userId are available before proceeding
-            if (!db || !appId || !userId || !currentUser) {
-                console.log("App.jsx: Skipping username fetch. DB, AppId, UserId, or CurrentUser not ready.");
+            // CRITICAL: Ensure Firebase db, appId, userId, and currentUser are available before proceeding
+            // Also check isFirebaseInitialized here
+            if (!isFirebaseInitialized || !db || !appId || !userId || !currentUser) {
+                console.log("App.jsx: Skipping username fetch. Firebase not initialized, DB, AppId, UserId, or CurrentUser not ready.");
                 setDisplayedUsername(''); // Clear username if prerequisites are not met
                 return;
             }
 
             console.log("App.jsx: Attempting to fetch username from Firestore...");
-            setDisplayedUsername(currentUser.email ? currentUser.email.split("@")[0] : "User"); // Default to email prefix
+            // Default to email prefix while fetching or if no custom username is set
+            setDisplayedUsername(currentUser.email ? currentUser.email.split("@")[0] : "User");
             try {
-                // Use the 'db' from useAuth here
                 const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
                 const docSnap = await getDoc(userDocRef);
 
@@ -96,30 +94,27 @@ function App() {
             }
         };
 
-        // Only attempt to fetch username if not loading and currentUser is available
-        // This corresponds to `e || (console.log(...), D())` in minified code
-        if (!loading && currentUser) {
+        // Only attempt to fetch username if Firebase is initialized, not loading, and currentUser is available
+        if (isFirebaseInitialized && !loading && currentUser) {
             fetchUsername();
-        } else if (!loading && !currentUser) {
+        } else if (isFirebaseInitialized && !loading && !currentUser) {
             setDisplayedUsername(''); // Clear username if logged out
         }
-    }, [currentUser, loading, db, appId, userId]); // Dependencies: t (currentUser), e (loading), db, appId, userId
+    }, [currentUser, loading, db, appId, userId, isFirebaseInitialized]); // Dependencies: include isFirebaseInitialized
 
     // Effect for handling click outside notifications/profile dropdowns
-    // This corresponds to the minified useEffect with event listeners
     useEffect(() => {
         function handleClickOutside(event) {
-            // 'm' is notificationsRef.current, 'b' is profileMenuRef.current
             const isNotificationsClick = notificationsRef.current && notificationsRef.current.contains(event.target);
             const isProfileMenuClick = profileMenuRef.current && profileMenuRef.current.contains(event.target);
             const isBellIconClick = event.target.closest(".bell-icon-link");
             const isUserInfoTriggerClick = event.target.closest(".user-info-trigger");
 
-            // Close notification dropdown if clicked outside and not on bell icon
+            // Close notification dropdown if clicked outside and not on bell icon/dropdown
             if (!isNotificationsClick && !isBellIconClick) {
                 setIsNotificationsOpen(false);
             }
-            // Close profile menu if clicked outside and not on user info trigger
+            // Close profile menu if clicked outside and not on user info trigger/dropdown
             if (!isProfileMenuClick && !isUserInfoTriggerClick) {
                 setIsProfileMenuOpen(false);
             }
@@ -129,7 +124,7 @@ function App() {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []); // No dependencies needed for this global event listener
+    }, []);
 
 
     // Ensure the app waits until Firebase is fully initialized and auth state is determined
@@ -154,6 +149,7 @@ function App() {
                     profileMenuRef={profileMenuRef}
                     isNotificationsOpen={isNotificationsOpen}
                     isProfileMenuOpen={isProfileMenuOpen}
+                    logout={logout} // Pass logout function to Header
                 />
                 {isNotificationsOpen && <NotificationsDropdown onClose={() => setIsNotificationsOpen(false)} userId={userId} />}
                 {isProfileMenuOpen && (

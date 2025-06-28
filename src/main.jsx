@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx'; // Make sure this path is correct based on your App.jsx location
 import { AuthProvider } from './contexts/AuthContext.jsx'; // Correct path to your AuthProvider
 
-import './index.css'; // Your global styles
-// Ensure PageStyles.css and ModalStyles.css are correctly imported within components/pages/modals
-// and their relevant App.jsx or component files.
+import './index.css'; // Your global styles. Make sure this exists.
+// Other global CSS files like PageStyles.css and ModalStyles.css should be imported
+// within App.jsx or the specific components/pages that use them.
 
 // Get the root DOM element where your React app will be mounted
 const rootElement = document.getElementById('root');

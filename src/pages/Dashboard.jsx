@@ -8,7 +8,7 @@ import {
 import * as firestore from 'firebase/firestore';
 const { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } = firestore;
 
-// NEW: Import useAuth only (db, appId, userId come from useAuth now)
+// NEW: Import useAuth only (db, appId, userId, isFirebaseInitialized come from useAuth now)
 import { useAuth } from '../contexts/AuthContext';
 
 // Import your separated modal components
@@ -48,7 +48,7 @@ const formatDateWithOrdinal = (dateString) => {
 
 function Dashboard() {
   // Destructure db, appId, userId, and isFirebaseInitialized from useAuth
-  const { currentUser, loading, db, appId, userId, isFirebaseInitialized } = useAuth(); // <-- UPDATED DESTRUCTURING
+  const { currentUser, loading, db, appId, userId, isFirebaseInitialized } = useAuth();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exams, setExams] = useState([]); // Exams fetched from Firestore
@@ -95,7 +95,7 @@ function Dashboard() {
       unsubscribe();
     };
     // Dependencies for this useEffect: re-run if any of these change
-  }, [userId, db, appId, findNextExam, loading, isFirebaseInitialized]); // Added isFirebaseInitialized
+  }, [userId, db, appId, findNextExam, loading, isFirebaseInitialized]);
 
 
   // --- Function to find the next upcoming exam from the fetched 'exams' list ---
@@ -125,7 +125,7 @@ function Dashboard() {
       console.log("Dashboard: No upcoming exams found."); // Debug log
     }
     setNextExam(closestExam);
-  }, []); // useCallback memoizes this function, only recreated if dependencies change (none here)
+  }, []);
 
 
   // --- Effect for updating current time (for the clock widget) ---
@@ -187,7 +187,7 @@ function Dashboard() {
       }
     });
     return components;
-  }, [timeRemaining]); // Re-calculate only when timeRemaining changes
+  }, [timeRemaining]);
 
 
   // --- Handlers for opening modals ---
