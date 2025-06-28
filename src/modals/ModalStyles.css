@@ -1,0 +1,499 @@
+/* --- MODAL GENERAL STYLES (Sleek & Modern Update) --- */
+/* Overlay that covers the whole screen when a modal is open */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Use 100vw to cover entire viewport width */
+    height: 100vh; /* Use 100vh to cover entire viewport height */
+    background-color: rgba(0, 0, 0, 0.6); /* Darker, more prominent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top of everything else */
+
+    /* Animation for fade-in/out */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    pointer-events: none; /* Initially, don't block pointer events */
+}
+
+/* State when modal is active/open */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Allow clicks on the overlay itself to close if a click handler is attached */
+}
+
+/* --- Modal Content Container --- */
+/* This is the actual dialog box that appears in the center */
+.modal-content {
+    background-color: white;
+    padding: 2.5rem; /* More generous padding */
+    border-radius: 18px; /* More rounded corners for modern look */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25); /* Stronger, softer shadow */
+    width: 90%; /* Take 90% width of the viewport */
+    max-width: 650px; /* Slightly adjusted max-width for general modals */
+    max-height: 85vh; /* Allow more height for content, enable scrolling if content overflows */
+    overflow-y: auto; /* Enable vertical scrolling within the modal content */
+
+    /* Animation for slide-up and fade-in */
+    transform: translateY(20px); /* Start slightly below for animation */
+    opacity: 0; /* Start hidden for animation */
+    transition: all 0.3s ease-out; /* Smooth slide-up and fade-in */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally within the modal */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+}
+
+/* When the overlay is active, apply the final transform and opacity to content */
+.modal-overlay.active .modal-content {
+    transform: translateY(0); /* Slide up to final position */
+    opacity: 1; /* Fade in */
+}
+
+/* Specific size for large modals like ViewExamsModal (for tables etc.) */
+.modal-content.large-modal {
+    max-width: 800px; /* Wider for tables or more complex layouts */
+    padding: 2rem; /* Slightly less padding to fit more content */
+}
+
+/* --- Modal Header --- */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem; /* More space below header */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee; /* Subtle separator */
+    width: 100%; /* Ensure header takes full width */
+    box-sizing: border-box;
+}
+
+.modal-header h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem; /* Larger, more prominent title */
+    font-weight: 700; /* Bolder */
+    color: #ff4d88; /* Consistent accent color */
+    margin: 0;
+    display: flex; /* Allow icon next to text */
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Close button positioned at top-right */
+.modal-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    font-size: 1.8rem; /* Larger icon */
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    padding: 0.2rem; /* More space around clickable area */
+    border-radius: 50%; /* Make it circular */
+    display: flex; /* Center icon */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:hover {
+    color: #ff4d4d; /* Red on hover */
+    transform: rotate(90deg); /* Subtle spin */
+}
+
+/* --- Modal Body --- */
+.modal-body {
+    flex-grow: 1; /* Allow body to grow and fill space */
+    width: 100%; /* Take full width of modal content */
+    margin-bottom: 1.5rem; /* Space before footer/action buttons */
+    box-sizing: border-box;
+}
+
+/* --- Modal Footer / Action Buttons --- */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 1rem; /* Space between buttons */
+    width: 100%; /* Take full width */
+    padding-top: 1rem; /* Space from content above */
+    border-top: 1px solid #eee; /* Subtle separator */
+    box-sizing: border-box;
+}
+
+.modal-action-btn,
+.modal-cancel-btn,
+.modal-save-btn,
+.modal-delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text and icon */
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s, color 0.2s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Primary gradient button (often for 'Save', 'Add', 'Confirm') */
+.modal-action-btn.primary-gradient {
+    background: linear-gradient(to right, #ff4d88, #ff8c42);
+    color: white;
+    border: none;
+}
+
+.modal-action-btn.primary-gradient:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+}
+
+/* Secondary button (often for 'Cancel', 'Close') */
+.modal-cancel-btn.secondary-btn,
+.modal-action-btn.secondary-btn {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.modal-cancel-btn.secondary-btn:hover:not(:disabled),
+.modal-action-btn.secondary-btn:hover:not(:disabled) {
+    background-color: #e5e5e5;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+/* Specific style for delete button */
+.modal-delete-btn {
+    background-color: #dc3545; /* Red */
+    color: white;
+    border: none;
+}
+
+.modal-delete-btn:hover:not(:disabled) {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+}
+
+/* Disabled state for all modal buttons */
+.modal-action-btn:disabled,
+.modal-cancel-btn:disabled,
+.modal-save-btn:disabled,
+.modal-delete-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none; /* No shadow when disabled */
+    transform: none; /* No transform when disabled */
+}
+
+/* --- Specific Styles for ConfirmationModal --- */
+.confirmation-modal-content {
+    max-width: 450px; /* Slightly narrower for confirmation */
+    text-align: center;
+}
+.confirmation-modal-content .modal-body p {
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.5;
+}
+.confirmation-modal-content .modal-footer {
+    justify-content: center; /* Center buttons in confirmation modal */
+}
+
+/* --- Specific Styles for NotesModal --- */
+.notes-modal-content {
+    max-width: 700px; /* Wider for more comfortable note-taking */
+}
+
+.notes-textarea {
+    width: 100%;
+    min-height: 250px; /* Decent height for notes */
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: vertical; /* Allow vertical resizing */
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+.notes-textarea:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.modal-save-btn { /* Specific style for save button in notes modal */
+    background: linear-gradient(to right, #4CAF50, #2e7d32); /* Green gradient */
+    color: white;
+    border: none;
+}
+.modal-save-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+    background: linear-gradient(to right, #388e3c, #1b5e20); /* Darker green on hover */
+}
+
+/* --- Styles for EditExamsModal / ViewExamsModal (Table and Form Grid) --- */
+/* Table Container (for ViewExamsModal) */
+.modal-table-container {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling for narrow screens */
+    margin-top: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    max-height: 50vh; /* Limit height and make table scrollable vertically */
+    overflow-y: auto;
+}
+
+.exams-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove space between cells */
+    min-width: 600px; /* Ensure table doesn't get too narrow on small screens */
+}
+
+.exams-table th,
+.exams-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Inter', sans-serif;
+}
+
+.exams-table th {
+    background-color: #f8f8f8; /* Light grey header background */
+    color: #555;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.exams-table tbody tr:nth-child(even) {
+    background-color: #fbfbfb; /* Slightly different background for even rows */
+}
+
+.exams-table tbody tr:hover {
+    background-color: #f0f8ff; /* Light blue on hover */
+}
+
+.exams-table td {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Form Grid for EditExamsModal */
+.modal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns by default */
+    gap: 1.5rem 2rem; /* Row gap and column gap */
+    width: 100%;
+    margin-top: 1rem;
+    max-height: 40vh; /* Make form scrollable if it gets too long */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+/* Individual form group styling within the modal (overrides PageStyles.css .form-group if applicable) */
+.modal-form-grid .form-group {
+    margin-bottom: 0; /* Override default margin for compact layout in grid */
+}
+
+.modal-form-grid .form-group label {
+    margin-bottom: 0.5rem; /* Keep a small margin below labels */
+}
+
+/* Style for individual exam input rows in EditExamsModal */
+.exam-input-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 0.8fr 0.5fr 40px; /* Subject, Component, Date, Time, Session, Delete button */
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #eee;
+}
+
+.exam-input-row:last-of-type {
+    border-bottom: none; /* No dashed line after the last input row */
+}
+
+.exam-input-row input,
+.exam-input-row select {
+    width: 100%; /* Ensure inputs take full width of their grid column */
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.exam-input-row input:focus,
+.exam-input-row select:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2);
+}
+
+.exam-input-row .delete-exam-btn {
+    background: none;
+    border: none;
+    color: #dc3545; /* Red for delete icon */
+    cursor: pointer;
+    padding: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, color 0.2s;
+    font-size: 1.2rem;
+    margin-left: auto; /* Push to the right */
+}
+
+.exam-input-row .delete-exam-btn:hover {
+    transform: scale(1.1);
+    color: #c82333;
+}
+
+.add-exam-btn { /* For the "Add another exam" button within EditExamsModal */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #28a745; /* Green for add button */
+    color: white;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem; /* Space before main action buttons */
+}
+
+.add-exam-btn:hover {
+    background-color: #218838;
+}
+
+/* General messages within modals */
+.no-exams-message,
+.no-items-message,
+.form-message { /* Reusing PageStyles.css .form-message for consistency */
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    /* Background and color will be overridden by error/success classes below */
+}
+
+.form-message.error-message {
+    background-color: #f8d7da; /* Light red for errors */
+    color: #721c24; /* Dark red for error text */
+    border: 1px solid #f5c6cb;
+}
+
+.form-message.success-message {
+    background-color: #d4edda; /* Light green for success */
+    color: #155724; /* Dark green for success text */
+    border-color: #c3e6cb;
+}
+
+/* Loading spinner animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* --- Responsive Adjustments for Modals --- */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 1.5rem; /* Smaller padding for mobile modal */
+        width: 95%; /* Take more width on mobile */
+        max-width: 95%; /* Override max-width for mobile */
+        max-height: 90vh; /* Adjust height */
+    }
+
+    .modal-header {
+        flex-direction: column; /* Stack title and close button if title is long */
+        text-align: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .modal-header h3 {
+        font-size: 1.5rem; /* Smaller title on mobile */
+        text-align: center;
+    }
+    .modal-close-btn {
+        position: static; /* Make static for better flow in stacked header */
+        margin-top: 0.5rem;
+    }
+
+    .modal-body {
+        margin-bottom: 1rem;
+    }
+
+    .modal-footer {
+        flex-direction: column; /* Stack buttons on mobile */
+        gap: 0.8rem;
+        padding-top: 0.8rem;
+    }
+    .modal-action-btn,
+    .modal-cancel-btn,
+    .modal-save-btn,
+    .modal-delete-btn {
+        width: 100%; /* Full width buttons on mobile */
+        padding: 0.8rem 1rem; /* Adjust padding */
+    }
+
+    .modal-form-grid {
+        grid-template-columns: 1fr; /* Single column for forms on mobile */
+        gap: 1rem;
+        max-height: 60vh; /* Adjust height for form scrolling */
+    }
+    .exam-input-row {
+        grid-template-columns: 1fr 40px; /* Two columns: input & delete button */
+        row-gap: 0.5rem;
+        padding-bottom: 1rem;
+        align-items: flex-start; /* Align items to top */
+    }
+    .exam-input-row input,
+    .exam-input-row select {
+        grid-column: 1 / span 1; /* Input takes first column */
+    }
+    .exam-input-row .delete-exam-btn {
+        grid-column: 2 / 3; /* Delete button takes second column */
+        margin-left: 0;
+        margin-top: 0; /* No top margin needed with flex */
+    }
+
+    .exams-table {
+        min-width: 320px; /* Adjust min-width for very small screens if necessary */
+    }
+    .exams-table th,
+    .exams-table td {
+        padding: 8px 10px; /* Smaller padding for table cells */
+        font-size: 0.85rem; /* Smaller font size for table text */
+    }
+
+    .notes-textarea {
+        min-height: 180px; /* Smaller height for notes on mobile */
+    }
+}
