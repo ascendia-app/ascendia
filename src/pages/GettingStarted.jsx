@@ -3,7 +3,6 @@
     import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
     import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
     import { doc, getDoc, setDoc } from "firebase/firestore";
-    import { auth, db } from '../firebaseConfig'; // Import auth and db
     import '../PageStyles.css';
 
     function GettingStarted() {

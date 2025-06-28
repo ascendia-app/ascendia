@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithCustomToken, signInAnonymously } from 'firebase/auth'; // Keep these imports for auth functions later if needed
-import { getFirestore } from 'firebase/firestore';
+// This file defines and exports global Canvas variables and the Firebase config.
+// Firebase initialization (initializeApp, getAuth, getFirestore) will now happen
+// in AuthContext.jsx to ensure global variables are fully loaded.
 
 // Global variables provided by the Canvas environment
 const __app_id = typeof window !== 'undefined' && window.__app_id !== undefined ? window.__app_id : 'default-app-id';
@@ -12,10 +12,11 @@ let firebaseConfig = {};
 
 try {
     firebaseConfig = JSON.parse(__firebase_config);
-    console.log("Firebase Init Debug (firebaseConfig.js): Canvas-provided config:", firebaseConfig);
+    console.log("Firebase Init Debug (firebaseConfig.js): Canvas-provided config detected.");
 
     // CRITICAL FALLBACK FOR INVALID/EMPTY CONFIG:
     // If Canvas-provided config is empty or invalid, use the hardcoded values.
+    // Ensure these match your actual Firebase project settings.
     if (!firebaseConfig || Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
         console.warn("Firebase Init Debug (firebaseConfig.js): Canvas-provided config is empty or invalid. Falling back to hardcoded config.");
         // !! YOUR ACTUAL FIREBASE PROJECT CONFIG GOES HERE !!
@@ -44,22 +45,14 @@ try {
     };
 }
 
-console.log("Firebase Init Debug (firebaseConfig.js): Final Firebase Config used for init = ", firebaseConfig);
-console.log("Firebase Init Debug (firebaseConfig.js): Final Resolved Canvas App ID = ", __app_id);
-console.log("Firebase Init Debug (firebaseConfig.js): Initial Auth Token provided = ", !!__initial_auth_token);
+console.log("Firebase Init Debug (firebaseConfig.js): Resolved Firebase Config object for export = ", firebaseConfig);
+console.log("Firebase Init Debug (firebaseConfig.js): Resolved Canvas App ID for export = ", __app_id);
+console.log("Firebase Init Debug (firebaseConfig.js): Initial Auth Token status for export = ", !!__initial_auth_token);
 
 
-// Initialize Firebase app (THIS IS THE ONLY PLACE initializeApp SHOULD BE CALLED)
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Export all necessary instances and variables
+// Export raw config and globals. Firebase app itself is NOT initialized here.
 export {
-    app,
-    auth,
-    db,
-    __app_id as appId,             // Canvas provided app ID
-    __initial_auth_token as initialAuthToken, // Canvas provided initial auth token
-    firebaseConfig as firebaseClientConfig // Export the resolved config itself if needed for debug elsewhere
+    firebaseConfig,
+    __app_id as canvasAppId, // Renamed to avoid confusion with Firebase config's appId
+    __initial_auth_token as canvasAuthToken,
 };

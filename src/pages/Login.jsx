@@ -2,7 +2,6 @@
     import React, { useState } from 'react';
     import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
     import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-    import { auth } from '../firebaseConfig'; // Import auth
     import '../PageStyles.css';
 
     function Login() {

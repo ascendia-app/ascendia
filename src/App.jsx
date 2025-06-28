@@ -4,7 +4,6 @@ import './App.css';
 import { useAuth } from './contexts/AuthContext';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebaseConfig';
 import { Bell, AlertCircle, Calendar, Award } from 'lucide-react'; // Import Bell icon and others for dummy notifications
 
 // Import pages
