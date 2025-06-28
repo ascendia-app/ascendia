@@ -1,7 +1,7 @@
 // src/firebaseConfig.js
 
 // IMPORTANT: Replace these with your actual Firebase project configuration
-const firebaseConfig = {
+const localFirebaseConfig = { // Renamed this variable to avoid any potential name conflicts
   apiKey: "AIzaSyC5xNK1gThitsLgSnzF7iujPKUEsnqA1jA",
   authDomain: "ascendia-app.firebaseapp.com",
   projectId: "ascendia-app",
@@ -11,16 +11,18 @@ const firebaseConfig = {
   // measurementId: "YOUR_MEASUREMENT_ID" // Uncomment if you enable analytics, and replace its value
 };
 
-// DO NOT MODIFY THE FOLLOWING GLOBAL VARIABLES.
-// They are provided by the Canvas environment at runtime for seamless integration.
-// If you are developing locally, they will be undefined and your app will use the values from firebaseConfig above.
-const __app_id = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.appId;
-const __firebase_config = typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify(firebaseConfig);
-const __initial_auth_token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+// DO NOT MODIFY THE FOLLOWING.
+// These variables are designed to pick up values provided by the Canvas environment at runtime.
+// If running locally (outside Canvas), they will fall back to your localFirebaseConfig values.
+
+// Access global variables via 'window' for robustness against Temporal Dead Zone (TDZ) issues.
+const resolvedAppId = window.__app_id !== undefined ? window.__app_id : localFirebaseConfig.appId;
+const resolvedFirebaseConfig = window.__firebase_config !== undefined ? window.__firebase_config : JSON.stringify(localFirebaseConfig);
+const resolvedInitialAuthToken = window.__initial_auth_token !== undefined ? window.__initial_auth_token : undefined;
 
 
 export {
-  __app_id as appId,
-  __firebase_config as firebaseConfig,
-  __initial_auth_token as initialAuthToken
+  resolvedAppId as appId,
+  resolvedFirebaseConfig as firebaseConfig,
+  resolvedInitialAuthToken as initialAuthToken
 };
