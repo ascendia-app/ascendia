@@ -3,11 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { LogOut, Bell, User, Sun, Moon, LayoutDashboard, Settings, HelpCircle } from 'lucide-react';
-import './Header.css'; // Create this CSS file next
-// UserProfileWidget.css and NotificationsDropdown.css styles are integrated into Header.css
-// The components themselves are imported in App.jsx but not directly used within Header's JSX
-// as their toggling logic is handled in App.jsx and they render conditionally based on state.
-
+import './Header.css';
 
 const Header = ({
     displayedUsername,
@@ -17,23 +13,20 @@ const Header = ({
     onToggleProfileMenu,
     notificationsRef,
     profileMenuRef,
-    isNotificationsOpen, // Passed down from App.jsx, but not directly used in Header's rendering for dropdown *content*
-    isProfileMenuOpen,   // Same as above
+    isNotificationsOpen,
+    isProfileMenuOpen,
     logout
 }) => {
     const navigate = useNavigate();
 
-    // Function to handle logout and redirect
     const handleLogout = async () => {
         const { success } = await logout();
         if (success) {
             console.log("Logged out successfully from Header.");
-            navigate('/login'); // Redirect to login page after successful logout
+            navigate('/login');
         } else {
             console.error("Logout failed.");
-            // Optionally, show an error message to the user
         }
-        // Ensure profile menu closes regardless of logout success/failure
         onToggleProfileMenu();
     };
 
@@ -42,11 +35,8 @@ const Header = ({
             <div className="nav-left">
                 <Link to="/" className="logo">Ascendia</Link>
                 <nav className="nav-links">
-                    <Link to="/dashboard">Dashboard</Link>
-                    <Link to="/syllabus">Syllabus</Link>
-                    <Link to="/papers">Papers</Link>
-                    <Link to="/planner">Planner</Link>
-                    <Link to="/tracker">Tracker</Link>
+                    <Link to="/about">About</Link>
+                    <Link to="/contact">Contact</Link>
                     <Link to="/downloads">Downloads</Link>
                 </nav>
             </div>
@@ -54,12 +44,11 @@ const Header = ({
                 <div className="nav-buttons">
                     {displayedUsername ? (
                         <>
-                            {/* Notifications Bell Icon */}
+                            {/* WHEN LOGGED IN: Show Bell and User Profile */}
                             <div className="bell-icon-link" onClick={onToggleNotifications} aria-label="Notifications" role="button" tabIndex="0">
                                 <Bell size={24} className="nav-bell-icon" />
                             </div>
 
-                            {/* User Profile Widget (Trigger) */}
                             <div className="user-profile-widget" ref={profileMenuRef}>
                                 <div className="user-info-trigger" onClick={onToggleProfileMenu}>
                                     <div className="avatar-circle">
@@ -68,13 +57,7 @@ const Header = ({
                                     <span className="welcome-message">Hello, {displayedUsername}!</span>
                                     <span className={`dropdown-arrow ${isProfileMenuOpen ? 'open' : ''}`}>▼</span>
                                 </div>
-                                {/* The actual dropdown menu (UserProfileWidget component) is rendered conditionally in App.jsx */}
-                                {/* This div acts as the reference point for clicking outside the menu */}
                                 {isProfileMenuOpen && (
-                                     // This section is a visual representation of what the dropdown would contain.
-                                     // The actual <UserProfileWidget> component rendering is in App.jsx.
-                                     // This is here to make the dropdown visually appear when open,
-                                     // but the full interactivity relies on the App.jsx's state and passed refs.
                                     <div className="dropdown-menu">
                                         <Link to="/dashboard" className="dropdown-item" onClick={onToggleProfileMenu}>
                                             <span className="icon"><LayoutDashboard size={20} /></span>Dashboard
@@ -97,12 +80,13 @@ const Header = ({
                         </>
                     ) : (
                         <>
+                            {/* WHEN LOGGED OUT: Show Login and Register buttons */}
                             <Link to="/login" className="login-btn">Login</Link>
-                            <Link to="/getting-started" className="start-btn primary-gradient">Get Started</Link>
+                            {/* Changed 'Get Started' to 'Register' */}
+                            <Link to="/getting-started" className="start-btn primary-gradient">Register</Link>
                         </>
                     )}
                 </div>
-                {/* Theme Toggle Button */}
                 <div className="theme-toggle" onClick={onToggleTheme} aria-label="Toggle dark mode">
                     {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
                 </div>

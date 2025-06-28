@@ -1,4 +1,4 @@
-/* src/PageStyles.css - General styles for content pages */
+/* src/PageStyles.css - General styles for content pages and Dashboard cards */
 
 .page-container {
   flex-grow: 1; /* Allow content to take full height */
@@ -23,7 +23,7 @@
 
 .page-title {
   font-size: 2.8rem;
-  color: var(--color-primary); /* Ascendia Pink */
+  color: var(--color-primary);
   margin-bottom: 0.5rem;
   text-align: center;
   width: 100%;
@@ -47,7 +47,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px var(--color-shadow-light);
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* Default margin for cards when not in a grid */
   width: 100%; /* Default to full width within container */
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid var(--color-border-light);
@@ -64,7 +64,7 @@
 .hero-page .hero {
     text-align: center;
     padding: 60px 20px;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); /* Pink to Blue gradient */
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     color: white;
     border-radius: 15px;
     margin-bottom: 40px;
@@ -110,12 +110,12 @@
 }
 
 .hero-page .hero-actions .cta.primary-gradient {
-    background: linear-gradient(45deg, #fff, #eee); /* Lighter background for CTA */
-    color: var(--color-primary); /* Primary pink text */
+    background: linear-gradient(45deg, #fff, #eee);
+    color: var(--color-primary);
     border: none;
 }
 .hero-page .hero-actions .cta.primary-gradient:hover {
-    color: var(--color-secondary); /* Secondary blue on hover */
+    color: var(--color-secondary);
 }
 
 .hero-page .hero-actions .cta.secondary-btn {
@@ -126,11 +126,11 @@
 
 .hero-page .hero-actions .cta.secondary-btn:hover {
     background-color: white;
-    color: var(--color-primary); /* Primary pink on hover */
+    color: var(--color-primary);
 }
 
 
-/* Features Section Styles */
+/* Features Section Styles (for GettingStarted page) */
 .features-section {
     width: 100%;
     margin-bottom: 40px;
@@ -139,10 +139,11 @@
 
 .features-section .section-heading {
     font-size: 2rem;
-    color: var(--color-primary); /* Primary pink */
+    color: var(--color-primary);
     margin-bottom: 30px;
 }
 
+/* Updated feature grid styling to be more explicit for GettingStarted and Dashboard */
 .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -153,32 +154,47 @@
 }
 
 .feature-card {
-    text-align: left;
+    text-align: center; /* Center content within each card */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 180px; /* Fixed height for consistent look */
+    cursor: default; /* Not clickable */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.feature-card-icon {
+.feature-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 6px 16px var(--color-shadow-light);
+}
+.dark .feature-card:hover {
+    box-shadow: 0 6px 16px var(--color-dark-shadow);
+}
+
+
+.feature-card-emoji {
     font-size: 3rem;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: block;
-    text-align: center;
 }
 
-.feature-card h4 {
+.feature-card-name {
     font-size: 1.4rem;
     color: var(--color-text-dark);
-    margin-bottom: 10px;
-    text-align: center;
+    margin-bottom: 8px;
 }
-.dark .feature-card h4 {
+.dark .feature-card-name {
     color: var(--color-dark-text-dark);
 }
 
-.feature-card p {
+.feature-card-description {
     font-size: 0.95rem;
     color: #666;
-    text-align: center;
+    line-height: 1.4;
+    padding: 0 10px; /* Add some padding to description */
 }
-.dark .feature-card p {
+.dark .feature-card-description {
     color: #bbb;
 }
 
@@ -235,14 +251,14 @@
 }
 
 .error-message {
-  color: #a94442; /* Red for error */
-  background-color: #f2dede; /* Light red background */
+  color: #a94442;
+  background-color: #f2dede;
   border: 1px solid #ebccd1;
 }
 
 .success-message {
-  color: #3c763d; /* Green for success */
-  background-color: #dff0d8; /* Light green background */
+  color: #3c763d;
+  background-color: #dff0d8;
   border: 1px solid #d6e9c6;
 }
 
@@ -277,33 +293,52 @@
 }
 
 .form-footer .inline-link {
-  color: var(--color-primary); /* Primary pink */
+  color: var(--color-primary);
   font-weight: 600;
   text-decoration: underline;
 }
 .form-footer .inline-link:hover {
-  color: var(--color-secondary); /* Secondary blue on hover */
+  color: var(--color-secondary);
 }
 
 /* General Layout for Dashboard and Syllabus (two columns often) */
-.dashboard-grid-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+/* Dashboard specific grid container to center the cards */
+.dashboard-content-area {
     width: 100%;
+    max-width: 960px; /* Max width for the grid area */
+    margin: 0 auto; /* Center the grid area */
+    display: flex;
+    justify-content: center; /* Center the grid itself within its area */
+    padding: 0 1rem; /* Add some padding on sides */
 }
 
-@media (min-width: 768px) {
+.dashboard-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid, 3 per row on larger screens */
+    gap: 25px; /* Spacing between cards */
+    width: 100%; /* Take full width of its container */
+    justify-content: center; /* Center cards horizontally if they don't fill the row */
+}
+
+
+@media (max-width: 900px) {
     .dashboard-grid-container {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
-    .grid-span-2 {
-        grid-column: span 2;
-    }
-    .grid-span-full {
-        grid-column: 1 / -1; /* Spans all columns */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust for smaller screens */
+        max-width: 600px; /* Max 2 columns on tablets */
     }
 }
+
+@media (max-width: 600px) {
+    .dashboard-grid-container {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+        max-width: 350px;
+    }
+    .feature-card {
+        height: auto; /* Allow height to adjust */
+        min-height: 150px;
+    }
+}
+
 
 /* Specific to Syllabus page */
 .syllabus-page .syllabus-grid-container {
@@ -338,7 +373,7 @@
 
 .panel-heading {
     font-size: 1.5rem;
-    color: var(--color-primary); /* Primary pink */
+    color: var(--color-primary);
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--color-border-light);
@@ -363,7 +398,7 @@
 }
 
 .cta {
-    background-color: var(--color-primary); /* Primary pink */
+    background-color: var(--color-primary);
     color: white;
     padding: 12px 25px;
     border-radius: 8px;
@@ -374,7 +409,7 @@
 }
 
 .cta:hover {
-    background-color: var(--color-secondary); /* Secondary blue on hover */
+    background-color: var(--color-secondary);
     transform: translateY(-2px);
 }
 .dark .cta {
@@ -386,7 +421,7 @@
 
 .section-heading {
   font-size: 1.8rem;
-  color: var(--color-primary); /* Primary pink */
+  color: var(--color-primary);
   margin-bottom: 1.5rem;
   width: 100%;
   text-align: left;
@@ -400,16 +435,16 @@
 
 /* Disabled input styling */
 input.disabled-input {
-    background-color: #e9ecef; /* Light gray background */
-    color: #6c757d; /* Darker gray text */
+    background-color: #e9ecef;
+    color: #6c757d;
     cursor: not-allowed;
-    border: 1px dashed #ced4da; /* Dashed border to indicate non-interactivity */
-    opacity: 0.8; /* Slightly faded look */
+    border: 1px dashed #ced4da;
+    opacity: 0.8;
 }
 
 .dark input.disabled-input {
-    background-color: #343a40; /* Darker background in dark mode */
-    color: #adb5bd; /* Lighter gray text in dark mode */
+    background-color: #343a40;
+    color: #adb5bd;
     border: 1px dashed #495057;
 }
 
