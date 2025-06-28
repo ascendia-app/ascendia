@@ -1,6 +1,6 @@
 // src/firebaseConfig.js
 
-// IMPORTANT: Replace these with your actual Firebase project configuration
+
 const localFirebaseConfig = { // Renamed this variable to avoid any potential name conflicts
   apiKey: "AIzaSyC5xNK1gThitsLgSnzF7iujPKUEsnqA1jA",
   authDomain: "ascendia-app.firebaseapp.com",
