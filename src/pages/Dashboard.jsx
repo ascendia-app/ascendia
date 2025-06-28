@@ -8,19 +8,15 @@ import {
 import * as firestore from 'firebase/firestore';
 const { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } = firestore;
 
-// REMOVE these imports from here:
-// import { db, appId } from '../firebaseConfig'; // <-- REMOVE THIS LINE
-// import { useAuth } from '../contexts/AuthContext';
-
-// NEW: Import useAuth only
-import { useAuth } from '../contexts/AuthContext'; // <-- Keep this line only
+// NEW: Import useAuth only (db, appId, userId come from useAuth now)
+import { useAuth } from '../contexts/AuthContext';
 
 // Import your separated modal components
 import EditExamsModal from '../modals/EditExamsModal';
 import ViewExamsModal from '../modals/ViewExamsModal';
 
 import '../PageStyles.css';
-import '../ModalStyles.css'; // Ensure this is imported for modal styling
+import '../ModalStyles.css'; // Ensure the general modal styles are imported
 
 
 // Helper function to format date and time for Date object construction
@@ -51,11 +47,8 @@ const formatDateWithOrdinal = (dateString) => {
 };
 
 function Dashboard() {
-  // Destructure db and appId directly from useAuth
-  const { currentUser, loading, db, appId, userId } = useAuth(); // <-- UPDATED DESTRUCTURING
-
-  // userId state is now directly from context, so no need for this useState
-  // const [userId, setUserId] = useState(null); // <-- REMOVE THIS LINE IF PRESENT
+  // Destructure db, appId, userId, and isFirebaseInitialized from useAuth
+  const { currentUser, loading, db, appId, userId, isFirebaseInitialized } = useAuth(); // <-- UPDATED DESTRUCTURING
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exams, setExams] = useState([]); // Exams fetched from Firestore
@@ -66,29 +59,13 @@ function Dashboard() {
   const [nextExam, setNextExam] = useState(null);
 
 
-  // --- NO LONGER NEEDED: Effect to set userId once AuthContext loading is complete and currentUser is available ---
-  // The userId is now provided directly by the AuthContext, so this effect is redundant here.
-  // useEffect(() => {
-  //   if (!loading) {
-  //     if (currentUser) {
-  //       setUserId(currentUser.uid);
-  //       console.log("Dashboard: User authenticated, UID:", currentUser.uid);
-  //     } else {
-  //       setUserId(null);
-  //       setExams([]);
-  //       setNextExam(null);
-  //       console.log("Dashboard: User not authenticated.");
-  //     }
-  //   }
-  // }, [currentUser, loading]);
-
   // --- Effect for real-time exams data from Firestore ---
   useEffect(() => {
-    // Only subscribe if userId, db, and appId are available (they now come from useAuth)
-    if (!userId || !db || !appId) { // Ensure all are present before trying to connect Firestore
+    // Only subscribe if Firebase is fully initialized AND userId, db, and appId are available
+    if (!isFirebaseInitialized || loading || !userId || !db || !appId) {
       setExams([]); // Clear exams if prerequisites are not met
       setFirebaseError(null); // Clear any old errors
-      console.log("Dashboard: Firestore subscription skipped. Waiting for userId, db, appId from AuthContext."); // Debug log
+      console.log("Dashboard: Firestore subscription skipped. Waiting for Firebase init, userId, db, appId from AuthContext."); // Debug log
       return;
     }
 
@@ -117,8 +94,8 @@ function Dashboard() {
       console.log("Dashboard: Unsubscribing from exams listener.");
       unsubscribe();
     };
-    // Dependencies for this useEffect: re-run if userId, db, or appId change
-  }, [userId, db, appId, findNextExam]);
+    // Dependencies for this useEffect: re-run if any of these change
+  }, [userId, db, appId, findNextExam, loading, isFirebaseInitialized]); // Added isFirebaseInitialized
 
 
   // --- Function to find the next upcoming exam from the fetched 'exams' list ---
@@ -234,7 +211,7 @@ function Dashboard() {
   // --- Handle Save Exams (Add/Update/Delete reconciliation with Firestore) ---
   // This function is passed to EditExamsModal and receives the updated list of exams
   const handleSaveExams = async (updatedExams) => {
-    // db, appId, and userId are now from useAuth context
+    // db, appId, and userId are now from useAuth context. Ensure they are present.
     if (!userId || !db || !appId) {
       console.error("Cannot save exams: User not authenticated or Firestore not ready.");
       setFirebaseError("Authentication required to save exams.");
@@ -339,10 +316,10 @@ function Dashboard() {
     { id: 'a5', description: "Set reminder for 'Maths Quiz' next week.", timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString() },
   ];
 
-  console.log("Dashboard Render: currentUser:", !!currentUser, "loading:", loading, "nextExam:", !!nextExam, "exams.length:", exams.length, "userId:", userId); // Primary debug log on render
+  console.log("Dashboard Render: currentUser:", !!currentUser, "loading:", loading, "isFirebaseInitialized:", isFirebaseInitialized, "nextExam:", !!nextExam, "exams.length:", exams.length, "userId:", userId); // Primary debug log on render
 
-  // Conditional rendering based on authentication state
-  if (loading) {
+  // Conditional rendering based on Firebase initialization and authentication state
+  if (!isFirebaseInitialized || loading) {
     return (
       <div className="page-container dashboard-page" style={{ justifyContent: 'center', alignItems: 'center' }}>
         <p className="welcome-message loading-pulse" style={{ color: '#ff4d88' }}>Loading dashboard...</p>

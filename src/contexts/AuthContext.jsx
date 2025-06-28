@@ -1,20 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app'; // getApps, getApp for checking if already initialized
 import {
     getAuth,
     signInWithCustomToken,
     signInAnonymously,
-    onAuthStateChanged, // To listen for auth state changes
+    onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    updateProfile // New: For updating user profiles (e.g., username)
+    updateProfile
 } from 'firebase/auth';
 import {
     getFirestore,
     doc,
     setDoc,
-    getDoc // To fetch user data if needed on auth state change
+    getDoc
 } from 'firebase/firestore';
 
 // Import the raw config and global variables from firebaseConfig.js
@@ -28,66 +28,68 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Initial loading for auth state
     const [authError, setAuthError] = useState(null);
 
-    // New states for Firebase instances and derived userId
-    const [firebaseApp, setFirebaseApp] = useState(null);
     const [authInstance, setAuthInstance] = useState(null);
     const [dbInstance, setDbInstance] = useState(null);
     const [userId, setUserId] = useState(null); // The authenticated user's UID or anonymous ID
+    const [isFirebaseInitialized, setIsFirebaseInitialized] = useState(false); // New state to track full Firebase initialization
 
     // --- EFFECT: Initialize Firebase and handle initial authentication ---
     useEffect(() => {
         console.log("AuthContext: Starting Firebase initialization useEffect.");
-        let app, auth, db;
+        let appInstance, auth, db;
 
         try {
-            // Ensure Firebase app is initialized only once
-            if (!firebaseApp) {
-                app = initializeApp(firebaseConfig);
-                setFirebaseApp(app);
-                console.log("AuthContext: Firebase app initialized.");
+            // Check if a Firebase app has already been initialized to avoid re-initialization warnings/errors
+            if (!getApps().length) {
+                appInstance = initializeApp(firebaseConfig);
+                console.log("AuthContext: Firebase app initialized for the first time.");
             } else {
-                app = firebaseApp; // Use existing instance
-                console.log("AuthContext: Firebase app already initialized.");
+                appInstance = getApp(); // Get the already initialized app
+                console.log("AuthContext: Firebase app already initialized, retrieving existing instance.");
             }
 
-            // Get Auth and Firestore instances
-            auth = getAuth(app);
+            auth = getAuth(appInstance);
+            db = getFirestore(appInstance);
+
             setAuthInstance(auth);
-            db = getFirestore(app);
             setDbInstance(db);
-            console.log("AuthContext: Auth and Firestore instances obtained.");
+            setIsFirebaseInitialized(true); // Firebase instances are now available
+            console.log("AuthContext: Auth and Firestore instances obtained and set. Firebase is now initialized.");
 
             // --- Set up Auth State Listener ---
             const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                setCurrentUser(user); // Set current user first
                 if (user) {
-                    setCurrentUser(user);
-                    setUserId(user.uid); // Set userId from authenticated user's UID
-                    console.log("AuthContext: User authenticated:", user.uid);
+                    setUserId(user.uid);
+                    console.log("AuthContext: User authenticated (onAuthStateChanged):", user.uid);
 
-                    // Optionally fetch user data from Firestore on sign-in/auth state change
-                    // This is good practice to ensure user profile is in sync
+                    // Fetch user profile data after authentication
                     const userDocRef = doc(db, `artifacts/${canvasAppId}/users/${user.uid}/profile/data`);
-                    const userDocSnap = await getDoc(userDocRef);
-                    if (userDocSnap.exists()) {
-                        console.log("AuthContext: User profile data fetched:", userDocSnap.data());
-                        setCurrentUser(prev => ({ ...prev, ...userDocSnap.data() })); // Merge profile data
-                    } else {
-                        console.log("AuthContext: No profile data found for user:", user.uid);
+                    try {
+                        const userDocSnap = await getDoc(userDocRef);
+                        if (userDocSnap.exists()) {
+                            console.log("AuthContext: User profile data fetched:", userDocSnap.data());
+                            setCurrentUser(prev => ({ ...prev, ...userDocSnap.data() })); // Merge profile data
+                        } else {
+                            console.log("AuthContext: No profile data found for user:", user.uid);
+                        }
+                    } catch (profileError) {
+                        console.error("AuthContext: Error fetching user profile:", profileError);
+                        setAuthError("Failed to fetch user profile. Displaying basic info.");
                     }
-
                 } else {
-                    setCurrentUser(null);
-                    setUserId(null); // No user, so no userId
-                    console.log("AuthContext: User is signed out or not authenticated.");
+                    setUserId(null);
+                    console.log("AuthContext: User is signed out or not authenticated (onAuthStateChanged).");
                 }
                 setLoading(false); // Auth state check is complete
-                console.log("AuthContext: Auth state listener processed.");
+                console.log("AuthContext: Auth state listener processed. Loading set to false.");
             });
 
             // --- Handle Initial Authentication Token (Canvas-provided) ---
+            // Only attempt signIn if there's no current user and token is available
             if (canvasAuthToken && !auth.currentUser) {
                 console.log("AuthContext: Attempting signInWithCustomToken with canvasAuthToken.");
                 signInWithCustomToken(auth, canvasAuthToken)
@@ -97,11 +99,11 @@ export const AuthProvider = ({ children }) => {
                     })
                     .catch((error) => {
                         console.error("AuthContext: signInWithCustomToken failed:", error);
-                        setAuthError("Authentication failed. Please try again.");
-                        // Fallback to anonymous sign-in if custom token fails (optional)
+                        setAuthError("Authentication failed. Attempting anonymous sign-in.");
+                        // Fallback to anonymous sign-in if custom token fails
                         signInAnonymously(auth)
                             .then(() => console.log("AuthContext: Signed in anonymously after custom token failure."))
-                            .catch((anonError) => console.error("AuthContext: Anonymous sign-in failed:", anonError));
+                            .catch((anonError) => console.error("AuthContext: Anonymous sign-in also failed:", anonError));
                     });
             } else if (!auth.currentUser) {
                 // If no custom token and no current user, sign in anonymously
@@ -113,8 +115,8 @@ export const AuthProvider = ({ children }) => {
                         setAuthError("Failed to authenticate anonymously. Some features may be unavailable.");
                     });
             } else {
-                console.log("AuthContext: User already authenticated or token not provided.");
-                setLoading(false); // If already authenticated, stop loading right away
+                console.log("AuthContext: User already authenticated or no initial token needed.");
+                // If already authenticated, setLoading to false will happen via onAuthStateChanged callback
             }
 
             // Cleanup function for the auth state listener
@@ -124,40 +126,47 @@ export const AuthProvider = ({ children }) => {
             };
 
         } catch (error) {
-            console.error("AuthContext: Error during Firebase initialization or initial authentication:", error);
+            console.error("AuthContext: Critical Error during Firebase initialization or setup:", error);
             setAuthError("Failed to initialize authentication service. Please try again later.");
-            setLoading(false); // Stop loading even if there's an error
+            setLoading(false); // Ensure loading state is false even on critical errors
+            setIsFirebaseInitialized(false); // Mark as not initialized on error
         }
-    }, [firebaseApp, canvasAuthToken, canvasAppId]); // Depend on firebaseApp (to init once), and canvas tokens (if they change)
+    }, [canvasAuthToken, canvasAppId]); // Dependencies: only re-run if these global-like values change
 
     // --- Authentication Actions (passed to consumers) ---
     const register = async (email, password, username) => {
         setAuthError(null);
+        if (!authInstance || !dbInstance) {
+            setAuthError("Authentication service not ready.");
+            return;
+        }
         try {
             const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
-            // After creating user, update their profile with the username
             await updateProfile(userCredential.user, { displayName: username });
 
-            // Create a user document in Firestore to store their username/profile data
             const userDocRef = doc(dbInstance, `artifacts/${canvasAppId}/users/${userCredential.user.uid}/profile/data`);
             await setDoc(userDocRef, {
                 uid: userCredential.user.uid,
                 email: userCredential.user.email,
                 username: username,
                 createdAt: new Date().toISOString()
-            }, { merge: true }); // Use merge to avoid overwriting existing fields if any
+            }, { merge: true });
 
             console.log("AuthContext: User registered and profile updated:", userCredential.user.uid);
             return userCredential.user;
         } catch (error) {
             console.error("AuthContext: Registration failed:", error);
             setAuthError(error.message);
-            throw error; // Re-throw to allow component to catch and display specific errors
+            throw error;
         }
     };
 
     const login = async (email, password) => {
         setAuthError(null);
+        if (!authInstance) {
+            setAuthError("Authentication service not ready.");
+            return;
+        }
         try {
             const userCredential = await signInWithEmailAndPassword(authInstance, email, password);
             console.log("AuthContext: User logged in:", userCredential.user.uid);
@@ -171,6 +180,10 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         setAuthError(null);
+        if (!authInstance) {
+            setAuthError("Authentication service not ready.");
+            return;
+        }
         try {
             await signOut(authInstance);
             console.log("AuthContext: User logged out.");
@@ -188,14 +201,32 @@ export const AuthProvider = ({ children }) => {
         register,
         login,
         logout,
-        db: dbInstance, // Export db instance directly from context
-        appId: canvasAppId, // Export appId directly from context
-        userId // Export the derived userId
+        db: dbInstance, // Provide db instance
+        appId: canvasAppId, // Provide appId
+        userId, // Provide userId
+        isFirebaseInitialized // Provide initialization status
     };
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children} {/* Only render children once authentication state is determined */}
+            {/* Only render children if Firebase is fully initialized AND auth state has been determined */}
+            {isFirebaseInitialized && !loading ? children : <LoadingScreen />}
         </AuthContext.Provider>
     );
 };
+
+// Simple loading screen to show while Firebase initializes and auth state is determined
+const LoadingScreen = () => (
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f9f9f9',
+        color: '#ff4d88',
+        fontSize: '1.5rem',
+        fontFamily: 'Poppins, sans-serif'
+    }}>
+        <p className="loading-pulse">Initializing Ascendia...</p>
+    </div>
+);
