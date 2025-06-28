@@ -5,9 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   // IMPORTANT: This 'base' property is CRITICAL for GitHub Pages.
-  // It should be '/YOUR_REPOSITORY_NAME/'.
-  // Since your repository is 'ascendia', it must be '/ascendia/'.
-  base: '/ascendia/', // <-- ENSURE THIS LINE IS CORRECT!
+  // It must be '/YOUR_REPOSITORY_NAME/'.
+  // For your repository 'ascendia', it should be '/ascendia/'.
+  base: '/ascendia/', // <-- CONFIRM THIS IS EXACTLY LIKE THIS
   server: {
     // Optional: If you want to force a specific port locally, e.g., 3000
     // port: 3000,
