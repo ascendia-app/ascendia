@@ -1,38 +1,35 @@
 {
   "name": "ascendia",
+  "private": true,
   "version": "1.0.0",
-  "description": "A progressive web app for Cambridge students",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "postinstall": "npm rebuild @rollup/rollup-linux-x64-gnu || true"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ascendia-app/ascendia.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ascendia-app/ascendia/issues"
-  },
-  "homepage": "https://github.com/ascendia-app/ascendia#readme",
   "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "@vitejs/plugin-react": "^4.6.0",
-    "firebase": "^11.9.1",
-    "lucide-react": "^0.523.0",
+    "firebase": "^10.12.3",
+    "lucide-react": "^0.395.0",
     "prop-types": "^15.8.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.3",
-    "recharts": "^3.0.2"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.24.0",
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.10",
-    "vite": "^7.0.0"
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.2",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "vite": "^5.3.1"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
