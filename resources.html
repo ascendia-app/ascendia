@@ -5,87 +5,61 @@
   <title>Ascendia | Student Resources</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Helvetica Neue', sans-serif;
-    }
-
-    body {
-      background: #f8f9fa;
-      color: #212529;
-      line-height: 1.6;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', sans-serif; }
+    body { background: #f8f9fa; color: #212529; line-height: 1.6; }
     header {
       background: white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 1.2rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
-
-    header h1 {
-      font-size: 1.8rem;
-      color: #0d6efd;
-    }
-
+    .logo-text { font-size: 1.8rem; font-weight: bold; color: #0d6efd; text-decoration: none; }
+    .logo-text:hover { text-decoration: underline; }
+    nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; }
     nav a {
-      margin-left: 2rem;
       text-decoration: none;
       color: #212529;
       font-weight: 500;
+      padding: 0.5rem 1rem;
+      transition: color 0.3s ease;
     }
+    nav a:hover { color: #0d6efd; }
 
-    nav a:hover {
-      color: #0d6efd;
-    }
-
-    main {
-      padding: 3rem 2rem;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: #0d6efd;
-    }
-
+    main { padding: 3rem 2rem; max-width: 1200px; margin: auto; }
+    h2 { font-size: 2rem; margin-bottom: 1rem; color: #0d6efd; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
       margin-bottom: 4rem;
     }
-
     .card {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(15px);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-radius: 16px;
       padding: 1.5rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.3);
     }
-
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.2);
     }
-
     .card a {
       text-decoration: none;
       color: #0d6efd;
       font-weight: 600;
-      display: block;
       font-size: 1rem;
     }
-
     footer {
       text-align: center;
       padding: 2rem;
@@ -93,28 +67,11 @@
       color: #6c757d;
       font-size: 0.9rem;
     }
-
     @media (max-width: 768px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+      header { flex-direction: column; align-items: flex-start; }
+      nav { margin-top: 1rem; flex-direction: column; width: 100%; }
+      nav a { padding: 0.5rem 0; }
     }
-
-    @media (min-width: 769px) and (max-width: 1024px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    .logo-text {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #0d6efd;
-  text-decoration: none;
-}
-
-.logo-text:hover {
-  text-decoration: underline;
-}
-
   </style>
 </head>
 <body>
@@ -127,53 +84,53 @@
   </nav>
 </header>
 
+<main>
+  <section>
+    <h2>O Level / IGCSE Resources</h2>
+    <div class="grid">
+      <div class="card"><a href="https://drive.google.com/drive/folders/1Xn9EztoWcyuegtbsWhH0BSWBQx2kvkzT?usp=drive_link" target="_blank">Add Math</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1nrTN9yhxc9ls3axeqOk7immc9heH9Owd?usp=drive_link" target="_blank">Biology</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1fKJbRagzUTEAEAmbeDRG9ZE0BhWD7PVj?usp=drive_link" target="_blank">Business</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1NQ58YAHV6pqbUEYS_z1AHMwpvhxRrzGJ?usp=drive_link" target="_blank">Chemistry</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1I38AfBBsrwSKfiVmAzo36cHUgOAbMIXZ?usp=drive_link" target="_blank">Commerce</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1C3k7GgfKawkmzKYQ1InpOeJ0RqO3CQwG?usp=drive_link" target="_blank">Computer Science</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1qmW_mka5axGgqqloGoCfXf3GSgBh5ilh?usp=drive_link" target="_blank">Economics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1ZqJyxMFoFX3derv2bkZpz65fziRAFASU?usp=drive_link" target="_blank">English</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1FOxdf2t2iZ2a90RKCKFwj6pZs05DsZgo?usp=drive_link" target="_blank">Environmental Management</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/18kok2xQiN7MSNTIm3RK272H06QA_87cl?usp=drive_link" target="_blank">English as a Second Language (ESL)</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1hz19mdaqjqwZsUjVGxh_X5aGsvAcd-sl?usp=drive_link" target="_blank">Global Perspectives</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1IyCh-EkRwmOaokzq8E4MZR7_V-NCmiVv?usp=drive_link" target="_blank">ICT</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1xhNjbKe-japiOqIMv9dKSgOUZmLm0O1I?usp=drive_link" target="_blank">Islamiyat</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1d_VeqWBC3FdgjAz_U16Z03gHj0h-s1nH?usp=drive_link" target="_blank">Mathematics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1AyPgt09AsNqDlTL1zFdm3TrtNCW-wqv0?usp=drive_link" target="_blank">Pakistan Studies</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1u1NTXrZ9zwZxOlyF23Gl5Np7g3DqsQH2?usp=drive_link" target="_blank">Physics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1q4_Eq4rq4GCqoaXICeQzSTwB_RTnGCX0?usp=drive_link" target="_blank">Sociology</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1rhMiGAWEy0tPxMtCwUK53_llICNNNIDj?usp=drive_link" target="_blank">Urdu Syllabus B</a></div>
+    </div>
+  </section>
 
-  <main>
-    <section>
-      <h2>O Level / IGCSE Resources</h2>
-      <div class="grid">
-        <div class="card"><a href="https://drive.google.com/drive/folders/1Xn9EztoWcyuegtbsWhH0BSWBQx2kvkzT?usp=drive_link" target="_blank">Add Math</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1nrTN9yhxc9ls3axeqOk7immc9heH9Owd?usp=drive_link" target="_blank">Biology</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1fKJbRagzUTEAEAmbeDRG9ZE0BhWD7PVj?usp=drive_link" target="_blank">Business</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1NQ58YAHV6pqbUEYS_z1AHMwpvhxRrzGJ?usp=drive_link" target="_blank">Chemistry</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1I38AfBBsrwSKfiVmAzo36cHUgOAbMIXZ?usp=drive_link" target="_blank">Commerce</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1C3k7GgfKawkmzKYQ1InpOeJ0RqO3CQwG?usp=drive_link" target="_blank">Computer Science</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1qmW_mka5axGgqqloGoCfXf3GSgBh5ilh?usp=drive_link" target="_blank">Economics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1ZqJyxMFoFX3derv2bkZpz65fziRAFASU?usp=drive_link" target="_blank">English</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1FOxdf2t2iZ2a90RKCKFwj6pZs05DsZgo?usp=drive_link" target="_blank">Environmental Management</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/18kok2xQiN7MSNTIm3RK272H06QA_87cl?usp=drive_link" target="_blank">English as a Second Language (ESL)</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1hz19mdaqjqwZsUjVGxh_X5aGsvAcd-sl?usp=drive_link" target="_blank">Global Perspectives</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1IyCh-EkRwmOaokzq8E4MZR7_V-NCmiVv?usp=drive_link" target="_blank">ICT</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1xhNjbKe-japiOqIMv9dKSgOUZmLm0O1I?usp=drive_link" target="_blank">Islamiyat</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1d_VeqWBC3FdgjAz_U16Z03gHj0h-s1nH?usp=drive_link" target="_blank">Mathematics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1AyPgt09AsNqDlTL1zFdm3TrtNCW-wqv0?usp=drive_link" target="_blank">Pakistan Studies</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1u1NTXrZ9zwZxOlyF23Gl5Np7g3DqsQH2?usp=drive_link" target="_blank">Physics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1q4_Eq4rq4GCqoaXICeQzSTwB_RTnGCX0?usp=drive_link" target="_blank">Sociology</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1rhMiGAWEy0tPxMtCwUK53_llICNNNIDj?usp=drive_link" target="_blank">Urdu Syllabus B</a></div>
-      </div>
-    </section>
+  <section>
+    <h2>AS / A Level Resources</h2>
+    <div class="grid">
+      <div class="card"><a href="https://drive.google.com/drive/folders/13JlfKMY3DfxYHFdsFfr2vNyu5a7WxW07?usp=drive_linkr" target="_blank">Biology</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/17xl8lWw1PW_Vu5M15jqKkpX5nhNavJlE?usp=drive_linkr" target="_blank">Physics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1YZUyjER4ooh3btJVYyNfnsRuRrQ35Ncx?usp=drive_link" target="_blank">Chemistry</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1X6iawNdMLR_wyD0F0_mj4Q9DPxVThW7q?usp=drive_link" target="_blank">Mathematics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/12GaLhWmv7nkLDeQMNw4fz1y8PT9Q_8Lm?usp=drive_link" target="_blank">Further Mathematics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1zOb_MMGiVU4DqKeNTCDhwlUc0ovu9eB_?usp=drive_link" target="_blank">Sociology</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1AHqgwmAnxzsjcYbYoOY337dn5plq46_-?usp=drive_link" target="_blank">History</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/11k2UoHnWWr4bpC7z5QS3xZJMM2USkfbH?usp=drive_link" target="_blank">Economics</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1Ylz1-TrFNA3oUze2o3EJpXZD5TMI8vAG?usp=drive_link" target="_blank">Business</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1b95PV4JX1Uv_nfyCPFyC1-Tic2lxe6fv?usp=drive_link" target="_blank">Computer Science</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/10WlGXfoS8RyNi8EWXhsvvp7Ehkm7gQ4p?usp=drive_link" target="_blank">Psychology</a></div>
+      <div class="card"><a href="https://drive.google.com/drive/folders/1OdyTQDwCzYPuA7T-9WYb4p-wcuctjl1v?usp=drive_link" target="_blank">Information Technology</a></div>
+    </div>
+  </section>
+</main>
 
-    <section>
-      <h2>AS / A Level Resources</h2>
-      <div class="grid">
-        <div class="card"><a href="https://drive.google.com/drive/folders/13JlfKMY3DfxYHFdsFfr2vNyu5a7WxW07?usp=drive_link" target="_blank">Biology</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/17xl8lWw1PW_Vu5M15jqKkpX5nhNavJlE?usp=drive_link" target="_blank">Physics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1YZUyjER4ooh3btJVYyNfnsRuRrQ35Ncx?usp=drive_link" target="_blank">Chemistry</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1X6iawNdMLR_wyD0F0_mj4Q9DPxVThW7q?usp=drive_link" target="_blank">Mathematics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/12GaLhWmv7nkLDeQMNw4fz1y8PT9Q_8Lm?usp=drive_link" target="_blank">Further Mathematics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1zOb_MMGiVU4DqKeNTCDhwlUc0ovu9eB_?usp=drive_link" target="_blank">Sociology</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1AHqgwmAnxzsjcYbYoOY337dn5plq46_-?usp=drive_link" target="_blank">History</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/11k2UoHnWWr4bpC7z5QS3xZJMM2USkfbH?usp=drive_link" target="_blank">Economics</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1Ylz1-TrFNA3oUze2o3EJpXZD5TMI8vAG?usp=drive_link" target="_blank">Business</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1b95PV4JX1Uv_nfyCPFyC1-Tic2lxe6fv?usp=drive_link" target="_blank">Computer Science</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/10WlGXfoS8RyNi8EWXhsvvp7Ehkm7gQ4p?usp=drive_link" target="_blank">Psychology</a></div>
-        <div class="card"><a href="https://drive.google.com/drive/folders/1OdyTQDwCzYPuA7T-9WYb4p-wcuctjl1v?usp=drive_link" target="_blank">Information Technology</a></div>
-      </div>
-    </section>
-  </main>
+<footer>
+  &copy; 2025 Ascendia. All rights reserved.
+</footer>
 
-  <footer>
-    &copy; 2025 Ascendia. All rights reserved.
-  </footer>
 </body>
 </html>
