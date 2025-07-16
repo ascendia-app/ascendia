@@ -30,9 +30,15 @@
       z-index: 100;
     }
 
-    header h1 {
+    .logo-text {
       font-size: 1.8rem;
+      font-weight: bold;
       color: #0d6efd;
+      text-decoration: none;
+    }
+
+    .logo-text:hover {
+      text-decoration: underline;
     }
 
     nav a {
@@ -70,6 +76,13 @@
       margin-bottom: 2rem;
     }
 
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
     .btn {
       background: #0d6efd;
       color: white;
@@ -94,17 +107,26 @@
       color: #6c757d;
       font-size: 0.9rem;
     }
-    .logo-text {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #0d6efd;
-  text-decoration: none;
-}
 
-.logo-text:hover {
-  text-decoration: underline;
-}
+    @media (max-width: 600px) {
+      .hero h2 {
+        font-size: 2rem;
+      }
 
+      .hero p {
+        font-size: 1rem;
+      }
+
+      nav a {
+        margin-left: 1rem;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        font-size: 0.95rem;
+        padding: 0.7rem 1.2rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -117,16 +139,18 @@
   </nav>
 </header>
 
-
-  <section class="hero">
-    <h2>Your A–Level & O–Level Guidance Hub</h2>
-    <p>Boost your academic journey with free counselling, curated notes, and exclusive webinars for IGCSE, O Level, and A Level students.</p>
+<section class="hero">
+  <h2>Your A–Level & O–Level Guidance Hub</h2>
+  <p>Boost your academic journey with free counselling, curated notes, and exclusive webinars for IGCSE, O Level, and A Level students.</p>
+  <div class="hero-buttons">
     <a href="book.html" class="btn">Book a Free Session</a>
-    
-  </section>
+    <a href="resources.html" class="btn">Access Free Resources</a>
+  </div>
+</section>
 
-  <footer>
-    &copy; 2025 Ascendia. All rights reserved.
-  </footer>
+<footer>
+  &copy; 2025 Ascendia. All rights reserved.
+</footer>
+
 </body>
 </html>
