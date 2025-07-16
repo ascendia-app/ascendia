@@ -24,22 +24,45 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
     }
 
-    header h1 {
+    .logo-text {
       font-size: 1.8rem;
+      font-weight: bold;
       color: #0d6efd;
+      text-decoration: none;
+    }
+
+    .logo-text:hover {
+      text-decoration: underline;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
     }
 
     nav a {
-      margin-left: 2rem;
       text-decoration: none;
       color: #212529;
       font-weight: 500;
+      transition: color 0.3s ease;
     }
 
     nav a:hover {
       color: #0d6efd;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.8rem;
+      background: none;
+      border: none;
+      cursor: pointer;
     }
 
     main {
@@ -68,41 +91,55 @@
       color: #6c757d;
       font-size: 0.9rem;
     }
-    .logo-text {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #0d6efd;
-  text-decoration: none;
-}
 
-.logo-text:hover {
-  text-decoration: underline;
-}
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+      }
 
+      nav.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <a href="index.html" class="logo-text">Ascendia</a>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="book.html">Book Session</a>
-  </nav>
-</header>
-
-
+  <header>
+    <a href="index.html" class="logo-text">Ascendia</a>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <nav id="nav-links">
+      <a href="index.html">Home</a>
+      <a href="book.html">Book Session</a>
+    </nav>
+  </header>
 
   <main>
     <h2>Book a Free Counselling Session</h2>
-    <!-- Replace the iframe src with your own Google Form link -->
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc8RnsHS0tX3Dl70ZTIITsF97FAba0N3cqjqax8qQd32Ru1GQ/viewform?embedded=true" width="640" height="1566" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc8RnsHS0tX3Dl70ZTIITsF97FAba0N3cqjqax8qQd32Ru1GQ/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
   </main>
 
   <footer>
     &copy; 2025 Ascendia. All rights reserved.
   </footer>
 
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById('nav-links');
+      nav.classList.toggle('active');
+    }
+  </script>
+
 </body>
 </html>
-
