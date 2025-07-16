@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ascendia | Academic Guidance Hub</title>
   <style>
     * {
@@ -28,6 +28,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-wrap: wrap;
     }
 
     .logo-text {
@@ -41,8 +42,12 @@
       text-decoration: underline;
     }
 
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
     nav a {
-      margin-left: 2rem;
       text-decoration: none;
       color: #212529;
       font-weight: 500;
@@ -51,6 +56,14 @@
 
     nav a:hover {
       color: #0d6efd;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.8rem;
+      background: none;
+      border: none;
+      cursor: pointer;
     }
 
     .hero {
@@ -108,18 +121,32 @@
       font-size: 0.9rem;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      nav.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
       .hero h2 {
         font-size: 2rem;
       }
 
       .hero p {
         font-size: 1rem;
-      }
-
-      nav a {
-        margin-left: 1rem;
-        font-size: 0.95rem;
       }
 
       .btn {
@@ -131,26 +158,34 @@
 </head>
 <body>
 
-<header>
-  <a href="index.html" class="logo-text">Ascendia</a>
-  <nav>
-    <a href="resources.html">Resources</a>
-    <a href="book.html">Book Session</a>
-  </nav>
-</header>
+  <header>
+    <a href="index.html" class="logo-text">Ascendia</a>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <nav id="nav-links">
+      <a href="resources.html">Resources</a>
+      <a href="book.html">Book Session</a>
+    </nav>
+  </header>
 
-<section class="hero">
-  <h2>Your A–Level & O–Level Guidance Hub</h2>
-  <p>Boost your academic journey with free counselling, curated notes, and exclusive webinars for IGCSE, O Level, and A Level students.</p>
-  <div class="hero-buttons">
-    <a href="book.html" class="btn">Book a Free Session</a>
-    <a href="resources.html" class="btn">Access Free Resources</a>
-  </div>
-</section>
+  <section class="hero">
+    <h2>Your A–Level & O–Level Guidance Hub</h2>
+    <p>Boost your academic journey with free counselling, curated notes, and exclusive webinars for IGCSE, O Level, and A Level students.</p>
+    <div class="hero-buttons">
+      <a href="book.html" class="btn">Book a Free Session</a>
+      <a href="resources.html" class="btn">Access Free Resources</a>
+    </div>
+  </section>
 
-<footer>
-  &copy; 2025 Ascendia. All rights reserved.
-</footer>
+  <footer>
+    &copy; 2025 Ascendia. All rights reserved.
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById('nav-links');
+      nav.classList.toggle('active');
+    }
+  </script>
 
 </body>
 </html>
