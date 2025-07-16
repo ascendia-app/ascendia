@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Ascendia | Student Resources</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
       margin: 0;
@@ -25,9 +25,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
 
     header h1 {
@@ -40,56 +37,49 @@
       text-decoration: none;
       color: #212529;
       font-weight: 500;
-      transition: color 0.3s ease;
     }
 
     nav a:hover {
       color: #0d6efd;
     }
 
-    .section {
-      padding: 4rem 2rem;
-      max-width: 1000px;
+    main {
+      padding: 3rem 2rem;
+      max-width: 1200px;
       margin: auto;
     }
 
-    .section h2 {
-      font-size: 2.2rem;
-      color: #0d6efd;
+    h2 {
+      font-size: 2rem;
       margin-bottom: 1rem;
+      color: #0d6efd;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
     }
 
     .card {
       background: white;
-      padding: 2rem;
-      border-radius: 12px;
+      border-radius: 10px;
+      padding: 1.2rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-      margin-bottom: 2rem;
+      text-align: center;
+      transition: transform 0.2s ease;
     }
 
-    .card h3 {
-      margin-bottom: 0.5rem;
-      color: #0d6efd;
+    .card:hover {
+      transform: translateY(-5px);
     }
 
-    .card p {
-      margin-bottom: 1rem;
-    }
-
-    .btn {
-      background: #0d6efd;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
+    .card a {
       text-decoration: none;
-      display: inline-block;
-      transition: background 0.3s ease;
-    }
-
-    .btn:hover {
-      background: #0b5ed7;
+      color: #0d6efd;
+      font-weight: 600;
+      display: block;
     }
 
     footer {
@@ -106,43 +96,55 @@
     <h1>Ascendia</h1>
     <nav>
       <a href="index.html">Home</a>
-      <a href="resources.html">Resources</a>
       <a href="book.html">Book Session</a>
-      <a href="events.html">Events</a>
     </nav>
   </header>
 
-  <section class="section">
-    <h2>Student Resources</h2>
+  <main>
+    <section>
+      <h2>O Level / IGCSE Resources</h2>
+      <div class="grid">
+        <!-- 18 Cards -->
+  <a class="card" href="https://drive.google.com/drive/folders/1Xn9EztoWcyuegtbsWhH0BSWBQx2kvkzT?usp=drive_link" target="_blank">Add Math</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1nrTN9yhxc9ls3axeqOk7immc9heH9Owd?usp=drive_link" target="_blank">Biology</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1fKJbRagzUTEAEAmbeDRG9ZE0BhWD7PVj?usp=drive_link" target="_blank">Business</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1NQ58YAHV6pqbUEYS_z1AHMwpvhxRrzGJ?usp=drive_link" target="_blank">Chemistry</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1I38AfBBsrwSKfiVmAzo36cHUgOAbMIXZ?usp=drive_link" target="_blank">Commerce</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1C3k7GgfKawkmzKYQ1InpOeJ0RqO3CQwG?usp=drive_link" target="_blank">Computer Science</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1qmW_mka5axGgqqloGoCfXf3GSgBh5ilh?usp=drive_link" target="_blank">Economics</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1ZqJyxMFoFX3derv2bkZpz65fziRAFASU?usp=drive_link" target="_blank">English</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1FOxdf2t2iZ2a90RKCKFwj6pZs05DsZgo?usp=drive_link" target="_blank">Environmental Management</a>
+  <a class="card" href="https://drive.google.com/drive/folders/18kok2xQiN7MSNTIm3RK272H06QA_87cl?usp=drive_link" target="_blank">English as a Second Language (ESL)</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1hz19mdaqjqwZsUjVGxh_X5aGsvAcd-sl?usp=drive_linkr" target="_blank">Global Perspectives</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1IyCh-EkRwmOaokzq8E4MZR7_V-NCmiVv?usp=drive_link" target="_blank">Information and Communication Technology (ICT)</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1xhNjbKe-japiOqIMv9dKSgOUZmLm0O1I?usp=drive_link" target="_blank">Islamiyat</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1d_VeqWBC3FdgjAz_U16Z03gHj0h-s1nH?usp=drive_link" target="_blank">Mathematics</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1AyPgt09AsNqDlTL1zFdm3TrtNCW-wqv0?usp=drive_link" target="_blank">Pakistan Studies</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1u1NTXrZ9zwZxOlyF23Gl5Np7g3DqsQH2?usp=drive_link" target="_blank">Physics</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1q4_Eq4rq4GCqoaXICeQzSTwB_RTnGCX0?usp=drive_link" target="_blank">Sociology</a>
+  <a class="card" href="https://drive.google.com/drive/folders/1rhMiGAWEy0tPxMtCwUK53_llICNNNIDj?usp=drive_link" target="_blank">Urdu Syllabus B</a>
+      </div>
+    </section>
 
-    <div class="card">
-      <h3>IGCSE & O Level Notes</h3>
-      <p>Download subject-wise summaries, concept maps, and annotated notes curated by high achievers.</p>
-      <a href="#" class="btn">View O Level Notes</a>
-    </div>
-
-    <div class="card">
-      <h3>A Level Resources</h3>
-      <p>Access revision checklists, topic trackers, and examiner-style essay plans for A Level Sociology, History, and more.</p>
-      <a href="#" class="btn">View A Level Resources</a>
-    </div>
-
-    <div class="card">
-      <h3>Past Paper Guides</h3>
-      <p>Explore breakdowns of marking schemes, tips for each paper type, and model answers for CAIE exams.</p>
-      <a href="#" class="btn">View Past Paper Help</a>
-    </div>
-
-    <div class="card">
-      <h3>Study & Revision Tools</h3>
-      <p>Download free Notion templates, planners, and productivity tools designed for Cambridge students.</p>
-      <a href="#" class="btn">Download Templates</a>
-    </div>
-  </section>
+    <section>
+<h2>AS / A Level Resources</h2>
+<div class="grid">
+  <div class="card"><a href="https://drive.google.com/drive/folders/13JlfKMY3DfxYHFdsFfr2vNyu5a7WxW07?usp=drive_linkr" target="_blank">Biology</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/17xl8lWw1PW_Vu5M15jqKkpX5nhNavJlE?usp=drive_linkr" target="_blank">Physics</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1YZUyjER4ooh3btJVYyNfnsRuRrQ35Ncx?usp=drive_link" target="_blank">Chemistry</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1X6iawNdMLR_wyD0F0_mj4Q9DPxVThW7q?usp=drive_link" target="_blank">Mathematics</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/12GaLhWmv7nkLDeQMNw4fz1y8PT9Q_8Lm?usp=drive_link" target="_blank">Further Mathematics</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1zOb_MMGiVU4DqKeNTCDhwlUc0ovu9eB_?usp=drive_link" target="_blank">Sociology</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1AHqgwmAnxzsjcYbYoOY337dn5plq46_-?usp=drive_link" target="_blank">History</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/11k2UoHnWWr4bpC7z5QS3xZJMM2USkfbH?usp=drive_link" target="_blank">Economics</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1Ylz1-TrFNA3oUze2o3EJpXZD5TMI8vAG?usp=drive_link" target="_blank">Business</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1b95PV4JX1Uv_nfyCPFyC1-Tic2lxe6fv?usp=drive_link" target="_blank">Computer Science</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/10WlGXfoS8RyNi8EWXhsvvp7Ehkm7gQ4p?usp=drive_link" target="_blank">Psychology</a></div>
+  <div class="card"><a href="https://drive.google.com/drive/folders/1OdyTQDwCzYPuA7T-9WYb4p-wcuctjl1v?usp=drive_link" target="_blank">Information Technology</a></div>
+</div>
 
   <footer>
     &copy; 2025 Ascendia. All rights reserved.
   </footer>
 </body>
 </html>
-
